@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Środowisko
+.env
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Dane
+data/raw/*.json
+*.csv
+!data/raw/sample/*.json
