@@ -22,3 +22,23 @@
 **Czas:** 8h | **Ocena dnia:**  2.5/5
 
 
+#Dziennik 04.08.2026 - dzień 2 (terminal fundamenty)
+
+**Co zrobiłem:**
+- wyklad MIT (shell,command-line environment,data wrangling)
+- nauka z jq z jqlang.org
+- pobranie strone z API i drobne zadania na niej
+
+**Komendy dnia:**
+- jq, grep, sed, sort, uniq, git config, cp, sed -i
+
+**Co mnie wciągnęło:**
+- możliwość komunikowania się z serwerem za pomocą Ubuntu, ekstracja i filtrowanie danych
+
+**Co mnie męczyło:**
+- problem z dwoma folderami na komputerze- pochłonęło mi to więcej czasu niż ćwiczenie jq, zbyt zaawansowane niektóre zadania, mieszanie się wyrażeń, dużo naraz
+
+**Wnioski:**
+- trzymać repo w jednym miejscu od początku, sprawdzać strukturę json częściej i testować ją
+
+**Czas:** 7h | Ocena dnia: 4/5
