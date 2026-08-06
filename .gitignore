@@ -16,3 +16,4 @@ __pycache__/
 data/raw/*.json
 *.csv
 !data/raw/sample/*.json
+tmp/
