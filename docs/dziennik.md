@@ -42,3 +42,26 @@
 - trzymać repo w jednym miejscu od początku, sprawdzać strukturę json częściej i testować ją
 
 **Czas:** 7h | Ocena dnia: 4/5
+
+#Dziennik 05.08.2026 - dzień 3 (środowisko pythona i pierwszy sktypt)
+
+**Co zrobiłem:**
+- wyklad MIT (packaging and shipping code)
+- napisalem fetch_sample
+- żadanie httpx z własnym user-agentem oraz zapis do pliku danych uzyskanych
+- trzy obserwacje o api
+- import konfiguracji z poznan_it_market.config
+
+**Komendy dnia:**
+- export JJIT_API_URL="https://justjoin.it/api/candidate-api/offers", uv run python scripts/fetch_sample.py
+
+**Co mnie wciągnęło:**
+- zderzenie z API, stosowanie pythona
+
+**Co mnie męczyło:**
+- problem z endpointem,naprawda błędów w fetch_sample.py, zmienianie calych plikow na jezyk angielski, nadmiar materiału, dużo kroków
+
+**Wnioski:**
+- upewnianie się, że biorę dobry enpoint, pisanie wszystkiego poza dziennikiem po angielsku, sprawdzanie więcej dokumentacji
+
+**Czas:** 8h | Ocena dnia: 3.5/5
