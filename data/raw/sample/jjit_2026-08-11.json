@@ -1,0 +1,1412 @@
+{
+    "data": [
+        {
+            "guid": "11e38f3a-dec1-4be3-9efa-7a438f26b043",
+            "slug": "cerebre-senior-ai-engineer-generative-ai-llm-systems--poznan-ai-356878be",
+            "title": "Senior AI Engineer (Generative AI / LLM Systems)",
+            "workplaceType": "remote",
+            "workingTime": "full_time",
+            "experienceLevel": "senior",
+            "category": {
+                "key": "ai",
+                "parentKey": null
+            },
+            "city": "Poznań",
+            "street": "100% remote",
+            "latitude": 52.40567859999999,
+            "longitude": 16.9312766,
+            "isRemoteInterview": false,
+            "companyName": "cerebre",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/K_ZJ64Xcrbx1pG5_Q-zIvsz41rlNW9Xk8drAViqvA-Q/h:200/w:200/plain/https://public.justjoin.it/companies/logos/original/ec14e8cda4c64c956ad5480a941731a01de34c4c.png",
+            "publishedAt": "2026-08-10T21:00:24.9036962Z",
+            "isOpenToHireUkrainians": false,
+            "locations": [
+                {
+                    "city": "Poznań",
+                    "street": "100% remote",
+                    "latitude": 52.40567859999999,
+                    "longitude": 16.9312766,
+                    "slug": "cerebre-senior-ai-engineer-generative-ai-llm-systems--poznan-ai-356878be"
+                },
+                {
+                    "city": "Wrocław",
+                    "street": "100% remote",
+                    "latitude": 51.10929480000001,
+                    "longitude": 17.0386019,
+                    "slug": "cerebre-senior-ai-engineer-generative-ai-llm-systems--wroclaw-ai-af970d51"
+                },
+                {
+                    "city": "Kraków",
+                    "street": "100% remote",
+                    "latitude": 50.06465009999999,
+                    "longitude": 19.9449799,
+                    "slug": "cerebre-senior-ai-engineer-generative-ai-llm-systems--krakow-ai-a2394695"
+                },
+                {
+                    "city": "Warszawa",
+                    "street": "100% remote",
+                    "latitude": 52.2296756,
+                    "longitude": 21.0122287,
+                    "slug": "cerebre-senior-ai-engineer-generative-ai-llm-systems--warszawa-ai-42689bb0"
+                },
+                {
+                    "city": "Trójmiasto",
+                    "street": "100% remote",
+                    "latitude": 54.3919577,
+                    "longitude": 18.5406663,
+                    "slug": "cerebre-senior-ai-engineer-generative-ai-llm-systems--trojmiasto-ai-f97c8a5e"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": null,
+                    "fromPerUnit": null,
+                    "to": null,
+                    "toPerUnit": null,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "month",
+                    "gross": false
+                },
+                {
+                    "from": null,
+                    "fromPerUnit": null,
+                    "to": null,
+                    "toPerUnit": null,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "month",
+                    "gross": false
+                },
+                {
+                    "from": null,
+                    "fromPerUnit": null,
+                    "to": null,
+                    "toPerUnit": null,
+                    "currency": "PLN",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "month",
+                    "gross": false
+                },
+                {
+                    "from": null,
+                    "fromPerUnit": null,
+                    "to": null,
+                    "toPerUnit": null,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "month",
+                    "gross": false
+                },
+                {
+                    "from": null,
+                    "fromPerUnit": null,
+                    "to": null,
+                    "toPerUnit": null,
+                    "currency": "USD",
+                    "currencySource": "original",
+                    "type": "b2b",
+                    "unit": "month",
+                    "gross": false
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "Cloud",
+                    "level": 3
+                },
+                {
+                    "name": "LLMs",
+                    "level": 4
+                },
+                {
+                    "name": "System Design",
+                    "level": 4
+                },
+                {
+                    "name": "vector databases",
+                    "level": 4
+                },
+                {
+                    "name": "RAG",
+                    "level": 4
+                },
+                {
+                    "name": "API Development",
+                    "level": 4
+                },
+                {
+                    "name": "Embeddings",
+                    "level": 4
+                },
+                {
+                    "name": "Industrial / Manufacturing / Operations domain",
+                    "level": 1
+                },
+                {
+                    "name": "Python",
+                    "level": 5
+                },
+                {
+                    "name": "AI Agents",
+                    "level": 4
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [
+                {
+                    "code": "en",
+                    "level": "B2"
+                }
+            ],
+            "isPromoted": false,
+            "isSuperOffer": false,
+            "applyMethod": "external",
+            "applyUrl": "https://cerebre.traffit.com/public/form/a/9774be41d6f377e38cec05fa16d1fae55448303d?source=justjoin.it",
+            "lastPublishedAt": "2026-07-31T20:25:48.361663Z",
+            "expiredAt": "2026-10-29T21:25:42.522Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": null
+        },
+        {
+            "guid": "13488b6c-edb9-4d3f-bf0f-f634f13685b4",
+            "slug": "dmtech-polska-1-level-it-support-specialist-z-j-niemieckim---service-desk-team-b2b--wroclaw-support-ca6853e9",
+            "title": "1. level IT Support Specialist z j. niemieckim - (Service Desk Team) (B2B)",
+            "workplaceType": "remote",
+            "workingTime": "full_time",
+            "experienceLevel": "mid",
+            "category": {
+                "key": "support",
+                "parentKey": null
+            },
+            "city": "Wrocław",
+            "street": "Jaworska",
+            "latitude": 51.1152502,
+            "longitude": 16.9935578,
+            "isRemoteInterview": false,
+            "companyName": "dmTECH Polska",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/nack9dita8DLYKtJogl9-sCbFkUUokI7-UKYdOsvsIk/h:200/w:200/plain/https://s3.eu-west-1.amazonaws.com/images.justjoin.it/justjoinit/company-logos/71030767-e261-436c-9fef-6400b03d442c.png",
+            "publishedAt": "2026-08-10T19:00:06.526049Z",
+            "isOpenToHireUkrainians": false,
+            "locations": [
+                {
+                    "city": "Wrocław",
+                    "street": "Jaworska",
+                    "latitude": 51.1152502,
+                    "longitude": 16.9935578,
+                    "slug": "dmtech-polska-1-level-it-support-specialist-z-j-niemieckim---service-desk-team-b2b--wroclaw-support-ca6853e9"
+                },
+                {
+                    "city": "Warszawa",
+                    "street": "-",
+                    "latitude": 52.2296756,
+                    "longitude": 21.0122287,
+                    "slug": "dmtech-polska-1-level-it-support-specialist-z-j-niemieckim---service-desk-team-b2b--warszawa-support-10d881f3"
+                },
+                {
+                    "city": "Kraków",
+                    "street": "-",
+                    "latitude": 50.06465009999999,
+                    "longitude": 19.9449799,
+                    "slug": "dmtech-polska-1-level-it-support-specialist-z-j-niemieckim---service-desk-team-b2b--krakow-support-47083d14"
+                },
+                {
+                    "city": "Gdańsk",
+                    "street": "-",
+                    "latitude": 54.35202520000001,
+                    "longitude": 18.6466384,
+                    "slug": "dmtech-polska-1-level-it-support-specialist-z-j-niemieckim---service-desk-team-b2b--gdansk-support-c7dff598"
+                },
+                {
+                    "city": "Poznań",
+                    "street": "-",
+                    "latitude": 52.40567859999999,
+                    "longitude": 16.9312766,
+                    "slug": "dmtech-polska-1-level-it-support-specialist-z-j-niemieckim---service-desk-team-b2b--poznan-support-7b8ba6de"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": 10080.0,
+                    "fromPerUnit": 60.0,
+                    "to": 15120.0,
+                    "toPerUnit": 90.0,
+                    "currency": "PLN",
+                    "currencySource": "original",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 2701.0,
+                    "fromPerUnit": 16.0754474332869,
+                    "to": 4051.0,
+                    "toPerUnit": 24.11317114993035,
+                    "currency": "USD",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 2344.0,
+                    "fromPerUnit": 13.95024412927224,
+                    "to": 3515.0,
+                    "toPerUnit": 20.92536619390836,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 2191.0,
+                    "fromPerUnit": 13.04206064558202,
+                    "to": 3287.0,
+                    "toPerUnit": 19.56309096837303,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 2009.0,
+                    "fromPerUnit": 11.95886151638364,
+                    "to": 3014.0,
+                    "toPerUnit": 17.93829227457546,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "ServiceNow",
+                    "level": 3
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [
+                {
+                    "code": "pl",
+                    "level": "C1"
+                },
+                {
+                    "code": "de",
+                    "level": "B2"
+                }
+            ],
+            "isPromoted": false,
+            "isSuperOffer": true,
+            "applyMethod": "external",
+            "applyUrl": "https://system.erecruiter.pl/FormTemplates/RecruitmentForm.aspx?WebID=b33095d0f66240de8cd800933618a522",
+            "lastPublishedAt": "2026-07-21T18:32:56.494453Z",
+            "expiredAt": "2026-09-30T21:59:59.999Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": null
+        },
+        {
+            "guid": "2ae30c47-9c91-40b2-8bc0-6156ae30d3b7",
+            "slug": "upvanta-sp-z-o-o--operator-monitoringu-systemow-i-sieci-specjalista-noc-network-operations-center---poznan-poznan-admin",
+            "title": "Operator Monitoringu Systemów i Sieci/ Specjalista NOC (Network Operations Center) - Poznań",
+            "workplaceType": "office",
+            "workingTime": "full_time",
+            "experienceLevel": "junior",
+            "category": {
+                "key": "admin",
+                "parentKey": null
+            },
+            "city": "Poznań",
+            "street": "-",
+            "latitude": 52.40567859999999,
+            "longitude": 16.9312766,
+            "isRemoteInterview": false,
+            "companyName": "Upvanta sp. z o.o.",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/Bh_zoFX-WYCsPr3y1Qeu4GL-qIc5lhkGgumXrHnrFZ8/h:200/w:200/plain/https://public.justjoin.it/companies/logos/original/ff9b4facf163f49a0ed5a2b165e7a06abc6c1858.jpg",
+            "publishedAt": "2026-08-10T18:00:24.2801875Z",
+            "isOpenToHireUkrainians": false,
+            "locations": [
+                {
+                    "city": "Poznań",
+                    "street": "-",
+                    "latitude": 52.40567859999999,
+                    "longitude": 16.9312766,
+                    "slug": "upvanta-sp-z-o-o--operator-monitoringu-systemow-i-sieci-specjalista-noc-network-operations-center---poznan-poznan-admin"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": 5275.0,
+                    "fromPerUnit": 31.4,
+                    "to": 5275.0,
+                    "toPerUnit": 31.4,
+                    "currency": "PLN",
+                    "currencySource": "original",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 1404.0,
+                    "fromPerUnit": 8.358177172061332,
+                    "to": 1404.0,
+                    "toPerUnit": 8.358177172061332,
+                    "currency": "USD",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 1230.0,
+                    "fromPerUnit": 7.318494347978104,
+                    "to": 1230.0,
+                    "toPerUnit": 7.318494347978104,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 1129.0,
+                    "fromPerUnit": 6.72160976131863,
+                    "to": 1129.0,
+                    "toPerUnit": 6.72160976131863,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 1051.0,
+                    "fromPerUnit": 6.2573483987963705,
+                    "to": 1051.0,
+                    "toPerUnit": 6.2573483987963705,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "IT Support",
+                    "level": 2
+                },
+                {
+                    "name": "ITIL",
+                    "level": 2
+                },
+                {
+                    "name": "TCP/IP",
+                    "level": 2
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [],
+            "isPromoted": false,
+            "isSuperOffer": false,
+            "applyMethod": "external",
+            "applyUrl": "https://form.erecruiter.pl/form/ee2e92655ef648968c90fdedd4a79ea3",
+            "lastPublishedAt": "2026-05-27T17:43:43.124988Z",
+            "expiredAt": "2026-08-25T21:59:59.999Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": null
+        },
+        {
+            "guid": "4df3653f-aa47-48f5-94da-b98329194aeb",
+            "slug": "upvanta-sp-z-o-o--architekt-rozwiazan-it---sektor-bankowy-poznan-architecture",
+            "title": "Architekt Rozwiązań IT – sektor bankowy",
+            "workplaceType": "remote",
+            "workingTime": "full_time",
+            "experienceLevel": "mid",
+            "category": {
+                "key": "architecture",
+                "parentKey": null
+            },
+            "city": "Poznań",
+            "street": "-",
+            "latitude": 52.40567859999999,
+            "longitude": 16.9312766,
+            "isRemoteInterview": false,
+            "companyName": "Upvanta sp. z o.o.",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/Bh_zoFX-WYCsPr3y1Qeu4GL-qIc5lhkGgumXrHnrFZ8/h:200/w:200/plain/https://public.justjoin.it/companies/logos/original/ff9b4facf163f49a0ed5a2b165e7a06abc6c1858.jpg",
+            "publishedAt": "2026-08-10T18:00:24.2783845Z",
+            "isOpenToHireUkrainians": false,
+            "locations": [
+                {
+                    "city": "Poznań",
+                    "street": "-",
+                    "latitude": 52.40567859999999,
+                    "longitude": 16.9312766,
+                    "slug": "upvanta-sp-z-o-o--architekt-rozwiazan-it---sektor-bankowy-poznan-architecture"
+                },
+                {
+                    "city": "Wrocław",
+                    "street": "-",
+                    "latitude": 51.10929480000001,
+                    "longitude": 17.0386019,
+                    "slug": "upvanta-sp-z-o-o--architekt-rozwiazan-it---sektor-bankowy-wroclaw-architecture"
+                },
+                {
+                    "city": "Warszawa",
+                    "street": "-",
+                    "latitude": 52.2296756,
+                    "longitude": 21.0122287,
+                    "slug": "upvanta-sp-z-o-o--architekt-rozwiazan-it---sektor-bankowy-warszawa-architecture"
+                },
+                {
+                    "city": "Kraków",
+                    "street": "-",
+                    "latitude": 50.06465009999999,
+                    "longitude": 19.9449799,
+                    "slug": "upvanta-sp-z-o-o--architekt-rozwiazan-it---sektor-bankowy-krakow-architecture"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": 29400.0,
+                    "fromPerUnit": 1400.0,
+                    "to": 31500.0,
+                    "toPerUnit": 1500.0,
+                    "currency": "PLN",
+                    "currencySource": "original",
+                    "type": "b2b",
+                    "unit": "Day",
+                    "gross": false
+                },
+                {
+                    "from": 7826.0,
+                    "fromPerUnit": 372.657580919932,
+                    "to": 8385.0,
+                    "toPerUnit": 399.27597955707,
+                    "currency": "USD",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Day",
+                    "gross": false
+                },
+                {
+                    "from": 6852.0,
+                    "fromPerUnit": 326.3022957697244,
+                    "to": 7342.0,
+                    "toPerUnit": 349.609602610419,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Day",
+                    "gross": false
+                },
+                {
+                    "from": 6293.0,
+                    "fromPerUnit": 299.6896071925504,
+                    "to": 6743.0,
+                    "toPerUnit": 321.096007706304,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Day",
+                    "gross": false
+                },
+                {
+                    "from": 5859.0,
+                    "fromPerUnit": 278.9900559972904,
+                    "to": 6277.0,
+                    "toPerUnit": 298.917917139954,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Day",
+                    "gross": false
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "Architecture",
+                    "level": 4
+                },
+                {
+                    "name": "UML",
+                    "level": 3
+                },
+                {
+                    "name": "BPMN",
+                    "level": 3
+                },
+                {
+                    "name": "SOA",
+                    "level": 3
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [],
+            "isPromoted": false,
+            "isSuperOffer": false,
+            "applyMethod": "external",
+            "applyUrl": "https://form.erecruiter.pl/form/b515e40488d2441fb21df9716905f2c0",
+            "lastPublishedAt": "2026-05-27T17:47:38.255275Z",
+            "expiredAt": "2026-08-25T21:59:59.999Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": null
+        },
+        {
+            "guid": "c3865c5e-52fb-4a31-9859-3a49ae35f90b",
+            "slug": "haleon-data-steward-lead-poznan-data",
+            "title": "Data Steward Lead",
+            "workplaceType": "hybrid",
+            "workingTime": "full_time",
+            "experienceLevel": "senior",
+            "category": {
+                "key": "data",
+                "parentKey": null
+            },
+            "city": "Poznań",
+            "street": "Kolorowa 6",
+            "latitude": 52.4051631,
+            "longitude": 16.8666971,
+            "isRemoteInterview": false,
+            "companyName": "Haleon",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/x5YYxApBbzk7O5dyAzfNvK3EWIcRWxnL6EDaDos6mX0/h:200/w:200/plain/https://public.justjoin.it/companies/logos/original/2a61e0bd80c93283b0a3fb999304630cc83daafe.jpg",
+            "publishedAt": "2026-08-10T17:00:06.9980971Z",
+            "isOpenToHireUkrainians": false,
+            "locations": [
+                {
+                    "city": "Poznań",
+                    "street": "Kolorowa 6",
+                    "latitude": 52.4051631,
+                    "longitude": 16.8666971,
+                    "slug": "haleon-data-steward-lead-poznan-data"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": 18500.0,
+                    "fromPerUnit": 18500.0,
+                    "to": 25500.0,
+                    "toPerUnit": 25500.0,
+                    "currency": "PLN",
+                    "currencySource": "original",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                },
+                {
+                    "from": 4884.0,
+                    "fromPerUnit": 4883.972649753162,
+                    "to": 6732.0,
+                    "toPerUnit": 6731.9623010111145,
+                    "currency": "USD",
+                    "currencySource": "conversion",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                },
+                {
+                    "from": 4275.0,
+                    "fromPerUnit": 4274.985557481234,
+                    "to": 5893.0,
+                    "toPerUnit": 5892.5476603119705,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                },
+                {
+                    "from": 3956.0,
+                    "fromPerUnit": 3956.0345564964523,
+                    "to": 5453.0,
+                    "toPerUnit": 5452.912496792407,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                },
+                {
+                    "from": 3646.0,
+                    "fromPerUnit": 3645.6793772785527,
+                    "to": 5025.0,
+                    "toPerUnit": 5025.125628140708,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "Infomratica IDMC",
+                    "level": 3
+                },
+                {
+                    "name": "data governance",
+                    "level": 3
+                },
+                {
+                    "name": "Informatica Data Quality & Governance",
+                    "level": 2
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [],
+            "isPromoted": false,
+            "isSuperOffer": false,
+            "applyMethod": "external",
+            "applyUrl": "https://gsknch.wd3.myworkdayjobs.com/GSKCareers/job/Poznan-Business-Garden/OU-EU-Data-Steward-Lead_545051-1",
+            "lastPublishedAt": "2026-07-16T16:21:28.602807Z",
+            "expiredAt": "2026-09-30T21:59:59.999Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": {
+                "officeDays": 2,
+                "remoteDays": 3
+            }
+        },
+        {
+            "guid": "a246dfa4-34ad-4e85-b004-ca972d82675c",
+            "slug": "ingenious-build-senior-php-developer-warszawa-php",
+            "title": "Senior PHP Developer",
+            "workplaceType": "remote",
+            "workingTime": "full_time",
+            "experienceLevel": "senior",
+            "category": {
+                "key": "php",
+                "parentKey": null
+            },
+            "city": "Warszawa",
+            "street": "Marszałkowska 126/134",
+            "latitude": 52.2346667,
+            "longitude": 21.0097385,
+            "isRemoteInterview": true,
+            "companyName": "Ingenious.Build",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/rRnSZyIKxE2aoCaY8AJv0owh21LYHx6njiAa4qD9r5s/h:200/w:200/plain/https://imgproxy.justjoinit.tech/a94etcY8r2bRKGOrycZBvKt1Pg67XFiR39WUCnW5XZg/h:200/w:200/plain/https://public.justjoin.it/companies/logos/original/9a3dd2fa082e0452193e3bafa40a8408f111068b.png",
+            "publishedAt": "2026-08-10T17:00:05.6570677Z",
+            "isOpenToHireUkrainians": true,
+            "locations": [
+                {
+                    "city": "Warszawa",
+                    "street": "Marszałkowska 126/134",
+                    "latitude": 52.2346667,
+                    "longitude": 21.0097385,
+                    "slug": "ingenious-build-senior-php-developer-warszawa-php"
+                },
+                {
+                    "city": "Kraków",
+                    "street": "Marszałkowska 126/134",
+                    "latitude": 50.06465009999999,
+                    "longitude": 19.9449799,
+                    "slug": "ingenious-build-senior-php-developer-krakow-php"
+                },
+                {
+                    "city": "Wrocław",
+                    "street": "Marszałkowska 126/134",
+                    "latitude": 51.10929480000001,
+                    "longitude": 17.0386019,
+                    "slug": "ingenious-build-senior-php-developer-wroclaw-php"
+                },
+                {
+                    "city": "Gdańsk",
+                    "street": "-",
+                    "latitude": 54.35202520000001,
+                    "longitude": 18.6466384,
+                    "slug": "ingenious-build-senior-php-developer-gdansk-php"
+                },
+                {
+                    "city": "Poznań",
+                    "street": "-",
+                    "latitude": 52.40567859999999,
+                    "longitude": 16.9312766,
+                    "slug": "ingenious-build-senior-php-developer-poznan-php"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": 19000.0,
+                    "fromPerUnit": 19000.0,
+                    "to": 26000.0,
+                    "toPerUnit": 26000.0,
+                    "currency": "PLN",
+                    "currencySource": "original",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                },
+                {
+                    "from": 5057.0,
+                    "fromPerUnit": 5056.822718441443,
+                    "to": 6920.0,
+                    "toPerUnit": 6919.862667340922,
+                    "currency": "USD",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                },
+                {
+                    "from": 4425.0,
+                    "fromPerUnit": 4424.984861893901,
+                    "to": 6055.0,
+                    "toPerUnit": 6055.242442591654,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                },
+                {
+                    "from": 4078.0,
+                    "fromPerUnit": 4077.603227744862,
+                    "to": 5580.0,
+                    "toPerUnit": 5579.878101124548,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                },
+                {
+                    "from": 3776.0,
+                    "fromPerUnit": 3776.284930635614,
+                    "to": 5168.0,
+                    "toPerUnit": 5167.547799817156,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "PHP",
+                    "level": 4
+                },
+                {
+                    "name": "PHP 8",
+                    "level": 4
+                },
+                {
+                    "name": "DDD",
+                    "level": 1
+                },
+                {
+                    "name": "REST API",
+                    "level": 4
+                },
+                {
+                    "name": "Software Architecture",
+                    "level": 4
+                },
+                {
+                    "name": "Laravel",
+                    "level": 4
+                },
+                {
+                    "name": "PHPUnit",
+                    "level": 3
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [
+                {
+                    "code": "en",
+                    "level": "B2"
+                }
+            ],
+            "isPromoted": false,
+            "isSuperOffer": true,
+            "applyMethod": "external",
+            "applyUrl": "https://grnh.se/8j8j36m05us",
+            "lastPublishedAt": "2026-06-07T16:19:54.438744Z",
+            "expiredAt": "2026-09-05T21:59:59.999999Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": null
+        },
+        {
+            "guid": "728c58ab-6a25-4ffb-a719-75337e218f71",
+            "slug": "agileengine-software-engineer-integrations--krakow-java",
+            "title": "Software Engineer (Integrations)",
+            "workplaceType": "remote",
+            "workingTime": "full_time",
+            "experienceLevel": "mid",
+            "category": {
+                "key": "java",
+                "parentKey": null
+            },
+            "city": "Kraków",
+            "street": "Olszańska St, 7",
+            "latitude": 50.0718495,
+            "longitude": 19.9601747,
+            "isRemoteInterview": false,
+            "companyName": "AgileEngine",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/NO4A_Jn0Wr55BlC0mGh0VhNB0VE9TEyFXOC2LyXU-EI/h:200/w:200/plain/https://public.justjoin.it/companies/logos/original/2e181c8ceb6eff31252a0d12d07ef4736c246a0a.png",
+            "publishedAt": "2026-08-10T17:00:05.6510724Z",
+            "isOpenToHireUkrainians": false,
+            "locations": [
+                {
+                    "city": "Kraków",
+                    "street": "Olszańska St, 7",
+                    "latitude": 50.0718495,
+                    "longitude": 19.9601747,
+                    "slug": "agileengine-software-engineer-integrations--krakow-java"
+                },
+                {
+                    "city": "Warszawa",
+                    "street": "00-002",
+                    "latitude": 52.2363414,
+                    "longitude": 21.0131092,
+                    "slug": "agileengine-software-engineer-integrations--warszawa-java"
+                },
+                {
+                    "city": "Poznań",
+                    "street": "60-001",
+                    "latitude": 52.3734689,
+                    "longitude": 16.8577461,
+                    "slug": "agileengine-software-engineer-integrations--poznan-java"
+                },
+                {
+                    "city": "Lublin",
+                    "street": "20-001",
+                    "latitude": 51.24224096522161,
+                    "longitude": 22.56847854866057,
+                    "slug": "agileengine-software-engineer-integrations--lublin-java"
+                },
+                {
+                    "city": "Szczecin",
+                    "street": "70-001",
+                    "latitude": 53.3837975,
+                    "longitude": 14.5115744,
+                    "slug": "agileengine-software-engineer-integrations--szczecin-java"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": 12474.0,
+                    "fromPerUnit": 12473.5547,
+                    "to": 19958.0,
+                    "toPerUnit": 19958.4451,
+                    "currency": "PLN",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                },
+                {
+                    "from": 3293.0,
+                    "fromPerUnit": 3293.0,
+                    "to": 5269.0,
+                    "toPerUnit": 5269.0,
+                    "currency": "USD",
+                    "currencySource": "original",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                },
+                {
+                    "from": 2882.0,
+                    "fromPerUnit": 2882.3927671865977,
+                    "to": 4612.0,
+                    "toPerUnit": 4612.003489312537,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                },
+                {
+                    "from": 2667.0,
+                    "fromPerUnit": 2667.341266786417,
+                    "to": 4268.0,
+                    "toPerUnit": 4267.908027542553,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                },
+                {
+                    "from": 2458.0,
+                    "fromPerUnit": 2458.085466548428,
+                    "to": 3933.0,
+                    "toPerUnit": 3933.0860380333033,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Month",
+                    "gross": false
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "Java",
+                    "level": 2
+                },
+                {
+                    "name": "Spring Boot",
+                    "level": 2
+                },
+                {
+                    "name": "RESTful API",
+                    "level": 2
+                },
+                {
+                    "name": "SOAP",
+                    "level": 2
+                },
+                {
+                    "name": "GraphQL",
+                    "level": 2
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [
+                {
+                    "code": "en",
+                    "level": "B2"
+                }
+            ],
+            "isPromoted": false,
+            "isSuperOffer": false,
+            "applyMethod": "external",
+            "applyUrl": "https://launchpod.agileengine.com?data=eyJ2IjoxLCJ0aXRsZSI6Ik1pZGRsZSBTb2Z0d2FyZSBFbmdpbmVlciAoSW50ZWdyYXRpb25zKSBJRDc3NzcyIiwic3BlY2lhbGl6YXRpb24iOiJEZXZlbG9wZXIiLCJza2lsbCI6IkpBVkEiLCJqb2JQb3N0aW5nVXJsIjoiaHR0cHM6Ly9qb2luLmFnaWxlZW5naW5lLmNvbS9qb2IvbWlkZGxlLXNvZnR3YXJlLWVuZ2luZWVyLWludGVncmF0aW9ucy1tYXJrNDMvIiwidXRtU291cmNlIjoiSW5ib3VuZCIsInV0bVByb3ZpZGVyIjoiSnVzdCBqb2luIGl0In0=",
+            "lastPublishedAt": "2026-07-16T17:02:47.640325Z",
+            "expiredAt": "2026-08-15T17:02:47.640325Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": null
+        },
+        {
+            "guid": "da09cf01-703c-4cfd-8fe4-a23d913c6ec1",
+            "slug": "haleon-domain-architect-r-d-and-qsc-poznan-architecture",
+            "title": "Domain Architect R&D and QSC",
+            "workplaceType": "hybrid",
+            "workingTime": "full_time",
+            "experienceLevel": "manager",
+            "category": {
+                "key": "architecture",
+                "parentKey": null
+            },
+            "city": "Poznań",
+            "street": "Kolorowa 6",
+            "latitude": 52.4051631,
+            "longitude": 16.8666971,
+            "isRemoteInterview": false,
+            "companyName": "Haleon",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/x5YYxApBbzk7O5dyAzfNvK3EWIcRWxnL6EDaDos6mX0/h:200/w:200/plain/https://public.justjoin.it/companies/logos/original/2a61e0bd80c93283b0a3fb999304630cc83daafe.jpg",
+            "publishedAt": "2026-08-10T16:00:23.0031334Z",
+            "isOpenToHireUkrainians": false,
+            "locations": [
+                {
+                    "city": "Poznań",
+                    "street": "Kolorowa 6",
+                    "latitude": 52.4051631,
+                    "longitude": 16.8666971,
+                    "slug": "haleon-domain-architect-r-d-and-qsc-poznan-architecture"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": 26500.0,
+                    "fromPerUnit": 26500.0,
+                    "to": 36450.0,
+                    "toPerUnit": 36450.0,
+                    "currency": "PLN",
+                    "currencySource": "original",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                },
+                {
+                    "from": 7040.0,
+                    "fromPerUnit": 7039.634470300724,
+                    "to": 9683.0,
+                    "toPerUnit": 9682.817978960808,
+                    "currency": "USD",
+                    "currencySource": "conversion",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                },
+                {
+                    "from": 6149.0,
+                    "fromPerUnit": 6148.919878413811,
+                    "to": 8458.0,
+                    "toPerUnit": 8457.665266723903,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                },
+                {
+                    "from": 5746.0,
+                    "fromPerUnit": 5745.880312228976,
+                    "to": 7903.0,
+                    "toPerUnit": 7903.2957502168365,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                },
+                {
+                    "from": 5272.0,
+                    "fromPerUnit": 5271.743455080776,
+                    "to": 7251.0,
+                    "toPerUnit": 7251.133922177142,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "permanent",
+                    "unit": "Month",
+                    "gross": true
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "Enterprise Architect",
+                    "level": 4
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [],
+            "isPromoted": false,
+            "isSuperOffer": false,
+            "applyMethod": "external",
+            "applyUrl": "https://gsknch.wd3.myworkdayjobs.com/GSKCareers/job/Poznan-Business-Garden/Domain-Architect-R-D-and-QSC_544413-1",
+            "lastPublishedAt": "2026-06-26T15:30:05.684194Z",
+            "expiredAt": "2026-09-24T15:25:26.75Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": {
+                "officeDays": 2,
+                "remoteDays": 3
+            }
+        },
+        {
+            "guid": "f4a5bc2a-365e-4219-aebb-feda1c4227f3",
+            "slug": "cshark-senior-fullstack-developer-angular-java--wroclaw-java",
+            "title": "Senior Fullstack Developer (Angular+Java)",
+            "workplaceType": "remote",
+            "workingTime": "full_time",
+            "experienceLevel": "senior",
+            "category": {
+                "key": "java",
+                "parentKey": null
+            },
+            "city": "Wrocław",
+            "street": "wyspa Słodowa 7",
+            "latitude": 51.1162189,
+            "longitude": 17.0388427,
+            "isRemoteInterview": false,
+            "companyName": "CSHARK",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/fmkuOmmTk-Vz-jNKlX8qi_nXP0s8VbpPBc9EoJZQhvQ/h:200/w:200/plain/https://public.justjoin.it/companies/logos/original/1b6077abfd6186eb0d5ae56e5a97561eb610a9e1.png",
+            "publishedAt": "2026-08-10T16:00:22.6723844Z",
+            "isOpenToHireUkrainians": false,
+            "locations": [
+                {
+                    "city": "Wrocław",
+                    "street": "wyspa Słodowa 7",
+                    "latitude": 51.1162189,
+                    "longitude": 17.0388427,
+                    "slug": "cshark-senior-fullstack-developer-angular-java--wroclaw-java"
+                },
+                {
+                    "city": "Warszawa",
+                    "street": "-",
+                    "latitude": 52.2296756,
+                    "longitude": 21.0122287,
+                    "slug": "cshark-senior-fullstack-developer-angular-java--warszawa-java"
+                },
+                {
+                    "city": "Kraków",
+                    "street": "-",
+                    "latitude": 50.06465009999999,
+                    "longitude": 19.9449799,
+                    "slug": "cshark-senior-fullstack-developer-angular-java--krakow-java"
+                },
+                {
+                    "city": "Poznań",
+                    "street": "-",
+                    "latitude": 52.40567859999999,
+                    "longitude": 16.9312766,
+                    "slug": "cshark-senior-fullstack-developer-angular-java--poznan-java"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": 22680.0,
+                    "fromPerUnit": 135.0,
+                    "to": 28560.0,
+                    "toPerUnit": 170.0,
+                    "currency": "PLN",
+                    "currencySource": "original",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 6025.0,
+                    "fromPerUnit": 35.86228881096596,
+                    "to": 7587.0,
+                    "toPerUnit": 45.15991924343861,
+                    "currency": "USD",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 5263.0,
+                    "fromPerUnit": 31.32468617305149,
+                    "to": 6627.0,
+                    "toPerUnit": 39.44590110680558,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 4918.0,
+                    "fromPerUnit": 29.27146574154384,
+                    "to": 6193.0,
+                    "toPerUnit": 36.86036426712928,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 4512.0,
+                    "fromPerUnit": 26.856051563619044,
+                    "to": 5682.0,
+                    "toPerUnit": 33.81873159863139,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "CI/CD",
+                    "level": 4
+                },
+                {
+                    "name": "Angular",
+                    "level": 4
+                },
+                {
+                    "name": "AI",
+                    "level": 4
+                },
+                {
+                    "name": "Helm",
+                    "level": 4
+                },
+                {
+                    "name": "Kubernetes",
+                    "level": 4
+                },
+                {
+                    "name": "Java",
+                    "level": 4
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [
+                {
+                    "code": "pl",
+                    "level": "B2"
+                },
+                {
+                    "code": "en",
+                    "level": "C1"
+                }
+            ],
+            "isPromoted": false,
+            "isSuperOffer": false,
+            "applyMethod": "external",
+            "applyUrl": "https://joboffers.cshark.com/en/fullstack-developer-angularjava,ja,327?source=1003",
+            "lastPublishedAt": "2026-06-26T15:54:24.046957Z",
+            "expiredAt": "2026-09-24T21:59:59.999999Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": null
+        },
+        {
+            "guid": "1899d0be-fcd2-4066-950d-cfae34c3afab",
+            "slug": "people-more-p-s-a--senior-c-developer-c-basic-python--warszawa-c",
+            "title": "Senior C++ Developer (C++ & Basic Python)",
+            "workplaceType": "remote",
+            "workingTime": "b2b_contract",
+            "experienceLevel": "senior",
+            "category": {
+                "key": "c",
+                "parentKey": null
+            },
+            "city": "Warszawa",
+            "street": ".",
+            "latitude": 52.2296756,
+            "longitude": 21.0122287,
+            "isRemoteInterview": false,
+            "companyName": "PEOPLE MORE P.S.A.",
+            "companyLogoThumbUrl": "https://imgproxy.justjoinit.tech/UpJrWIXavo_rrRWYoj2r9cGpF1YQpXnUlAJgRsNc6W8/h:200/w:200/plain/https://public.rocketjobs.pl/companies/logos/original/545aacf1bca13aa839de6bd69c20f901e2ffe635.png",
+            "publishedAt": "2026-08-10T16:00:22.528953Z",
+            "isOpenToHireUkrainians": false,
+            "locations": [
+                {
+                    "city": "Warszawa",
+                    "street": ".",
+                    "latitude": 52.2296756,
+                    "longitude": 21.0122287,
+                    "slug": "people-more-p-s-a--senior-c-developer-c-basic-python--warszawa-c"
+                },
+                {
+                    "city": "Kraków",
+                    "street": ".",
+                    "latitude": 50.06465009999999,
+                    "longitude": 19.9449799,
+                    "slug": "people-more-p-s-a--senior-c-developer-c-basic-python--krakow-c"
+                },
+                {
+                    "city": "Poznań",
+                    "street": ".",
+                    "latitude": 52.40567859999999,
+                    "longitude": 16.9312766,
+                    "slug": "people-more-p-s-a--senior-c-developer-c-basic-python--poznan-c"
+                },
+                {
+                    "city": "Wrocław",
+                    "street": ".",
+                    "latitude": 51.10929480000001,
+                    "longitude": 17.0386019,
+                    "slug": "people-more-p-s-a--senior-c-developer-c-basic-python--wroclaw-c"
+                },
+                {
+                    "city": "Gdańsk",
+                    "street": ".",
+                    "latitude": 54.35202520000001,
+                    "longitude": 18.6466384,
+                    "slug": "people-more-p-s-a--senior-c-developer-c-basic-python--gdansk-c"
+                }
+            ],
+            "employmentTypes": [
+                {
+                    "from": 21840.0,
+                    "fromPerUnit": 130.0,
+                    "to": 30240.0,
+                    "toPerUnit": 180.0,
+                    "currency": "PLN",
+                    "currencySource": "original",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 5813.0,
+                    "fromPerUnit": 34.6039182282794,
+                    "to": 8049.0,
+                    "toPerUnit": 47.9131175468484,
+                    "currency": "USD",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 5090.0,
+                    "fromPerUnit": 30.29949889290298,
+                    "to": 7048.0,
+                    "toPerUnit": 41.95315231325028,
+                    "currency": "EUR",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 4675.0,
+                    "fromPerUnit": 27.82832066787968,
+                    "to": 6473.0,
+                    "toPerUnit": 38.53152092475648,
+                    "currency": "CHF",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                },
+                {
+                    "from": 4352.0,
+                    "fromPerUnit": 25.90621948546268,
+                    "to": 6026.0,
+                    "toPerUnit": 35.87015005679448,
+                    "currency": "GBP",
+                    "currencySource": "conversion",
+                    "type": "b2b",
+                    "unit": "Hour",
+                    "gross": false
+                }
+            ],
+            "requiredSkills": [
+                {
+                    "name": "C++",
+                    "level": 4
+                },
+                {
+                    "name": "Python",
+                    "level": 1
+                },
+                {
+                    "name": "Algorithms",
+                    "level": 4
+                },
+                {
+                    "name": "AI",
+                    "level": 2
+                }
+            ],
+            "niceToHaveSkills": [],
+            "languages": [
+                {
+                    "code": "pl",
+                    "level": "C1"
+                },
+                {
+                    "code": "en",
+                    "level": "C1"
+                }
+            ],
+            "isPromoted": false,
+            "isSuperOffer": true,
+            "applyMethod": "external",
+            "applyUrl": "https://peoplemorepl.traffit.com/public/form/a/7da3045b25637e8c014c80ac347dfea36d356561",
+            "lastPublishedAt": "2026-06-19T15:19:19.262749Z",
+            "expiredAt": "2026-09-17T15:15:49.433Z",
+            "companyProfileSlug": null,
+            "hybridWorkSchedule": null
+        }
+    ],
+    "meta": {
+        "from": 0,
+        "totalItems": 1286,
+        "prev": {
+            "cursor": null,
+            "itemsCount": 10
+        },
+        "next": {
+            "cursor": 10,
+            "itemsCount": 10
+        }
+    }
+}
