@@ -13,3 +13,5 @@ jobs:
       - run: uv run ruff format --check
       - run: uv run mypy src
       - run: uv run pytest
+        env:
+          JJIT_API_URL: "https://api.justjoin.it/v2/user-panel/offers"
