@@ -65,3 +65,26 @@
 - upewnianie się, że biorę dobry enpoint, pisanie wszystkiego poza dziennikiem po angielsku, sprawdzanie więcej dokumentacji
 
 **Czas:** 8h | Ocena dnia: 3.5/5
+
+
+#Dziennik 06.08.2026 - dzień 4 (testy)
+
+**Co zrobiłem:**
+- wykład MIT (lec 9, code quality)
+- testy fetch_sample 
+- uruchomilem mypy src, zero blędów
+- uruchomilem pytest --cov=src, 97% pokrycia
+
+**Komendy dnia:**
+- uv run pytest --cov=src, monkeypatch, mypy src
+
+**Co mnie wciągnęło:**
+- blyskawiczne testy bez internetu, testowanie is_main_location
+
+**Co mnie męczyło:**
+- setup mockow, błędy ogólne
+
+**Wnioski:**
+- nie skupiac sie na 100% pokrycia 
+
+**Czas:** 9h | **Ocena dnia:**  3.5/5
