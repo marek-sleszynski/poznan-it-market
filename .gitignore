@@ -17,3 +17,4 @@ data/raw/*.json
 !data/raw/sample/*.json
 *.csv
 tmp/
+.coverage
