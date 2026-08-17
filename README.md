@@ -10,7 +10,7 @@ market evolves.
 ## Why this exists
 
 Public reports on the Polish IT market are quarterly and nationwide. As a cs student looking for my first job, I wanted daily,
-local data and I wanted to build a system that deals with real data engineering
+local data and I wanted to build a system that deals with real data engineering. 
 problems: incremental loads, cross-source deduplication and change tracking over time. Manually browsing job gives you not as good personalisation suited for me.
 
 ## Setup
