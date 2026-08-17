@@ -1,5 +1,7 @@
 # Poznań IT Market
 
+![CI](https://github.com/marek-sleszynski/poznan-it-market/actions/workflows/ci.yml/badge.svg)
+
 A data pipeline that collects IT job postings from justjoin.it and No Fluff Jobs
 every day, tracks how they change over time, and shows how the Poznań IT job
 market evolves.
