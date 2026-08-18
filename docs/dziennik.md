@@ -1,4 +1,4 @@
-#Dziennik 03.08.2026 - dzień 1 (git)
+# Dziennik 03.08.2026 - dzień 1 (git)
 
 **Co zrobiłem:**
 - Dział main i remote na Learn Git Branching
@@ -22,7 +22,7 @@
 **Czas:** 8h | **Ocena dnia:**  2.5/5
 
 
-#Dziennik 04.08.2026 - dzień 2 (terminal fundamenty)
+# Dziennik 04.08.2026 - dzień 2 (terminal fundamenty)
 
 **Co zrobiłem:**
 - wyklad MIT (shell,command-line environment,data wrangling)
@@ -43,7 +43,7 @@
 
 **Czas:** 7h | Ocena dnia: 4/5
 
-#Dziennik 05.08.2026 - dzień 3 (środowisko pythona i pierwszy sktypt)
+# Dziennik 05.08.2026 - dzień 3 (środowisko pythona i pierwszy sktypt)
 
 **Co zrobiłem:**
 - wyklad MIT (packaging and shipping code)
@@ -67,7 +67,7 @@
 **Czas:** 8h | Ocena dnia: 3.5/5
 
 
-#Dziennik 06.08.2026 - dzień 4 (testy)
+# Dziennik 06.08.2026 - dzień 4 (testy)
 
 **Co zrobiłem:**
 - wykład MIT (lec 9, code quality)
@@ -79,7 +79,7 @@
 - uv run pytest --cov=src, monkeypatch, mypy src
 
 **Co mnie wciągnęło:**
-- blyskawiczne testy bez internetu, testowanie is_main_location
+- testy bez internetu, testowanie is_main_location
 
 **Co mnie męczyło:**
 - setup mockow, błędy ogólne
@@ -88,3 +88,27 @@
 - nie skupiac sie na 100% pokrycia 
 
 **Czas:** 9h | **Ocena dnia:**  3.5/5
+
+
+# Dziennik 07.08.2026 - dzień 5 (CI i domknięcie tygodnia)
+
+**Co zrobiłem:**
+- pierwszy workflow github actions
+- zaktualizowałem README
+- naprawiałem błędy związa z github actions, aby uzyskać zielony przebieg
+- dodałem licencję MIT
+- włączyłem opcję, aby od teraz pracować przez branche i PR
+
+**Komendy dnia:**
+- git checkout -b, git push -u origin, uv run mypy src, ruff format --check
+
+**Co mnie wciągnęło:**
+- gdy pierwszy przebieg zrobił się zielony po czterech rundach poprawek, poprawianie struktury mojego projektu
+
+**Co mnie męczyło:**
+- cztery rundy poprawek i commitów pod rząd związane z github actions
+
+**Wnioski:**
+- branch protection rzeczywiście blokuje merge, uv run jest konieczny, poniewaz (np ruff, mypy) nie są zainstalowane globalnie
+
+**Czas:** 4h | **Ocena dnia:** 4/5
