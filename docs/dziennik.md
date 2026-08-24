@@ -112,3 +112,47 @@
 - branch protection rzeczywiście blokuje merge, uv run jest konieczny, poniewaz (np ruff, mypy) nie są zainstalowane globalnie
 
 **Czas:** 4h | **Ocena dnia:** 4/5
+
+# Dziennik 10.08.2026 - dzień 6 (Postgres w kontenerze i JOIN-y)
+
+**Co zrobiłem:**
+- utworzyłem sql/exercises i zrobilem zadania z sql
+- skonfigurowalem i uruchomilem docker compose
+- zaladowalem pagille i przeanalizowalem tam ralacje
+
+**Komendy dnia:**
+- make db-up, make db-shell, make db-reset, docker compose down, cross join
+
+**Co mnie wciągnęło:**
+- uczenie się sql i odkrywanie nowych metod rozwiązania
+- tzw self join
+
+**Co mnie męczyło:**
+- niektóre zadania z sql były zbyt zaawansowane, poruszanie się w pegilii i przenoszenie danych bez wcześniejszego doświadczenia
+
+**Wnioski:**
+- makefile przyśpiesza pracę, przyłożyć się do sql
+
+**Czas:** 7h | **Ocena dnia:** 4/5
+
+# Dziennik 11.08.2026 - dzień 7 (Agregacje i CTE)
+
+**Co zrobiłem:**
+- zrobiłem zadania z agregates i recursive
+- zrozumiałem jak ważne jest CTE 
+- zrozumialem wiele funkcji w sql
+- zrobiłem kalendarz wykorzystując recursive
+
+**Komendy dnia:**
+- with recursive, leteral, having, rollup, cube
+
+**Co mnie wciągnęło:**
+- niektóre zadania, zrozumienie tego jak ważne jest with z CTE, generowanie danych z dim_date
+
+**Co mnie męczyło:**
+-niektóre zadania zbyt zaawansowane, zrozumienie rekurancji, zrozumienie struktury sql (nie po kolei czyta on linijki), zrozumienie kolejności logiki przetważania danych tzw. FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY
+
+**Wnioski:**
+- jeśli zadanie jest zbyt cieżkie nalezy przede wszystkim je zrozumieć, uzywac CTE
+
+**Czas:** 9h | **Ocena dnia:** 3/5
