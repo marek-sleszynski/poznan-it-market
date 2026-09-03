@@ -343,3 +343,114 @@ select recs.member member, recs.recommender, mems.firstname, mems.surname
 		on recs.recommender = mems.memid
 	where recs.member = 22 or recs.member = 12
 order by recs.member asc, recs.recommender desc
+
+
+-- sql exercises with pagilla
+
+-- 1. Top 3 Films by Rating per Category
+WITH ranked_films AS (
+    SELECT
+        fi.title,
+        fi.rating,
+        cat.name AS category_name,
+        ROW_NUMBER() OVER (
+            PARTITION BY cat.name
+            ORDER BY fi.rating DESC
+        ) AS ranking
+    FROM film fi
+    INNER JOIN film_category fcat
+        ON fi.film_id = fcat.film_id
+    INNER JOIN category cat
+        ON cat.category_id = fcat.category_id
+)
+SELECT
+    title,
+    rating,
+    category_name
+FROM ranked_films
+WHERE ranking <= 3;
+
+
+-- 2. Daily Cumulative Running Total
+SELECT
+    payment_date::DATE AS payment_day,
+    SUM(amount) AS daily_revenue,
+    SUM(SUM(amount)) OVER (ORDER BY payment_date::DATE) AS cumulative_revenue
+FROM payment
+GROUP BY payment_date::DATE
+ORDER BY payment_day;
+
+
+-- 3. 7-Day Moving Average of Daily Revenue
+SELECT
+    payment_date::DATE AS payment_day,
+    SUM(amount) AS daily_revenue,
+    AVG(SUM(amount)) OVER (
+        ORDER BY payment_date::DATE
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+    ) AS moving_avg_7d
+FROM payment
+GROUP BY payment_date::DATE
+ORDER BY payment_day;
+
+
+-- 4. Month-over-Month (MoM) Revenue Growth Percentage
+WITH monthly_summary AS (
+    SELECT
+        TO_CHAR(payment_date, 'YYYY-MM') AS payment_month,
+        SUM(amount) AS monthly_revenue
+    FROM payment
+    GROUP BY TO_CHAR(payment_date, 'YYYY-MM')
+)
+SELECT
+    payment_month,
+    monthly_revenue,
+    LAG(monthly_revenue) OVER (ORDER BY payment_month) AS previous_month_revenue,
+    ROUND(
+        (monthly_revenue / LAG(monthly_revenue) OVER (ORDER BY payment_month) - 1) * 100,
+        2
+    ) AS mom_growth_pct
+FROM monthly_summary
+ORDER BY payment_month;
+
+
+-- 5. Customer Revenue Contribution Share
+SELECT
+    customer_id,
+    SUM(amount) AS customer_revenue,
+    SUM(SUM(amount)) OVER () AS total_revenue,
+    ROUND(
+        (SUM(amount) / SUM(SUM(amount)) OVER ()) * 100,
+        2
+    ) AS revenue_share_pct
+FROM payment
+GROUP BY customer_id
+ORDER BY revenue_share_pct DESC;
+
+
+-- 6. First and Last Rental Date per Customer
+SELECT
+    customer_id,
+    MIN(rental_date) AS first_rental_date,
+    MAX(rental_date) AS last_rental_date
+FROM rental
+GROUP BY customer_id
+ORDER BY customer_id;
+
+
+-- 7. Customer Deciles by Total Spend (NTILE)
+WITH customer_spend AS (
+    SELECT
+        customer_id,
+        SUM(amount) AS total_spent
+    FROM payment
+    GROUP BY customer_id
+)
+SELECT
+    customer_id,
+    total_spent,
+    NTILE(10) OVER (ORDER BY total_spent DESC) AS decile
+FROM customer_spend
+ORDER BY decile, total_spent DESC;
+
+
