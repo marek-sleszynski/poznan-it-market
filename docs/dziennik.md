@@ -156,3 +156,23 @@
 - jeśli zadanie jest zbyt cieżkie nalezy przede wszystkim je zrozumieć, uzywac CTE
 
 **Czas:** 9h | **Ocena dnia:** 3/5
+
+# Dziennik 12.08.2026 - dzień 8 (funkcje okna)
+
+**Co zrobiłem:**
+- pytania do pagilii (sumy, obroty itp.)
+- nauczylem sie wiele funkcji (np. FIRST_VALUE, LAST_VALUE, NTH_VALUE, NTILE)
+
+**Komendy dnia:**
+- with, group by, \dt, round, to_char
+
+**Co mnie wciągnęło:**
+- nauka nowych funkcji, satysfakcja z działającego kodu
+
+**Co mnie męczyło:**
+- błędy składniowe, zaawansowaność niektórych pytań
+
+**Wnioski:**
+- CTE jest ważne, funkcja okna potrafi rozwiązać łatwiej problem
+
+**Czas:** 8h | **Ocena dnia:** 2.5/5
