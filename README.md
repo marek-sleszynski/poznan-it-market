@@ -36,4 +36,4 @@ Python 3.12, httpx, pytest, ruff, mypy, GitHub Actions
 
 ## Status
 
-Project developed since August 2026. Still not finished.
+Project developed since August 2026. In active development. Project is currently at the beginning of development.
