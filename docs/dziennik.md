@@ -176,3 +176,26 @@
 - CTE jest ważne, funkcja okna potrafi rozwiązać łatwiej problem
 
 **Czas:** 8h | **Ocena dnia:** 2.5/5
+
+# Dziennik dzień 1 (porządki i jsonb)
+
+**Co zrobiłem:**
+- test api- błąd 503
+- aktualizacja readme.md
+- napisałem 3 pytania sql na jsonb
+- dodałem ADR-1
+
+**Komendy dnia:**
+- `payload->>'companyName', `jsonb_array_elements(payload->'requiredSkills')`, `(payload->>'publishedAt')::timestamptz AT TIME ZONE 'Europe/Warsaw'
+
+**Co mnie wciągnęło:**
+- Korzystanie z sql na prawdziwych ofertach pracy i uzyskiwanie wyników odnośnie np top 10 firm.
+
+**Co mnie męczyło:**
+- rozróżnianie ->, a ->>, wgranie próbki.
+
+**Wnioski:**
+-  `->` zwraca `jsonb`, a `->>` zwraca `text`, zawsze trzeba jak najbardziej rozpakować dane, daty przechowywać w timestamptz.
+
+
+**Czas:** 4h | **Ocena dnia:** 4/5
