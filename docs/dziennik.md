@@ -199,3 +199,24 @@
 
 
 **Czas:** 4h | **Ocena dnia:** 4/5
+
+# Dziennik dzień 2 (upsert)
+
+**Co zrobiłem:**
+- przetestowalem dzialanie insert, on conflict, do nothing, do update set
+- zrobiłem docelowy schemat sql/ddl/001_raw_schema.sql
+- przetestowalem obslugę duplikatow przy ponownym uruchomieniu pipeline 
+
+**Komendy dnia:**
+- insert into, on conflict, do update set
+
+**Co mnie wciągnęło:**
+- odkrycie pułapki null (WAŻNE NOT NULL), zrozumienie co to idempotencja i zastosowanie tego (przy uruchamianiu pipelinów stan systemu bedzie taki sam zawsze) 
+
+**Co mnie męczyło:**
+- złożoność schematu docelowego, błędy składniowe
+
+**Wnioski:**
+- do update uzywamy, gdy chcemy podmienic wartosc o tym samym np id, do nothing służy, do zachowania pierwszego zarejestowania po danym id
+
+**Czas:** 4h | **Ocena dnia:** 3.5/5
