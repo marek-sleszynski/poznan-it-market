@@ -220,3 +220,25 @@
 - do update uzywamy, gdy chcemy podmienic wartosc o tym samym np id, do nothing służy, do zachowania pierwszego zarejestowania po danym id
 
 **Czas:** 4h | **Ocena dnia:** 3.5/5
+
+
+# Dziennik dzień 3 (indexy i plany zapytań)
+
+**Co zrobiłem:**
+- powiększyłem testy do +/- 100tyś używając generate_series 
+- poznałem strukturę b-tree i regułę lewego prefixu
+- zoptymalizowalem zapytania uzywając indexa o x20
+
+**Komendy dnia:**
+- ANALYZE, EXPLAIN (ANALYZE, BUFFERS), CREATE INDEX, generate_series(1, 200) g
+
+**Co mnie wciągnęło:**
+- satysfakcja z optymalizacji, użycie ANALYZE
+
+**Co mnie męczyło:**
+- składnia, pojęcie niektórej teorii (b-tree,lewy prefix)
+
+**Wnioski:**
+- ANALYZE jest ważne, dla dużych wyników baza automatycznie bierze bitmap scan, konieczne są podwójne nawiasy przy wyciąganiu pól w indexie
+
+**Czas:** 4h | **Ocena dnia:** 4/5
