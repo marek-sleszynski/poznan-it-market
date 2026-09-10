@@ -242,3 +242,24 @@
 - ANALYZE jest ważne, dla dużych wyników baza automatycznie bierze bitmap scan, konieczne są podwójne nawiasy przy wyciąganiu pól w indexie
 
 **Czas:** 4h | **Ocena dnia:** 4/5
+
+# Dziennik dzień 4 (Rozpoznanie API)
+
+**Co zrobiłem:**
+- w devtools zbadałem maksymalny rozmiar strony, zachowanie api przy przekroczeniu zakresu.
+- przeanalizowałem strukturę lokalizacji ofert i podjąłem decyzję które oferty odrzucam
+- sprawdziłem nagłówki pod kątem rate limitów
+
+**Komendy dnia:**
+- SELECT count(*) FROM scratch.offers_sample WHERE payload->'locations'->0->>'city' = 'Poznań';
+
+**Co mnie wciągnęło:**
+- odkrycie kiedy serwer zwraca błąd, zdanie sobie sprawy ile odrzuciłem ofert
+
+**Co mnie męczyło:**
+- opisywanie w dokumentacji, rozpozanie api
+
+**Wnioski:**
+- pętlę pobierania musimy zatrzymać na podstawie meta.next.cursor is null, trzeba ograniczenia pilnować samemu (brak rate limit)
+
+**Czas:** 4h | **Ocena dnia:** 3/5
