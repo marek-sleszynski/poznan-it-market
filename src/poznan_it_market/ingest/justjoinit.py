@@ -62,5 +62,6 @@ def fetch_and_save(city: str = "poznan", max_pages: int | None = None) -> list[P
     pages = fetch_justjoinit_pages(client=client, city=city, max_pages=max_pages)
     return save_raw_pages(pages)
 
+
 if __name__ == "__main__":
     fetch_and_save()
