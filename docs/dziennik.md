@@ -263,3 +263,25 @@
 - pętlę pobierania musimy zatrzymać na podstawie meta.next.cursor is null, trzeba ograniczenia pilnować samemu (brak rate limit)
 
 **Czas:** 4h | **Ocena dnia:** 3/5
+
+# Dziennik dzień 5 (klient http)
+
+**Co zrobiłem:**
+- Konfiguracja httpx.Client z user-agent
+- fetch_justjoinit_pages jako yield z max_pages i odstępem time.sleep
+- funkcja save_raw_pages zapisująca odpowiedzi do data/raw/YYYY-MM-DD/page_NNN.json (odporność na wywalenia)
+- testy pytest z httpx.MockTransport (ponowienie przy 500, przerwanie przy 404)
+
+**Komendy dnia:**
+- pytest tests/test_client.py
+
+**Co mnie wciągnęło:**
+- testy bez łączenia z siecią
+
+**Co mnie męczyło:**
+- Zaawansowaność funkcji, ilość nowych rzeczy, funkcji. Przesyt nowej wiedzy
+
+**Wnioski:**
+- Skupić się na powtórce, upraszczać jak najbardziej, błędy 4xx bez ponawiania (marnowanie zasobów), yield zapobiega zapychaniu ram przy duzym pobieraniu
+
+**Czas:** 5.5h | **Ocena dnia:** 2/5
