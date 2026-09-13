@@ -285,3 +285,24 @@
 - Skupić się na powtórce, upraszczać jak najbardziej, błędy 4xx bez ponawiania (marnowanie zasobów), yield zapobiega zapychaniu ram przy duzym pobieraniu
 
 **Czas:** 5.5h | **Ocena dnia:** 2/5
+
+# Dziennik dzień 6 (walidacja i odrzuty)
+
+**Co zrobiłem:**
+- implementacja model RawOffer w Pydantic v2.
+- tabela raw.rejected_records do zapisu błędnych payloadow
+- 3 iteracje walidacji na danych
+- testy i zestaw testow jednostykowych 
+
+**Komendy dnia:**
+- uv run python scripts/validate_sample.py, uv run pytest tests/test_models.py
+
+**Co mnie wciągnęło:**
+- Kontrolowanie odrzucanych błędów, przez co nic nie ginie. 
+
+**Co mnie męczyło:**
+- Składnia niektórych funkcji, nowe rzeczy
+
+**Wnioski:**
+- słowa kluczowe dla pythona wymagają validation_alias, nie mozna odrzucac i usuwac błędów, bo mogą się do czegoś przydać
+**Czas:** 4h | **Ocena dnia:** 4/5

@@ -10,3 +10,16 @@
 - Requesting pages beyond last result (from=99999) crashes the server with an 500 error insted of returning an empty list. Always stop the loop when meta.next.cursor is null or meta.next.itemsCount == 0.
 **No rate limit warnings**
 - The api does not return rare limit headers like. To avoid IP bans, slow down request to 1 every 2 seconds and set cutom User-Agent.
+
+## First observations
+- Minimum and maximum wages are often null.
+- `publishedAt` include "Z", python will raise an error.
+- API uses `from` as a important phrase in python. It will raise an error.
+
+## Gotchas
+**Null in salary ranges**
+- Always check `is not None` before using them to avoid error.
+**ISO timestamps**
+- Always use `datetime.now(timezone.utc)` when using from `publishedAt`.
+**Reserved word in python**
+- Always use `validation_alias="from"` to avoid `from` conflicts with python.
