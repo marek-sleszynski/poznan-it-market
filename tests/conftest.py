@@ -1,7 +1,10 @@
 import json
+import os
 from pathlib import Path
 
 import pytest
+
+os.environ.setdefault("DATABASE_URL", "postgresql://test:test@localhost:5432/test_db")
 
 
 @pytest.fixture
