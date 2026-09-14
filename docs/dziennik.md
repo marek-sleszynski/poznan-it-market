@@ -306,3 +306,24 @@
 **Wnioski:**
 - słowa kluczowe dla pythona wymagają validation_alias, nie mozna odrzucac i usuwac błędów, bo mogą się do czegoś przydać
 **Czas:** 4h | **Ocena dnia:** 4/5
+
+# Dziennik dzień 7 (ładowanie i historia przebiegów)
+
+**Co zrobiłem:**
+- loader w psycopg 3
+- tabela metadanych rejestrująca stan, czas trwania i liczba ofert
+- spiełem pobieranie, audyt i ładowanie w jedną funkcję 
+
+**Komendy dnia:**
+- uv run python -m poznan_it_market.ingest.loader, docker compose exec -T db psql -U postgres -d poznan_it_market < sql/ddl/001_raw_schema.sql
+
+**Co mnie wciągnęło:**
+- satysfakcja z skrypt rejestruje stan rzeczywisty i dane
+
+**Co mnie męczyło:**
+- zaawansowaność kodu, funkcji, błędy z postgresql
+
+**Wnioski:**
+- Skupić się na nauce, tabela metadanych jest ważna do rejestrowania statusu i odróżnić trendy rynkowe
+
+**Czas:** 4.5h | **Ocena dnia:** 3.5/5

@@ -16,3 +16,5 @@ db-shell:
 db-reset:
 	docker compose down -v
 	docker compose up -d
+ingest:
+	uv run python -m poznan_it_market.ingest.loader
