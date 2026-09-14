@@ -327,3 +327,23 @@
 - Skupić się na nauce, tabela metadanych jest ważna do rejestrowania statusu i odróżnić trendy rynkowe
 
 **Czas:** 4.5h | **Ocena dnia:** 3.5/5
+
+# Dziennik dzień 8 (Idempotentoność)
+
+**Co zrobiłem:**
+- dezycja dotycząca zapisów duplikatów
+- 3 testy idempotentności (brak duplikatów (i aktualizowanie), status failed przy przerwaniu, poprawne ponowne zczytywanie)
+
+**Komendy dnia:**
+- make ingest, uv run pytest tests/test_loader_idempotency.py -v
+
+**Co mnie wciągnęło:**
+- prosty temat i zrozumiały, stabilność pipeline 
+
+**Co mnie męczyło:**
+- błędy przy obaleniu testów
+
+**Wnioski:**
+- Idempotentność jest ważna, pipeline musi być bezpieczny przy ponownych uruchomienach.
+
+**Czas:** 3h | **Ocena dnia:** 4/5
