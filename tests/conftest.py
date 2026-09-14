@@ -6,6 +6,7 @@ import pytest
 
 os.environ.setdefault("DATABASE_URL", "postgresql://test:test@localhost:5432/test_db")
 
+
 @pytest.fixture
 def sample_offers():
     SAMPLE_PATH = Path(__file__).parent.parent / "data/raw/sample/jjit_2026-08-11.json"
