@@ -1,3 +1,5 @@
+CREATE SCHEMA IF NOT EXISTS raw;
+
 DROP TABLE IF EXISTS raw.offers;
 
 CREATE OR REPLACE FUNCTION raw.to_date_utc(timestamptz) 
@@ -14,6 +16,5 @@ CREATE TABLE raw.offers (
     run_id uuid NOT NULL
 );
 
--- one posting per calendar day.
 CREATE UNIQUE INDEX offers_natural_key 
 ON raw.offers (source, source_offer_id, (raw.to_date_utc(fetched_at)));

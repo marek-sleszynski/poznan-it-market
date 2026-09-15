@@ -11,7 +11,11 @@ from poznan_it_market.config import DATABASE_URL
 INSERT_OFFERS_QUERY = """
 INSERT INTO raw.offers (source, source_offer_id, payload, fetched_at, run_id)
 VALUES (%s, %s, %s, %s, %s)
-ON CONFLICT (source, source_offer_id, (raw.to_date_utc(fetched_at))) DO NOTHING;
+ON CONFLICT (source, source_offer_id, (raw.to_date_utc(fetched_at)))
+DO UPDATE SET
+    payload = EXCLUDED.payload,
+    fetched_at = EXCLUDED.fetched_at,
+    run_id = EXCLUDED.run_id;
 """
 
 START_RUN_QUERY = """
