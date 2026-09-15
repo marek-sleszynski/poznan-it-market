@@ -3,10 +3,12 @@ import os
 from pathlib import Path
 
 import pytest
+from dotenv import load_dotenv
 
-from poznan_it_market.ingest.loader import get_connection
-
-os.environ.setdefault("DATABASE_URL", "postgresql://test:test@localhost:5432/test_db")
+load_dotenv()
+os.environ.setdefault(
+    "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/poznan_it_market"
+)
 
 
 @pytest.fixture
@@ -19,6 +21,8 @@ def sample_offers():
 
 @pytest.fixture
 def db_conn():
+    from poznan_it_market.ingest.loader import get_connection
+
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("TRUNCATE TABLE raw.offers, raw.ingestion_runs CASCADE;")

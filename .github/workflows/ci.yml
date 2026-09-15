@@ -1,19 +1,49 @@
 on: push
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: poznan_it_market
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
         with:
           enable-cache: true
+
       - run: uv sync
       - run: uv run ruff check
       - run: uv run ruff format --check
       - run: uv run mypy src
+
+      - name: Migrate database schema
+        run: |
+          for file in sql/ddl/*.sql; do
+            echo "Applying $file..."
+            PGPASSWORD=postgres psql -h localhost -U postgres -d poznan_it_market -f "$file"
+          done
+
+      # 3. Odpalamy testy z przekazanym adresem do bazy
       - run: uv run pytest
         env:
           JJIT_API_URL: "https://api.justjoin.it/v2/user-panel/offers"
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market"
