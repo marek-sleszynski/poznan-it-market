@@ -4,17 +4,25 @@ __pycache__/
 .venv/
 *.egg-info/
 
-# Środowisko
+# Environment
 .env
 .DS_Store
+
+# dbt
+logs/
+dbt/target/
+dbt/logs/
+*.log
+dbt/profiles.yml
 
 # IDE
 .vscode/
 .idea/
 
-# Dane
+# Data
 data/raw/*.json
 !data/raw/sample/*.json
 *.csv
 tmp/
 .coverage
+

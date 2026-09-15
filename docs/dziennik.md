@@ -347,3 +347,24 @@
 - Idempotentność jest ważna, pipeline musi być bezpieczny przy ponownych uruchomienach.
 
 **Czas:** 3h | **Ocena dnia:** 4/5
+
+# Dziennik dzień 9 ( Model danych i dbt)
+
+**Co zrobiłem:**
+- 5 pytań biznesowych
+- ziarno tabeli faktów, diagram encji
+- czytanie teorii Kiballa, zasady dbt style
+- konfiguracja profiles.yml
+**Komendy dnia:**
+- uv add dbt-core dbt-postgres, dbt init, dbt debug
+
+**Co mnie wciągnęło:**
+- dobór najciekawszych pytań biznesowych 
+
+**Co mnie męczyło:**
+- teoria, nowa struktura, konieczność powtarzania
+
+**Wnioski:**
+- przykładać więcej uwagi, standardy nazewnictwa są ważne, pytania biznesowe i definicja ziarna są ważne.
+
+**Czas:** 4h | **Ocena dnia:** 3.5/5
