@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: "Raw data loaded by scripts."
+    tables:
+      - name: offers
+        description: "Raw offers from justjoinit api."

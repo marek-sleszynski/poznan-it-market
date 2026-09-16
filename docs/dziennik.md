@@ -348,13 +348,14 @@
 
 **Czas:** 3h | **Ocena dnia:** 4/5
 
-# Dziennik dzień 9 ( Model danych i dbt)
+# Dziennik dzień 9 (Model danych i dbt)
 
 **Co zrobiłem:**
 - 5 pytań biznesowych
 - ziarno tabeli faktów, diagram encji
 - czytanie teorii Kiballa, zasady dbt style
 - konfiguracja profiles.yml
+
 **Komendy dnia:**
 - uv add dbt-core dbt-postgres, dbt init, dbt debug
 
@@ -368,3 +369,22 @@
 - przykładać więcej uwagi, standardy nazewnictwa są ważne, pytania biznesowe i definicja ziarna są ważne.
 
 **Czas:** 4h | **Ocena dnia:** 3.5/5
+
+# Dziennik dzień 10 (Warstwa staging)
+
+**Co zrobiłem:**
+- model stagingowy i rozpakowałem dane, znormalizowałem widełki, dodałem flagę, przeniosłem logikę filtrowania lokalizacji z pythona do sql
+- weryfikacja wierszy (widok poprawnie odrzucił dane)
+
+**Komendy dnia:**
+- uv run dbt compile, uv run dbt run
+
+**Co mnie wciągnęło:**
+- zrozumienie prostoty widoku za pomocą sql
+
+**Co mnie męczyło:**
+- błędy, składnia sql, struktura danych
+
+**Wnioski:**
+- patrzec uwazniej na strukture danych, dbt compile sprawdza linia po linie, a dbt run wysyla kod do postgresql, gdzie baza weryfikuje poprawnosc (bardziej zaawansowane)
+**Czas:** 4h | **Ocena dnia:** 4/5
