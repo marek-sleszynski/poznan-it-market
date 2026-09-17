@@ -388,3 +388,25 @@
 **Wnioski:**
 - patrzec uwazniej na strukture danych, dbt compile sprawdza linia po linie, a dbt run wysyla kod do postgresql, gdzie baza weryfikuje poprawnosc (bardziej zaawansowane)
 **Czas:** 4h | **Ocena dnia:** 4/5
+
+# Dziennik dzień 11 (Warstwa marts)
+
+**Co zrobiłem:**
+- model wymiaru z md5
+- imprementacja głownej tabeli faktów
+- przygotowałem 3 pytania analityczne w sql 
+
+**Komendy dnia:**
+- uv run dbt run --select stg_offers
+
+**Co mnie wciągnęło:**
+- proste pytania w sql
+
+**Co mnie męczyło:**
+- ciężkie pytania w sql
+
+**Wnioski:**
+- stałe dane trzymamy jako table, nie view
+- W tabeli faktów technologie musza byc w osobnej tabeli 
+
+**Czas:** 4h | **Ocena dnia:** 4/5
