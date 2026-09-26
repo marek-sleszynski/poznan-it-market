@@ -1,6 +1,6 @@
 # Architecture decisions
 
-### ADR-1 - Why I use timestamptz for all colums 
+## ADR-01 - Why I use timestamptz for all colums 
 
 **Date:** 2026-09-06 · **Status:** Accepted
 
@@ -14,7 +14,7 @@ Always use 'timestamptz' instead of 'timestamp' across all database tables.
 - (+) SQL standardizes for all timestamps to UTC.
 - (+) Eliminates misses when converting to local timezones. 
 
-### ADR-2 - Primary location and remote offers
+## ADR-02 - Primary location and remote offers
 
 **Date:** 2026-09-09 · **Status:** Accepted
 
@@ -29,7 +29,7 @@ Filter job postings by primary location `locations[0].city == 'Poznań'`. Keep p
 - (+) Gives more reliable market information in Poznań.
 - (-) Throws away around 50% of postings returned by raw API during staging.
 
-### ADR-3 - Same-day re-run strategy
+## ADR-003 - Same-day re-run strategy
 
 **Date:** 2026-09-14 · **Status:** Accepted
 
@@ -44,3 +44,17 @@ Overwrite existing records.
 - (+) If pipeline goes wrong I can rerun it easly to update the data.
 - (-) Updating it (in larger numbers) is less efficient than ignoring duplicates.
 - (-) We lose data from the primary unupdated offer (date and id).
+
+## ADR-004 - Updating daily snapshot tables
+
+**Date:** 2026-09-26 · **Status:** Accepted
+
+**Context**
+Rebuilding fully fact table is too slow and expensive.
+
+**Decision**
+Add new data each day only using a date filter `materialized='incremental'` with key on `unique_key=['date_id', 'raw_offer_id']` with filtering on `fetched_at`. 
+
+**Consequences**
+- (+) Much faster performance and lower costs for the table growing over time
+- (-) Risks of missing data or older rows not matching with updated structure so we need to fully rebuild once a week with `--full-refresh` to fix data. 

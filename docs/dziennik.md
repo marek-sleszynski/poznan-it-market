@@ -410,3 +410,24 @@
 - W tabeli faktów technologie musza byc w osobnej tabeli 
 
 **Czas:** 4h | **Ocena dnia:** 4/5
+
+# Dziennik dzień 12 (Model przyrostowy)
+
+**Co zrobiłem:**
+- przekształciłem model na `incremental` z kluczem na `unique_key=['date_id', 'raw_offer_id']` i filtrem `fetched_at`.
+- sumylacja drugiego dnia danych w warstwie surowej i potwierdzilem braku duplikatów.
+- wpis w adr.
+
+**Komendy dnia:**
+- `uv run dbt run --select fct_offer_snapshot`, `uv run dbt run --select +fct_offer_snapshot --full-refresh`
+
+**Co mnie wciągnęło:**
+- Spadek wykonywania czasu zapytania i satysfakcja z kolejnych kroków.
+
+**Co mnie męczyło:**
+- błędy z pustą tabelą, logiką sql, błąd postsql
+
+**Wnioski:**
+- model `incremental` jest efektywny, ale wrażliwy na zmiany, trzeba pamiętac o używaniu raz w tygodniu `--full-refresh` dla poprawy logiki danych.
+
+**Czas:** 4h | **Ocena dnia:** 3.5/5
