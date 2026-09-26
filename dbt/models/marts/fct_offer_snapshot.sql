@@ -1,4 +1,7 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='incremental',
+    unique_key=['date_id', 'raw_offer_id']
+) }}
 
 select
     fetched_at::date as date_id,
@@ -17,3 +20,7 @@ select
     fetched_at
 
 from {{ ref('stg_offers') }}
+
+{% if is_incremental() %}
+  where fetched_at > (select max(fetched_at) from {{ this }})
+{% endif %}
