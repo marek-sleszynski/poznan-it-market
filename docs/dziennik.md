@@ -431,3 +431,29 @@
 - model `incremental` jest efektywny, ale wrażliwy na zmiany, trzeba pamiętac o używaniu raz w tygodniu `--full-refresh` dla poprawy logiki danych.
 
 **Czas:** 4h | **Ocena dnia:** 3.5/5
+
+# Dziennik dzień 13 (SCD type 2)
+
+**Co zrobiłem:**
+- scd type 2 do śledzenia zmian w ofertach
+- konfiguracja snap_offers.sql z check w płacach 
+- zapytanie sql ze zmianą płac
+
+**Komendy dnia:**
+- `uv run dbt snapshot`.  `LAG(salary_from) OVER (PARTITION BY source_offer_id ORDER BY dbt_valid_from)`
+
+**Co mnie wciągnęło:**
+- satysfaskcja z poprawnych wyników komend
+
+**Co mnie męczyło:**
+- zapomnienie o `make ingest`, składnia sql i błędy, poprawne odwołania do kolumn
+
+**Wnioski:**
+- skupiać się bardziej, snapshot musi zostac uruchomiony przed nadpisaniem nowymi danymi
+
+**Wyniki dzisiejszego zapytania**
+| source_offer_id | company_name | old_salary_from | old_salary_to | new_salary_from | new_salary_to | changed_at |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `upvanta-sp-z-o-o--operator-monitoringu-systemow-i-sieci-specjalista-noc-network-operations-center---poznan-poznan-admin` | Upvanta sp. z o.o. | 5275.0 | 5275.0 | 25000 | 35000 | 2026-09-27 18:00:45.696034 |
+
+**Czas:** 3.5h | **Ocena dnia:** 3.5/5
