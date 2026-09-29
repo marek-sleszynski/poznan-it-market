@@ -457,3 +457,25 @@
 | `upvanta-sp-z-o-o--operator-monitoringu-systemow-i-sieci-specjalista-noc-network-operations-center---poznan-poznan-admin` | Upvanta sp. z o.o. | 5275.0 | 5275.0 | 25000 | 35000 | 2026-09-27 18:00:45.696034 |
 
 **Czas:** 3.5h | **Ocena dnia:** 3.5/5
+
+# Dziennik dzień 14 (Testy dbt i dokumentacja)
+
+**Co zrobiłem:**
+- testy dbt unique, not_null, relationships w yaml
+- test sql weryfikujący logikę biznesową płac
+- dbt build do github actions
+- zdjęcie grafu lini danych 
+
+**Komendy dnia:**
+- `uv run dbt test --select stg_offers`, `uv run dbt test --select marts`
+
+**Co mnie wciągnęło:**
+- wizualizacja architektury w lineage graph
+
+**Co mnie męczyło:**
+- złożoność struktury, natłok wiedzy, zapisywanie obrazu do wsl
+
+**Wnioski:**
+- dbt zwraca efekty testów poprzez zwracanie tylko odrzuconych ofert, pozwala to szybko namierzyć błąd i ewentualnie manualnie wpiąć ofertę do bazy
+
+**Czas:** 4.5h | **Ocena dnia:** 3/5
