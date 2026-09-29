@@ -9,4 +9,5 @@ poznan_it_market:
       port: "{{ env_var('DB_PORT', '5432') | as_number }}"
       dbname: "{{ env_var('POSTGRES_DB', 'poznan_it_market') }}"
       schema: public
+      sslmode: "{{ env_var('DB_SSLMODE', 'prefer') }}"
       threads: 4
