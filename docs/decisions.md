@@ -58,3 +58,18 @@ Add new data each day only using a date filter `materialized='incremental'` with
 **Consequences**
 - (+) Much faster performance and lower costs for the table growing over time
 - (-) Risks of missing data or older rows not matching with updated structure so we need to fully rebuild once a week with `--full-refresh` to fix data. 
+
+## ADR-005 - Keeping raw data under 0.5gb cloud storage limit
+
+**Date:** 2026-09-29 · **Status:** Accepted
+
+**Context**
+Cloud- Neon's free plan gives us 0.5gb of storage. Daily raw data takes up to 1,2 mb. Neon's space will run out out in about 400 days.
+
+**Decision**
+Keeping raw data for 30 days from `raw.offers` and `raw.rejected_records` using `sql/maintenance/prune_raw.sql` can allow us enough time to turn it into business logic we're interested in and catch bugs.
+
+**Consequences**
+- (+) Cloud size limit stays in the free limit.
+- (+) We have access to data from the last 30 days.
+- (-) Raw data older than 30 days cannot be turned into data business logic if buisness logic chaned.

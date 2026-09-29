@@ -479,3 +479,25 @@
 - dbt zwraca efekty testów poprzez zwracanie tylko odrzuconych ofert, pozwala to szybko namierzyć błąd i ewentualnie manualnie wpiąć ofertę do bazy
 
 **Czas:** 4.5h | **Ocena dnia:** 3/5
+
+# Dziennik dzień 15 (Baza w chmurze)
+
+**Co zrobiłem:**
+- konfiguracja chmury i założenie bazy
+- aplikacja sktyptów warstwy surowej do chmury przez `psql`
+- test chmury z ładowaniem danych i testami
+- analiza limitu darmowego, obliczenie, że dziennie będzie zabierać do 1.2mb i dostosowanie modelu do limitu za pomocą polecenia sql
+
+**Komendy dnia:**
+- `psql "$DATABASE_URL" -f sql/ddl/001_raw_schema.sql`, `set -a && source .env && set +a`
+
+**Co mnie wciągnęło:**
+- Satysfakcja z optymalizacji danych w chmurze, zobaczenie jak wszystko przechodzi na zdalnym silniku. 
+
+**Co mnie męczyło:**
+- Problem ze zmiennymi, problem z konfiguracją chmury.
+
+**Wnioski:**
+- dawać adresy z parametrami w .env w cudzysłowach. Trzymanie w chmurze w nieskończoność danych to strata zasobów (tym bardziej, że wszystko się zapisuje w warstwie marts).
+
+**Czas:** 4h | **Ocena dnia:** 4/5

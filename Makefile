@@ -21,5 +21,4 @@ ingest:
 snapshot:
 	cd dbt && uv run dbt snapshot
 dbt:
-	cd dbt && uv run dbt snapshot
-	cd dbt && uv run dbt run
+	cd dbt && uv run dbt build
