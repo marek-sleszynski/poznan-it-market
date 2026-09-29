@@ -42,8 +42,17 @@ jobs:
             PGPASSWORD=postgres psql -h localhost -U postgres -d poznan_it_market -f "$file"
           done
 
-      # 3. Odpalamy testy z przekazanym adresem do bazy
       - run: uv run pytest
         env:
           JJIT_API_URL: "https://api.justjoin.it/v2/user-panel/offers"
           DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market"
+      - name: Run dbt build
+        run: |
+          cp dbt/profiles.yml.example dbt/profiles.yml
+          uv run dbt build --project-dir dbt --profiles-dir dbt
+        env:
+          DB_HOST: localhost
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: poznan_it_market
+          DB_PORT: "5432"

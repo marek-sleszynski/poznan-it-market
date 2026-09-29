@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: stg_offers
+    description: "Staging view for raw offers filtered to Poznan"
+    columns:
+      - name: raw_offer_id
+        tests:
+          - unique
+          - not_null
+
+      - name: source_offer_id
+        tests:
+          - not_null
+
+      - name: company_name
+        tests:
+          - not_null
+
+      - name: fetched_at
+        tests:
+          - not_null
