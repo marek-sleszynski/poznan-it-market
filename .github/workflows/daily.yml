@@ -9,6 +9,7 @@ jobs:
     timeout-minutes: 20
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      JJIT_API_URL: "https://api.justjoin.it/v2/user-panel/offers"
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
