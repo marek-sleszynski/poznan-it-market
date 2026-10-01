@@ -19,6 +19,6 @@ db-reset:
 ingest:
 	uv run python -m poznan_it_market.ingest.loader
 snapshot:
-	cd dbt && uv run dbt snapshot
+	cd dbt && uv run dbt snapshot --profiles-dir .
 dbt:
-	cd dbt && uv run dbt build
+	cd dbt && uv run dbt build --profiles-dir .
