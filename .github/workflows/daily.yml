@@ -1,0 +1,23 @@
+name: Daily Data Pipeline
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '00 4 * * *'
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - name: Ingest raw data
+        run: make ingest
+      - name: Run dbt snapshots
+        run: make snapshot
+      - name: Run dbt build
+        run: make dbt

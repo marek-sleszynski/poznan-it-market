@@ -1,4 +1,4 @@
-.PHONY: install lint test sample db-up db-shell db-reset snapshot dbt
+.PHONY: install lint test sample db-up db-shell db-reset ingest snapshot dbt
 
 install:
 	uv sync
