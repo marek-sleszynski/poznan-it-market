@@ -73,3 +73,21 @@ Keeping raw data for 30 days from `raw.offers` and `raw.rejected_records` using 
 - (+) Cloud size limit stays in the free limit.
 - (+) We have access to data from the last 30 days.
 - (-) Raw data older than 30 days cannot be turned into data business logic if buisness logic chaned.
+
+## ADR-006 - Github Actons for pipeline automation
+
+**Date:** 2026-10-02 · **Status:** Accepted
+
+**Context**
+I need to run pipeline daily in order to keep offers updated (~300 offers per day). I need to decide whether to use Airflow, Github Actions or cron.
+
+**Decision**
+Github actions is the most suitable for the project. I run it only ~3 minutes per day. It is costless, simple and does not need to run on servers in comparision to other options.
+
+**Consequences**
+- (+) Zero cost
+- (+) Simpler because of lack of servers
+- (+) Emails in case of malfunction
+- (-) No backfill
+- (-) No task-level retries in case of malfunction
+- (-) No DAG

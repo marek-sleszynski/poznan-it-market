@@ -26,6 +26,11 @@ problems: incremental loads, cross-source deduplication and change tracking over
 
 Python 3.12, httpx, pytest, ruff, mypy, GitHub Actions
 
+## Orchestration & Alerting
+
+The pipeline runs automatically once a day at 6:00 CET using Github Actions. 
+Malfunction's alerting is made using Github Actions sending automatitically email message whether a scheduled run fails or tests.
+There is no need for extra tools. I chose this to achieve zero maintance design with simple monitoring. 
 
 ## Getting started
 
