@@ -524,13 +524,25 @@
 
 **Czas:** 3.5h | **Ocena dnia:** 3.5/5
 
+# Dziennik dzień 17 (Testy jakości danych)
 
+**Co zrobiłem:**
+- Test świeżości źródła dbt z progiem ostrzeżenia na 26h.
+- test sql na anomalie ilościowe (np spadek dziennej liczby ofert poniezej 60%)
+- dokumentacja z tlumaczeniem progów i zatrzymania pipelinów
+- Tabela w neonie do logów ofert i monitorowania jakości danych
+- kontrolowana awaria
 
+**Komendy dnia:**
+- `uv run dbt test --select assert_daily_offers_completeness`
 
+**Co mnie wciągnęło:**
+- satysfakcja z działających testów implementowanie i łatwa modyfikacja ich
 
+**Co mnie męczyło:**
+- Błędy, próba łączenia z chmurą przez konsolę
 
+**Wnioski:**
+- Najlepiej jest przetestować najpierw test np za pomocą sztucznych danych. 26 godziny czekania to próg limitu, aby nie dostawać sztucznych alertów o awariach.
 
-
-
-
-
+**Czas:** 3.5h | **Ocena dnia:** 4/5
