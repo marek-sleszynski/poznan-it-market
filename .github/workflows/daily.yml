@@ -36,3 +36,9 @@ jobs:
         run: make snapshot
       - name: Run dbt build
         run: make dbt
+      - name: Archive diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-logs
+          path: dbt/logs/dbt.log

@@ -501,3 +501,36 @@
 - dawać adresy z parametrami w .env w cudzysłowach. Trzymanie w chmurze w nieskończoność danych to strata zasobów (tym bardziej, że wszystko się zapisuje w warstwie marts).
 
 **Czas:** 4h | **Ocena dnia:** 4/5
+
+# Dziennik dzień 16 (Automatyzacja w Github Actions)
+
+**Co zrobiłem:**
+- automatyzacja w Github Actions wykonujący się codziennie o 6:00 CET
+- implementacja zabiezpieczeń przed awarią 
+- zapisanie decyzji artefaktów
+- naprawa makefile i błędów
+
+**Komendy dnia:**
+- cd dbt && uv run dbt build --full-refresh --profiles-dir .
+
+**Co mnie wciągnęło:**
+- satysfakcja z zielonego przebiegu w github actions 
+
+**Co mnie męczyło:**
+- naprawa zmiennych, naprawa błędów, natłok błędów
+
+**Wnioski:**
+- Github Actions jest prosty, optymalny kosztowo i czasowo. Dla mojego projektu najlepiej się on nada, gdzie pipeline działa ~3 min dziennie.
+
+**Czas:** 3.5h | **Ocena dnia:** 3.5/5
+
+
+
+
+
+
+
+
+
+
+
