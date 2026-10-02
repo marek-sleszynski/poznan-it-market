@@ -7,3 +7,8 @@ sources:
     tables:
       - name: offers
         description: "Raw offers from justjoinit api."
+        loaded_at_field: fetched_at
+        freshness:
+          warn_after:
+            count: 26
+            period: hour
