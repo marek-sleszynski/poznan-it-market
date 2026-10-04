@@ -2,43 +2,92 @@
 
 ![CI](https://github.com/marek-sleszynski/poznan-it-market/actions/workflows/ci.yml/badge.svg)
 
-A data pipeline that collects IT job postings from justjoin.it. With plans to add No Fluff Jobs
-every day,	 track how they change over time and show, how the Poznań IT job
-market evolves.
+A daily data pipeline that collects IT job postings from justjoin.it, tracks how they change over time, and shows how the Poznań tech job market evolves.
 
+![Job Postings Over Time](docs/img/postings_over_time.png)
 
 ## Why this exists
 
-Public reports on the Polish IT market are quarterly and nationwide. As a cs student looking for my first job, I wanted daily,
-local data and I wanted to build a system that deals with real data engineering. 
-problems: incremental loads, cross-source deduplication and change tracking over time. Manually browsing jobs gives you not as good personalisation suited for me.
+Public reports on the Polish IT market are quarterly and nationwide. As a student looking for my first job, I wanted daily and local data.
 
+I also wanted to learn by building a system that deals with real data engineering problems: handling API pagination, saving raw data safely, building dimensional models in dbt, and automating runs with GitHub Actions.
 
 ## What it does
 
-- pulls sample postings from justjoin.it API
-- stores raw API as .json files
-- normalizes company names, salary ranges and filters by primary location
-- runs automated tests and type checks if pushed by CI
+- Pulls job postings daily from the justjoin.it public API with retries and validation.
+- Saves raw responses unchanged in PostgreSQL as JSONB so data is never lost.
+- Transforms data with dbt into staging views and dimensional marts.
+- Tracks salary and offer status changes over time (SCD Type 2 snapshots).
+- Runs data quality tests (freshness, completeness, referential integrity).
+- Generates trend charts automatically after each run.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    A[justjoin.it API] -->|httpx + tenacity| B[ingest / pydantic]
+    B -->|upsert| C[(raw.offers · JSONB)]
+    C -->|views| D[dbt staging]
+    D -->|tables| E[dbt marts · star schema]
+    E -->|snapshot| F[snap_offers · SCD2]
+    E -->|matplotlib| G[docs/img charts]
+    H[GitHub Actions] -.orchestration.-> B
+    H -.-> D
+    H -.-> E
+    H -.-> G
+```
 
 ## Stack
 
-Python 3.12, httpx, pytest, ruff, mypy, GitHub Actions
+- **Python 3.12** — data ingestion, validation, and chart generation
+- **PostgreSQL 16** — database for raw JSONB payloads and analytics marts
+- **dbt-core** — SQL transformations, dimensional models, and automated tests
+- **Docker Compose** — local PostgreSQL container
+- **GitHub Actions** — automated daily runs and failure alerts via email
+- **Pydantic & Tenacity** — API data validation and HTTP retries
+- **matplotlib** — generating charts saved to documentation
+
+## Getting Started
+
+To run the project locally:
+
+```bash
+cp .env.example .env        # fill in database credentials
+make up                     # start PostgreSQL in Docker
+make ingest && make dbt     # fetch data, build models and run tests
+```
+
+To regenerate charts manually:
+
+```bash
+uv run python scripts/make_charts.py
+```
+
+## What the data shows
+
+- **Junior-level postings:** Around **10–20%** of all postings are marked as junior positions.
+- **Salary transparency:** About **20%** of postings do not disclose salary ranges (these are excluded from salary stats to avoid misleading averages).
+- **Core technologies:** Python and SQL are the most frequently requested skills across backend and data roles.
+
+## Limitations
+
+- **Single source:** Currently tracks only justjoin.it. Adding No Fluff Jobs is planned next.
+- **Single city:** Focuses only on Poznań. Filtered on `multilocation[0]` to exclude mislabeled remote offers.
+- **Disclosed salaries only:** Missing salary ranges are treated as missing data, not zero.
+
+## Documentation
+
+- [Data sources & API traps](docs/sources.md)
+- [Data model & grain](docs/data-model.md)
+- [Architecture decisions (ADRs)](docs/decisions.md)
+- [Data quality tests](docs/data-quality.md)
+- [Database indexes experiment](docs/indexes.md)
 
 ## Orchestration & Alerting
 
-The pipeline runs automatically once a day at 6:00 CET using Github Actions. 
-Malfunction's alerting is made using Github Actions sending automatitically email message whether a scheduled run fails or tests.
-There is no need for extra tools. I chose this to achieve zero maintance design with simple monitoring. 
-
-## Getting started
-
-- uv sync
-- make sample
-- make test 
-
+The pipeline runs automatically once a day at 6:00 CET using GitHub Actions.
+Alerting is handled natively by GitHub Actions, which sends email notifications if a scheduled run or test fails. There is no need for extra third-party tools, achieving a zero-maintenance design.
 
 ## Status
 
-Project developed since August 2026. In active development. Project is currently at the beginning of development.
+Educational project in active development, running daily via GitHub Actions.

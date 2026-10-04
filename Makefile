@@ -1,4 +1,4 @@
-.PHONY: install lint test sample db-up db-shell db-reset ingest snapshot dbt
+.PHONY: install lint test sample db-up db-shell db-reset ingest snapshot dbt charts
 
 install:
 	uv sync
@@ -22,3 +22,5 @@ snapshot:
 	cd dbt && uv run dbt snapshot --profiles-dir .
 dbt:
 	cd dbt && uv run dbt build --profiles-dir .
+charts:
+	uv run python scripts/make_charts.py
