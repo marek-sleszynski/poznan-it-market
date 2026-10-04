@@ -546,3 +546,25 @@
 - Najlepiej jest przetestować najpierw test np za pomocą sztucznych danych. 26 godziny czekania to próg limitu, aby nie dostawać sztucznych alertów o awariach.
 
 **Czas:** 3.5h | **Ocena dnia:** 4/5
+
+# Dziennik dzień 18 (Wykresy i README)
+
+**Co zrobiłem:**
+- implementacja `scripts/make_charts.py` w matplotlib
+- 4 wykresy do `docs/img/`
+- aktualizacja README.md
+- wpięcie automatycznego odświerzania wykresów
+
+**Komendy dnia:**
+- `make charts`, `uv run python scripts/make_charts.py`
+
+**Co mnie wciągnęło:**
+- Zobaczenie wykresów w dokumentacji
+
+**Co mnie męczyło:**
+- Skomplikowaność poleceń i natłok wiedzy, matplotlib
+
+**Wnioski:**
+- Dokumentacja techniczna jest ważna. Jest wizytówką projektu.
+
+**Czas:** 5h | **Ocena dnia:** 3/5
