@@ -7,8 +7,6 @@ jobs:
   pipeline:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    permissions:
-      contents: write
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       JJIT_API_URL: "https://api.justjoin.it/v2/user-panel/offers"
@@ -40,12 +38,12 @@ jobs:
         run: make dbt
       - name: Generate analytics charts
         run: make charts
-      - name: Commit and push updated charts
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/img/*.png
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update market charts [skip ci]" && git push)
+      - name: Archive generated charts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: market-charts
+          path: docs/img/*.png
       - name: Archive diagnostic logs
         if: always()
         uses: actions/upload-artifact@v4
