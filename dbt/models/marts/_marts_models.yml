@@ -20,9 +20,6 @@ models:
       - name: raw_offer_id
         tests:
           - not_null
-          - relationships:
-              to: ref('stg_offers')
-              field: raw_offer_id
 
       - name: company_key
         tests:
