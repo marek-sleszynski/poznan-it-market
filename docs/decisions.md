@@ -1,6 +1,23 @@
 # Architecture decisions
 
-## ADR-01 - Why I use timestamptz for all colums 
+
+## ADR-001 — Store raw API responses unchanged
+
+**Date:** 2026-08-20 · **Status:** Accepted
+
+**Context**
+API data can be loaded directly into typed relational columns or stored as raw responses first. The JustJoin.it API is undocumented and its format may change without notice.
+
+**Decision**
+Store untouched JSON responses directly in a `payload jsonb` column in `raw.offers` table before transforming them downstream with dbt.
+
+**Consequences**
+- (+) Keeps full history, so you can remodel or backfill data without calling the API again.
+- (+) Easier debugging using the original API responses.
+- (−) Requires more database storage than regular database tables.
+- (−) Adds an extra staging transformation layer in dbt.
+
+## ADR-002 - Why I use timestamptz for all colums 
 
 **Date:** 2026-09-06 · **Status:** Accepted
 
@@ -14,7 +31,7 @@ Always use 'timestamptz' instead of 'timestamp' across all database tables.
 - (+) SQL standardizes for all timestamps to UTC.
 - (+) Eliminates misses when converting to local timezones. 
 
-## ADR-02 - Primary location and remote offers
+## ADR-003 - Primary location and remote offers
 
 **Date:** 2026-09-09 · **Status:** Accepted
 
@@ -29,7 +46,7 @@ Filter job postings by primary location `locations[0].city == 'Poznań'`. Keep p
 - (+) Gives more reliable market information in Poznań.
 - (-) Throws away around 50% of postings returned by raw API during staging.
 
-## ADR-003 - Same-day re-run strategy
+## ADR-004 - Same-day re-run strategy
 
 **Date:** 2026-09-14 · **Status:** Accepted
 
@@ -45,7 +62,22 @@ Overwrite existing records.
 - (-) Updating it (in larger numbers) is less efficient than ignoring duplicates.
 - (-) We lose data from the primary unupdated offer (date and id).
 
-## ADR-004 - Updating daily snapshot tables
+## ADR-005 — Simplified dimensional model instead of snowflake normalization
+
+**Date:** 2026-09-18 · **Status:** Accepted
+
+**Context**
+A standard Kimball model handles many-to-many relationships with a bridge table and a dim_technology dimension. Location could also be split into dim_location. Because we only track one city from a single data source, these extra tables add unnecessary join overhead.
+
+**Decision**
+I chose to skip dim_location to filter by city early in staging and flatten technologies by making one row per job-skill pair instead of creating a bridge table and dim_technology.
+
+**Consequences**
+- (+) Finding top technologies requires a simple GROUP BY without multi-table joins.
+- (+) Faster dbt runs and simpler data lineage.
+- (−) If we want to add more cities we would need to add dedicated dimension tables later.
+
+## ADR-006 - Updating daily snapshot tables
 
 **Date:** 2026-09-26 · **Status:** Accepted
 
@@ -59,7 +91,7 @@ Add new data each day only using a date filter `materialized='incremental'` with
 - (+) Much faster performance and lower costs for the table growing over time
 - (-) Risks of missing data or older rows not matching with updated structure so we need to fully rebuild once a week with `--full-refresh` to fix data. 
 
-## ADR-005 - Keeping raw data under 0.5gb cloud storage limit
+## ADR-007 - Keeping raw data under 0.5gb cloud storage limit
 
 **Date:** 2026-09-29 · **Status:** Accepted
 
@@ -74,7 +106,7 @@ Keeping raw data for 30 days from `raw.offers` and `raw.rejected_records` using 
 - (+) We have access to data from the last 30 days.
 - (-) Raw data older than 30 days cannot be turned into data business logic if buisness logic chaned.
 
-## ADR-006 - Github Actons for pipeline automation
+## ADR-008 - Github Actons for pipeline automation
 
 **Date:** 2026-10-02 · **Status:** Accepted
 

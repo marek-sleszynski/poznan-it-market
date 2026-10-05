@@ -52,9 +52,11 @@ flowchart LR
 To run the project locally:
 
 ```bash
-cp .env.example .env        # fill in database credentials
-make up                     # start PostgreSQL in Docker
-make ingest && make dbt     # fetch data, build models and run tests
+cp .env.example .env                                # fill in database local credentials
+cp dbt/profiles.yml.example dbt/profiles.yml        # set up local dbt profile
+make db-up                                          # start PostgreSQL in Docker (remember to start Docker locally)
+make migrate                                        # apply initial DDL schemas and tables
+make ingest && make dbt                             # fetch raw data, transform models and run tests
 ```
 
 To regenerate charts manually:

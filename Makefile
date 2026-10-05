@@ -1,4 +1,4 @@
-.PHONY: install lint test sample db-up db-shell db-reset ingest snapshot dbt charts
+.PHONY: install lint test sample db-up db-shell db-reset ingest snapshot dbt charts migrate
 
 install:
 	uv sync
@@ -24,3 +24,5 @@ dbt:
 	cd dbt && uv run dbt build --profiles-dir .
 charts:
 	uv run python scripts/make_charts.py
+migrate:
+	for f in sql/ddl/*.sql; do echo "Running $$f..."; docker compose exec -T db psql -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" < "$$f"; done
