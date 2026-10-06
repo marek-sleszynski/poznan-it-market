@@ -24,7 +24,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
         with:
@@ -42,10 +42,19 @@ jobs:
             PGPASSWORD=postgres psql -h localhost -U postgres -d poznan_it_market -f "$file"
           done
 
+      - name: Prepare test database
+        env:
+          PGPASSWORD: postgres
+        run: |
+          createdb -h localhost -U postgres poznan_it_market_test
+          psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/001_raw_schema.sql
+          psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/004_ingestion_runs.sql
+
       - run: uv run pytest
         env:
           JJIT_API_URL: "https://api.justjoin.it/v2/user-panel/offers"
           DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market"
+          TEST_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
       - name: Run dbt build
         run: |
           cp dbt/profiles.yml.example dbt/profiles.yml

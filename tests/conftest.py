@@ -6,9 +6,8 @@ import pytest
 from dotenv import load_dotenv
 
 load_dotenv()
-os.environ.setdefault(
-    "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/poznan_it_market"
-)
+
+os.environ["DATABASE_URL"] = os.environ.get("TEST_DATABASE_URL", "")
 
 
 @pytest.fixture
@@ -20,14 +19,24 @@ def sample_offers():
 
 
 @pytest.fixture
-def db_conn():
-    from poznan_it_market.ingest.loader import get_connection
+def db_conn(monkeypatch):
+    test_url = os.environ.get("TEST_DATABASE_URL")
+    if not test_url:
+        pytest.fail("TEST_DATABASE_URL must be set for database tests.")
 
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("TRUNCATE TABLE raw.offers, raw.ingestion_runs CASCADE;")
+    from poznan_it_market.ingest import loader
+
+    monkeypatch.setattr(loader, "DATABASE_URL", test_url)
+
+    with loader.get_connection() as conn:
+        if conn.info.dbname != "poznan_it_market_test":
+            pytest.fail("Database tests require poznan_it_market_test.")
+
+        conn.execute("TRUNCATE TABLE raw.offers, raw.ingestion_runs CASCADE;")
         conn.commit()
-        yield conn
-        with conn.cursor() as cur:
-            cur.execute("TRUNCATE TABLE raw.offers, raw.ingestion_runs CASCADE;")
-        conn.commit()
+        try:
+            yield conn
+        finally:
+            conn.rollback()
+            conn.execute("TRUNCATE TABLE raw.offers, raw.ingestion_runs CASCADE;")
+            conn.commit()
