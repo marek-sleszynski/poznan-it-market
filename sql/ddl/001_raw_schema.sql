@@ -1,13 +1,11 @@
 CREATE SCHEMA IF NOT EXISTS raw;
 
-DROP TABLE IF EXISTS raw.offers;
-
-CREATE OR REPLACE FUNCTION raw.to_date_utc(timestamptz) 
+CREATE OR REPLACE FUNCTION raw.to_date_utc(timestamptz)
 RETURNS date AS $$
     SELECT ($1 AT TIME ZONE 'UTC')::date;
 $$ LANGUAGE sql IMMUTABLE;
 
-CREATE TABLE raw.offers (
+CREATE TABLE IF NOT EXISTS raw.offers (
     id bigserial PRIMARY KEY,
     source text NOT NULL,
     source_offer_id text NOT NULL,
@@ -16,5 +14,5 @@ CREATE TABLE raw.offers (
     run_id uuid NOT NULL
 );
 
-CREATE UNIQUE INDEX offers_natural_key 
+CREATE UNIQUE INDEX IF NOT EXISTS offers_natural_key
 ON raw.offers (source, source_offer_id, (raw.to_date_utc(fetched_at)));
