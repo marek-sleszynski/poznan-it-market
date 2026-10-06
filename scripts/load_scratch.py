@@ -1,13 +1,11 @@
 import json
-import os
 
 import psycopg
 from psycopg.types.json import Jsonb
 
+from poznan_it_market.config import DATABASE_URL
+
 SAMPLE_PATH = "data/raw/sample/jjit_2026-08-11.json"
-DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql://poznan_it_market:Marek3cc@localhost:5432/poznan_it_market"
-)
 
 
 def load_sample():
@@ -21,7 +19,6 @@ def load_sample():
 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
-            # 1. Tworzymy schemat i tabelę roboczą
             cur.execute("""
                 CREATE SCHEMA IF NOT EXISTS scratch;
                 CREATE TABLE IF NOT EXISTS scratch.offers_sample (
@@ -31,7 +28,6 @@ def load_sample():
                 );
             """)
 
-            # 2. Hurtowe wstawianie ofert
             if offers:
                 records = [(Jsonb(offer),) for offer in offers]
                 cur.executemany("INSERT INTO scratch.offers_sample (payload) VALUES (%s);", records)
