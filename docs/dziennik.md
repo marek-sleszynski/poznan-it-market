@@ -1,4 +1,4 @@
-# Dziennik 03.08.2026 - dzień 1 (git)
+# Dziennik dzień 1 (git)
 
 **Co zrobiłem:**
 - Dział main i remote na Learn Git Branching
@@ -22,7 +22,7 @@
 **Czas:** 8h | **Ocena dnia:**  2.5/5
 
 
-# Dziennik 04.08.2026 - dzień 2 (terminal fundamenty)
+# Dziennik dzień 2 (terminal fundamenty)
 
 **Co zrobiłem:**
 - wyklad MIT (shell,command-line environment,data wrangling)
@@ -43,7 +43,7 @@
 
 **Czas:** 7h | Ocena dnia: 4/5
 
-# Dziennik 05.08.2026 - dzień 3 (środowisko pythona i pierwszy sktypt)
+# Dziennik dzień 3 (środowisko pythona i pierwszy sktypt)
 
 **Co zrobiłem:**
 - wyklad MIT (packaging and shipping code)
@@ -67,7 +67,7 @@
 **Czas:** 8h | Ocena dnia: 3.5/5
 
 
-# Dziennik 06.08.2026 - dzień 4 (testy)
+# Dziennik dzień 4 (testy)
 
 **Co zrobiłem:**
 - wykład MIT (lec 9, code quality)
@@ -90,7 +90,7 @@
 **Czas:** 9h | **Ocena dnia:**  3.5/5
 
 
-# Dziennik 07.08.2026 - dzień 5 (CI i domknięcie tygodnia)
+# Dziennik dzień 5 (CI i domknięcie tygodnia)
 
 **Co zrobiłem:**
 - pierwszy workflow github actions
@@ -113,7 +113,7 @@
 
 **Czas:** 4h | **Ocena dnia:** 4/5
 
-# Dziennik 10.08.2026 - dzień 6 (Postgres w kontenerze i JOIN-y)
+# Dziennik dzień 6 (Postgres w kontenerze i JOIN-y)
 
 **Co zrobiłem:**
 - utworzyłem sql/exercises i zrobilem zadania z sql
@@ -135,7 +135,7 @@
 
 **Czas:** 7h | **Ocena dnia:** 4/5
 
-# Dziennik 11.08.2026 - dzień 7 (Agregacje i CTE)
+# Dziennik dzień 7 (Agregacje i CTE)
 
 **Co zrobiłem:**
 - zrobiłem zadania z agregates i recursive
@@ -157,7 +157,7 @@
 
 **Czas:** 9h | **Ocena dnia:** 3/5
 
-# Dziennik 12.08.2026 - dzień 8 (funkcje okna)
+# Dziennik dzień 8 (funkcje okna)
 
 **Co zrobiłem:**
 - pytania do pagilii (sumy, obroty itp.)
@@ -177,7 +177,7 @@
 
 **Czas:** 8h | **Ocena dnia:** 2.5/5
 
-# Dziennik dzień 1 (porządki i jsonb)
+# Dziennik dzień 9 (porządki i jsonb)
 
 **Co zrobiłem:**
 - test api- błąd 503
@@ -200,7 +200,7 @@
 
 **Czas:** 4h | **Ocena dnia:** 4/5
 
-# Dziennik dzień 2 (upsert)
+# Dziennik dzień 10 (upsert)
 
 **Co zrobiłem:**
 - przetestowalem dzialanie insert, on conflict, do nothing, do update set
@@ -222,7 +222,7 @@
 **Czas:** 4h | **Ocena dnia:** 3.5/5
 
 
-# Dziennik dzień 3 (indexy i plany zapytań)
+# Dziennik dzień 11 (indexy i plany zapytań)
 
 **Co zrobiłem:**
 - powiększyłem testy do +/- 100tyś używając generate_series 
@@ -243,7 +243,7 @@
 
 **Czas:** 4h | **Ocena dnia:** 4/5
 
-# Dziennik dzień 4 (Rozpoznanie API)
+# Dziennik dzień 12 (Rozpoznanie API)
 
 **Co zrobiłem:**
 - w devtools zbadałem maksymalny rozmiar strony, zachowanie api przy przekroczeniu zakresu.
@@ -264,7 +264,7 @@
 
 **Czas:** 4h | **Ocena dnia:** 3/5
 
-# Dziennik dzień 5 (klient http)
+# Dziennik dzień 13 (klient http)
 
 **Co zrobiłem:**
 - Konfiguracja httpx.Client z user-agent
@@ -286,7 +286,7 @@
 
 **Czas:** 5.5h | **Ocena dnia:** 2/5
 
-# Dziennik dzień 6 (walidacja i odrzuty)
+# Dziennik dzień 14 (walidacja i odrzuty)
 
 **Co zrobiłem:**
 - implementacja model RawOffer w Pydantic v2.
@@ -307,7 +307,7 @@
 - słowa kluczowe dla pythona wymagają validation_alias, nie mozna odrzucac i usuwac błędów, bo mogą się do czegoś przydać
 **Czas:** 4h | **Ocena dnia:** 4/5
 
-# Dziennik dzień 7 (ładowanie i historia przebiegów)
+# Dziennik dzień 15 (ładowanie i historia przebiegów)
 
 **Co zrobiłem:**
 - loader w psycopg 3
@@ -328,7 +328,7 @@
 
 **Czas:** 4.5h | **Ocena dnia:** 3.5/5
 
-# Dziennik dzień 8 (Idempotentoność)
+# Dziennik dzień 16 (Idempotentoność)
 
 **Co zrobiłem:**
 - dezycja dotycząca zapisów duplikatów
@@ -348,7 +348,7 @@
 
 **Czas:** 3h | **Ocena dnia:** 4/5
 
-# Dziennik dzień 9 (Model danych i dbt)
+# Dziennik dzień 17 (Model danych i dbt)
 
 **Co zrobiłem:**
 - 5 pytań biznesowych
@@ -370,7 +370,7 @@
 
 **Czas:** 4h | **Ocena dnia:** 3.5/5
 
-# Dziennik dzień 10 (Warstwa staging)
+# Dziennik dzień 18 (Warstwa staging)
 
 **Co zrobiłem:**
 - model stagingowy i rozpakowałem dane, znormalizowałem widełki, dodałem flagę, przeniosłem logikę filtrowania lokalizacji z pythona do sql
@@ -389,7 +389,7 @@
 - patrzec uwazniej na strukture danych, dbt compile sprawdza linia po linie, a dbt run wysyla kod do postgresql, gdzie baza weryfikuje poprawnosc (bardziej zaawansowane)
 **Czas:** 4h | **Ocena dnia:** 4/5
 
-# Dziennik dzień 11 (Warstwa marts)
+# Dziennik dzień 19 (Warstwa marts)
 
 **Co zrobiłem:**
 - model wymiaru z md5
@@ -411,7 +411,7 @@
 
 **Czas:** 4h | **Ocena dnia:** 4/5
 
-# Dziennik dzień 12 (Model przyrostowy)
+# Dziennik dzień 20 (Model przyrostowy)
 
 **Co zrobiłem:**
 - przekształciłem model na `incremental` z kluczem na `unique_key=['date_id', 'raw_offer_id']` i filtrem `fetched_at`.
@@ -432,7 +432,7 @@
 
 **Czas:** 4h | **Ocena dnia:** 3.5/5
 
-# Dziennik dzień 13 (SCD type 2)
+# Dziennik dzień 21 (SCD type 2)
 
 **Co zrobiłem:**
 - scd type 2 do śledzenia zmian w ofertach
@@ -458,7 +458,7 @@
 
 **Czas:** 3.5h | **Ocena dnia:** 3.5/5
 
-# Dziennik dzień 14 (Testy dbt i dokumentacja)
+# Dziennik dzień 22 (Testy dbt i dokumentacja)
 
 **Co zrobiłem:**
 - testy dbt unique, not_null, relationships w yaml
@@ -480,7 +480,7 @@
 
 **Czas:** 4.5h | **Ocena dnia:** 3/5
 
-# Dziennik dzień 15 (Baza w chmurze)
+# Dziennik dzień 23 (Baza w chmurze)
 
 **Co zrobiłem:**
 - konfiguracja chmury i założenie bazy
@@ -502,7 +502,7 @@
 
 **Czas:** 4h | **Ocena dnia:** 4/5
 
-# Dziennik dzień 16 (Automatyzacja w Github Actions)
+# Dziennik dzień 24 (Automatyzacja w Github Actions)
 
 **Co zrobiłem:**
 - automatyzacja w Github Actions wykonujący się codziennie o 6:00 CET
@@ -524,7 +524,7 @@
 
 **Czas:** 3.5h | **Ocena dnia:** 3.5/5
 
-# Dziennik dzień 17 (Testy jakości danych)
+# Dziennik dzień 25 (Testy jakości danych)
 
 **Co zrobiłem:**
 - Test świeżości źródła dbt z progiem ostrzeżenia na 26h.
@@ -547,7 +547,7 @@
 
 **Czas:** 3.5h | **Ocena dnia:** 4/5
 
-# Dziennik dzień 18 (Wykresy i README)
+# Dziennik dzień 26 (Wykresy i README)
 
 **Co zrobiłem:**
 - implementacja `scripts/make_charts.py` w matplotlib
@@ -568,3 +568,25 @@
 - Dokumentacja techniczna jest ważna. Jest wizytówką projektu.
 
 **Czas:** 5h | **Ocena dnia:** 3/5
+
+# Dziennik dzień 27 (ADR,klon projektu, v1.0)
+
+**Co zrobiłem:**
+- uporządkowanie 8 decyzji architektonicznych
+- test świerzego klona i uzupełniłem README i poprawiłem błędy
+- test pipeline od zera
+- wydanie v1.0
+
+**Komendy dnia:**
+- `git clone . /tmp/poznan-it-market-fresh`, `git tag -a v1.0`
+
+**Co mnie wciągnęło:**
+- test świerzego klona
+
+**Co mnie męczyło:**
+- awaria github actions, błędy w klonie
+
+**Wnioski:**
+- ważne są testy na klonach, projekt jest domnięty i cały plan jest ukończony. Zostały lekkie modyfikacje i usprawnienia lekkie.
+
+**Czas:** 4h | **Ocena dnia:** 3/5
