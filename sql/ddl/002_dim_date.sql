@@ -1,5 +1,5 @@
   --  calendar dimension 2020-01-01 to 2030-12-31, one row per day
-CREATE TABLE dim_date (
+CREATE TABLE IF NOT EXISTS dim_date (
     date_id  DATE PRIMARY KEY,
     year     INTEGER NOT NULL,
     month    INTEGER NOT NULL,
@@ -22,4 +22,5 @@ SELECT
     EXTRACT(DAY FROM n)::integer     AS day,
     EXTRACT(ISOYEAR FROM n)::integer AS iso_year,
     EXTRACT(WEEK FROM n)::integer    AS iso_week
-FROM dates;
+FROM dates
+ON CONFLICT (date_id) DO NOTHING;
