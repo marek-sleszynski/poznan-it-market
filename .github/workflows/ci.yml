@@ -34,12 +34,12 @@ jobs:
       - run: uv run ruff check
       - run: uv run ruff format --check
       - run: uv run mypy src
-
       - name: Migrate database schema
+        env:
+          PGPASSWORD: postgres
         run: |
           for file in sql/ddl/*.sql; do
-            echo "Applying $file..."
-            PGPASSWORD=postgres psql -h localhost -U postgres -d poznan_it_market -f "$file"
+            psql -h localhost -U postgres -d poznan_it_market -v ON_ERROR_STOP=1 -f "$file" || exit 1
           done
 
       - name: Prepare test database
@@ -49,8 +49,8 @@ jobs:
           createdb -h localhost -U postgres poznan_it_market_test
           psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/001_raw_schema.sql
           psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/004_ingestion_runs.sql
-
-      - run: uv run pytest
+      - name: Run Python tests
+        run: uv run pytest
         env:
           JJIT_API_URL: "https://api.justjoin.it/v2/user-panel/offers"
           DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market"

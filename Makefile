@@ -25,4 +25,6 @@ dbt:
 charts:
 	uv run python scripts/make_charts.py
 migrate:
-	for f in sql/ddl/*.sql; do echo "Running $$f..."; docker compose exec -T db psql -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" < "$$f"; done
+	for f in sql/ddl/*.sql; do \
+		docker compose exec -T db sh -c 'psql -X -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -v ON_ERROR_STOP=1' < "$$f" || exit 1; \
+	done
