@@ -56,7 +56,7 @@ jobs:
           DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market"
           TEST_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
       - name: Run dbt build
-        run:
+        run: |
           cp dbt/profiles.yml.example dbt/profiles.yml
           uv run dbt build --project-dir dbt --profiles-dir dbt
         env:
