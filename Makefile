@@ -1,4 +1,4 @@
-.PHONY: install lint test sample db-up db-shell db-reset ingest snapshot dbt charts migrate
+.PHONY: install lint test sample db-up db-shell db-reset ingest snapshot dbt charts migrate demo
 
 install:
 	uv sync
@@ -17,7 +17,10 @@ db-reset:
 	docker compose down -v
 	docker compose up -d
 ingest:
-	uv run python -m poznan_it_market.ingest.loader
+	uv run poznan-it-market --mode live
+
+demo:
+	uv run poznan-it-market --mode demo
 snapshot:
 	cd dbt && uv run dbt snapshot --profiles-dir .
 dbt:

@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-poznan-it-market = "poznan_it_market:main"
+poznan-it-market = "poznan_it_market.pipeline:main"
 
 [build-system]
 requires = ["uv_build>=0.12.2,<0.13.0"]

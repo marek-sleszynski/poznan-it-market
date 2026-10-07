@@ -27,12 +27,13 @@ def db_conn(monkeypatch):
     from poznan_it_market.ingest import loader
 
     monkeypatch.setattr(loader, "DATABASE_URL", test_url)
+    monkeypatch.setattr(loader, "DEMO_DATABASE_URL", test_url)
 
     with loader.get_connection() as conn:
         if conn.info.dbname != "poznan_it_market_test":
             pytest.fail("Database tests require poznan_it_market_test.")
 
-        conn.execute("TRUNCATE TABLE raw.offers, raw.ingestion_runs CASCADE;")
+        conn.execute("TRUNCATE TABLE raw.offers, raw.ingestion_runs, raw.rejected_records CASCADE;")
         conn.commit()
         try:
             yield conn
