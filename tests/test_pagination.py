@@ -3,7 +3,7 @@ import json
 import httpx
 import pytest
 
-from poznan_it_market.ingest import justjoinit
+from poznan_it_market.ingest import justjoinit, loader
 
 
 def test_fetches_two_pages_and_stops(monkeypatch):
@@ -99,3 +99,29 @@ def test_accepts_complete_empty_response():
         pages = list(justjoinit.fetch_justjoinit_pages(client))
 
     assert pages == [payload]
+
+
+def test_live_reader_counts_pages_and_closes_client(monkeypatch):
+    monkeypatch.setattr(justjoinit.time, "sleep", lambda _: None)
+
+    def fake_api(request):
+        cursor = int(request.url.params["from"])
+        return httpx.Response(
+            200,
+            json={
+                "data": [{"slug": f"offer-{cursor}"}],
+                "meta": {
+                    "from": cursor,
+                    "next": {"cursor": 10 if cursor == 0 else None},
+                },
+            },
+        )
+
+    client = httpx.Client(transport=httpx.MockTransport(fake_api))
+    monkeypatch.setattr(loader, "get_http_client", lambda: client)
+
+    offers, pages_fetched = loader.read_live_offers()
+
+    assert offers == [{"slug": "offer-0"}, {"slug": "offer-10"}]
+    assert pages_fetched == 2
+    assert client.is_closed

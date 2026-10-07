@@ -50,6 +50,7 @@ jobs:
           psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/001_raw_schema.sql
           psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/003_rejected_records.sql
           psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/004_ingestion_runs.sql
+          psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/006_ingestion_run_errors.sql
       - name: Run Python tests
         run: uv run pytest
         env:

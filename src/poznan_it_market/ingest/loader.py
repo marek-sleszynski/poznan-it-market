@@ -1,4 +1,5 @@
 import json
+import logging
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -11,6 +12,8 @@ from poznan_it_market.config import DATABASE_URL, DEMO_DATABASE_URL
 from poznan_it_market.ingest.client import get_http_client
 from poznan_it_market.ingest.justjoinit import fetch_justjoinit_pages
 from poznan_it_market.ingest.validation import validate_offers
+
+logger = logging.getLogger(__name__)
 
 INSERT_OFFERS_QUERY = """
 INSERT INTO raw.offers (source, source_offer_id, payload, fetched_at, run_id)
@@ -29,7 +32,14 @@ VALUES (%s, %s, 'running');
 
 FINISH_RUN_QUERY = """
 UPDATE raw.ingestion_runs
-SET finished_at = %s, status = %s, pages_fetched = %s, records_accepted = %s, records_rejected = %s
+SET finished_at = %s,
+    status = %s,
+    pages_fetched = %s,
+    records_accepted = %s,
+    records_rejected = %s,
+    stage = %s,
+    error_type = %s,
+    error_message = %s
 WHERE run_id = %s;
 """
 
@@ -64,11 +74,24 @@ def log_run_finish(
     status: str,
     count: int = 0,
     rejected_count: int = 0,
+    pages_fetched: int | None = None,
+    stage: str | None = None,
+    error: Exception | None = None,
 ) -> None:
     with conn.transaction():
         conn.execute(
             FINISH_RUN_QUERY,
-            (finished_at, status, 1, count, rejected_count, run_id),
+            (
+                finished_at,
+                status,
+                pages_fetched,
+                count,
+                rejected_count,
+                stage,
+                type(error).__name__ if error is not None else None,
+                str(error) if error is not None else None,
+                run_id,
+            ),
         )
 
 
@@ -84,12 +107,16 @@ def read_demo_offers(sample_file: Path) -> list[dict]:
     return offers
 
 
-def read_live_offers() -> list[dict]:
-    offers = []
+def read_live_offers() -> tuple[list[dict], int]:
+    offers: list[dict] = []
+    pages_fetched = 0
+
     with get_http_client() as client:
         for page in fetch_justjoinit_pages(client):
             offers.extend(page["data"])
-    return offers
+            pages_fetched += 1
+
+    return offers, pages_fetched
 
 
 def load_rejected_offers(
@@ -117,6 +144,7 @@ def load_rejected_offers(
 
 def run_pipeline(mode: str = "demo") -> None:
     started_at = datetime.now(UTC)
+    run_id = uuid.uuid4()
 
     if mode == "demo":
         if not DEMO_DATABASE_URL:
@@ -133,26 +161,33 @@ def run_pipeline(mode: str = "demo") -> None:
 
         database_url = DEMO_DATABASE_URL
         observed_at = datetime(2026, 8, 11, tzinfo=UTC)
-        offers = read_demo_offers(Path("data/raw/sample/jjit_2026-08-11.json"))
-
     elif mode == "live":
         if not DATABASE_URL:
             raise ValueError("DATABASE_URL is required for live import.")
-
         database_url = DATABASE_URL
         observed_at = started_at
-        offers = read_live_offers()
-
     else:
         raise ValueError("Mode must be demo or live.")
 
-    run_id = uuid.uuid4()
+    pages_fetched: int | None = None
+    stage = "fetch"
 
     with get_connection(database_url) as conn:
         log_run_start(conn, run_id, started_at)
         try:
+            logger.info("run_id=%s mode=%s stage=fetch", run_id, mode)
+            if mode == "demo":
+                offers = read_demo_offers(Path("data/raw/sample/jjit_2026-08-11.json"))
+                pages_fetched = 1
+            else:
+                offers, pages_fetched = read_live_offers()
+
+            stage = "validate"
+            logger.info("run_id=%s stage=validate", run_id)
             accepted, rejected = validate_offers(offers)
 
+            stage = "write"
+            logger.info("run_id=%s stage=write", run_id)
             with conn.transaction():
                 loaded_count = load_raw_offers(conn, accepted, "justjoin.it", run_id, observed_at)
                 rejected_count = load_rejected_offers(conn, rejected, run_id)
@@ -163,14 +198,32 @@ def run_pipeline(mode: str = "demo") -> None:
                     "success",
                     loaded_count,
                     rejected_count,
+                    pages_fetched=pages_fetched,
+                    stage="finished",
                 )
 
-            print(
-                f"{mode.upper()}: Accepted {loaded_count}, "
-                f"rejected {rejected_count}. Run ID: {run_id}"
+            logger.info(
+                "run_id=%s mode=%s accepted=%s rejected=%s pages=%s",
+                run_id,
+                mode,
+                loaded_count,
+                rejected_count,
+                pages_fetched,
             )
-        except Exception:
-            log_run_finish(conn, run_id, datetime.now(UTC), "failed", 0)
+        except Exception as error:
+            logger.exception("run_id=%s stage=%s import failed", run_id, stage)
+            try:
+                log_run_finish(
+                    conn,
+                    run_id,
+                    datetime.now(UTC),
+                    "failed",
+                    pages_fetched=pages_fetched,
+                    stage=stage,
+                    error=error,
+                )
+            except Exception:
+                logger.exception("run_id=%s failed status could not be saved", run_id)
             raise
 
 

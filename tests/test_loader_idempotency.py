@@ -76,7 +76,7 @@ def test_live_uses_api_data(db_conn, sample_offers, monkeypatch):
     offer = sample_offers["data"][0]
 
     def fake_read_live_offers():
-        return [offer]
+        return [offer], 2
 
     def forbidden_demo_read(path):
         raise AssertionError("Live import must not read the demo sample.")
@@ -93,6 +93,7 @@ def test_live_uses_api_data(db_conn, sample_offers, monkeypatch):
     assert len(rows) == 1
     assert rows[0][0] == offer
     assert before <= rows[0][1] <= after
+    assert db_conn.execute("SELECT pages_fetched FROM raw.ingestion_runs;").fetchone()[0] == 2
 
 
 def test_saves_rejected_offer_with_error_and_run_id(db_conn):
@@ -126,8 +127,7 @@ def test_pipeline_saves_valid_offer_and_rejection(db_conn, sample_offers, monkey
     if mode == "demo":
         monkeypatch.setattr(loader, "read_demo_offers", lambda path: offers)
     else:
-        monkeypatch.setattr(loader, "read_live_offers", lambda: offers)
-
+        monkeypatch.setattr(loader, "read_live_offers", lambda: ([valid, invalid], 1))
     loader.run_pipeline(mode=mode)
 
     accepted_row = db_conn.execute("SELECT payload, run_id FROM raw.offers;").fetchone()
@@ -159,7 +159,7 @@ def test_pipeline_rolls_back_offer_when_rejection_write_fails(db_conn, sample_of
     valid = sample_offers["data"][0]
     invalid = {**valid, "slug": ""}
 
-    monkeypatch.setattr(loader, "read_live_offers", lambda: [valid, invalid])
+    monkeypatch.setattr(loader, "read_live_offers", lambda: ([valid, invalid], 1))
 
     def fail_rejection_write(conn, rejected, run_id):
         count = conn.execute("SELECT count(*) FROM raw.offers;").fetchone()[0]
@@ -174,3 +174,51 @@ def test_pipeline_rolls_back_offer_when_rejection_write_fails(db_conn, sample_of
     assert db_conn.execute("SELECT count(*) FROM raw.offers;").fetchone()[0] == 0
     assert db_conn.execute("SELECT count(*) FROM raw.rejected_records;").fetchone()[0] == 0
     assert db_conn.execute("SELECT status FROM raw.ingestion_runs;").fetchone()[0] == "failed"
+
+
+@pytest.mark.parametrize("mode", ["demo", "live"])
+def test_fetch_failure_is_recorded(db_conn, monkeypatch, mode):
+    def fail_fetch(*args):
+        raise RuntimeError("Simulated fetch failure")
+
+    monkeypatch.setattr(loader, "read_demo_offers", fail_fetch)
+    monkeypatch.setattr(loader, "read_live_offers", fail_fetch)
+
+    with pytest.raises(RuntimeError, match="Simulated fetch failure"):
+        loader.run_pipeline(mode=mode)
+
+    row = db_conn.execute(
+        """
+        SELECT status, stage, error_type, error_message,
+               pages_fetched, records_accepted, records_rejected,
+               finished_at
+        FROM raw.ingestion_runs;
+        """
+    ).fetchone()
+
+    assert row is not None
+    assert row[:7] == (
+        "failed",
+        "fetch",
+        "RuntimeError",
+        "Simulated fetch failure",
+        None,
+        0,
+        0,
+    )
+    assert row[7] is not None
+    assert db_conn.execute("SELECT count(*) FROM raw.offers;").fetchone()[0] == 0
+
+
+def test_status_write_failure_preserves_original_error(db_conn, monkeypatch):
+    def fail_fetch():
+        raise RuntimeError("Original fetch failure")
+
+    def fail_status_write(*args, **kwargs):
+        raise OSError("Simulated status write failure")
+
+    monkeypatch.setattr(loader, "read_live_offers", fail_fetch)
+    monkeypatch.setattr(loader, "log_run_finish", fail_status_write)
+
+    with pytest.raises(RuntimeError, match="Original fetch failure"):
+        loader.run_pipeline(mode="live")
