@@ -12,30 +12,47 @@ JUSTJOINIT_API_URL = "https://api.justjoin.it/v2/user-panel/offers"
 
 
 def fetch_justjoinit_pages(
-    client: httpx.Client, city: str = "poznan", max_pages: int | None = None
+    client: httpx.Client, city: str = "Poznań", max_pages: int = 500
 ) -> Iterator[dict]:
-    page = 1
-    while True:
-        params = {"page": page, "perPage": 100, "city": city}
+    if max_pages < 1:
+        raise ValueError("max_pages must be positive.")
+
+    cursor = 0
+    seen_cursors = {cursor}
+
+    for page_number in range(1, max_pages + 1):
+        params = {"city": city, "cityRadius": 0, "from": cursor}
         response = fetch_url_with_retry(client, JUSTJOINIT_API_URL, params=params)
         payload = response.json()
 
-        offers = payload.get("data", [])
-        if not offers:
-            break
+        if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+            raise ValueError("Invalid API response: data must be a list.")
+
+        meta = payload.get("meta")
+        if not isinstance(meta, dict) or meta.get("from") != cursor:
+            raise ValueError("Invalid API response: unexpected page position.")
+
+        next_page = meta.get("next")
+        if not isinstance(next_page, dict) or "cursor" not in next_page:
+            raise ValueError("Invalid API response: missing next cursor.")
+
+        next_cursor = next_page["cursor"]
+        if next_cursor is not None:
+            if type(next_cursor) is not int or next_cursor < 0:
+                raise ValueError("Invalid API response: unsupported cursor.")
+            if next_cursor in seen_cursors:
+                raise ValueError("API returned a repeated cursor.")
+            if page_number == max_pages:
+                raise RuntimeError("Page limit reached before import completed.")
 
         yield payload
 
-        meta = payload.get("meta", {})
-        total_pages = meta.get("totalPages", 1)
+        if next_cursor is None:
+            return
 
-        if page >= total_pages:
-            break
-        if max_pages is not None and page >= max_pages:
-            break
-
+        seen_cursors.add(next_cursor)
+        cursor = next_cursor
         time.sleep(2.0)
-        page += 1
 
 
 def save_raw_pages(pages: Iterator[dict], target_date: str | None = None) -> list[Path]:
@@ -57,10 +74,10 @@ def save_raw_pages(pages: Iterator[dict], target_date: str | None = None) -> lis
     return saved_paths
 
 
-def fetch_and_save(city: str = "poznan", max_pages: int | None = None) -> list[Path]:
-    client = get_http_client()
-    pages = fetch_justjoinit_pages(client=client, city=city, max_pages=max_pages)
-    return save_raw_pages(pages)
+def fetch_and_save(city: str = "Poznań", max_pages: int = 500) -> list[Path]:
+    with get_http_client() as client:
+        pages = fetch_justjoinit_pages(client, city=city, max_pages=max_pages)
+        return save_raw_pages(pages)
 
 
 if __name__ == "__main__":

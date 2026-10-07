@@ -1,25 +1,25 @@
-## First observations
-- Offers `candidate-api/offers` has a city filter, but still returns remote jobs. I will need to filter by primary city later.
-- I only use "city", "cityRadius", "sortBy", "orderBy" in my requests. I skip 'isPromoted=true' because it returns only paid listings, not the full set of postings.
-- `publishedAt` is in UTC. The format is `YYYY-MM-DDTHH:MM:SS.ffffffZ`- I will need to change timezone conversion for local-time reporting.
+# Data source
 
-## Gotchas
-**The city filter returns companies outside of Poznań**
-- 50% postings are primarly in other cities. To only get local offers `locations[0].city` must be used.
-**Paging past the end causes a 500 error**
-- Requesting pages beyond last result (from=99999) crashes the server with an 500 error insted of returning an empty list. Always stop the loop when meta.next.cursor is null or meta.next.itemsCount == 0.
-**No rate limit warnings**
-- The api does not return rare limit headers like. To avoid IP bans, slow down request to 1 every 2 seconds and set cutom User-Agent.
+The project uses job offers from Just Join IT.
 
-## First observations
-- Minimum and maximum wages are often null.
-- `publishedAt` include "Z", python will raise an error.
-- API uses `from` as a important phrase in python. It will raise an error.
+## API and pagination
 
-## Gotchas
-**Null in salary ranges**
-- Always check `is not None` before using them to avoid error.
-**ISO timestamps**
-- Always use `datetime.now(timezone.utc)` when using from `publishedAt`.
-**Reserved word in python**
-- Always use `validation_alias="from"` to avoid `from` conflicts with python.
+Checked on 2026-10-06.
+
+Endpoint: `https://justjoin.it/api/candidate-api/offers`
+
+- Use `city=Poznań`, `cityRadius=0` and `from=0` for the first request.
+- Offers are in the `data` array.
+- Send `meta.next.cursor` as `from` to get the next page.
+- Stop when the next cursor is `null`.
+- Wait two seconds between requests and use a custom User-Agent.
+- Fail on an invalid response, a repeated cursor or the page limit.
+- The default limit is 500 pages. Reaching it with more pages available means the import is incomplete.
+
+## Data limits
+
+- The city filter may include remote offers or offers in other locations. Check locations before including offers in the report.
+- Salary values can be `null`. Missing salary is not zero.
+- A timestamp ending in `Z` uses UTC. Keep timezone information when parsing it.
+- JSON can use the key `from`. In Python models, use another field name with an alias.
+- Demo data comes from a saved sample. Loading it today does not make it current market data.
