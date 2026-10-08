@@ -24,3 +24,11 @@ Another import on the same day updates the offer with the latest fetched data. O
 An import on the next day creates a new observation.
 
 Daily counts show offers seen during the day. They do not show how many offers were active at the same time.
+
+## Offer counts
+
+Daily charts count offers seen on each UTC day.
+
+Company, skill and salary disclosure summaries count unique offers across the stored history, using each offer's latest observation. An offer is identified by its source and source offer ID.
+
+The latest observation does not mean the offer is still active.

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import psycopg
 
@@ -83,21 +85,11 @@ def plot_junior_share(rows):
 
 
 def get_top_skills_data():
+    query_path = Path(__file__).resolve().parent.parent / "sql" / "analysis" / "03_top_skills.sql"
+    query = query_path.read_text(encoding="utf-8")
+
     with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                SELECT 
-                    skill_name, 
-                    COUNT(DISTINCT raw_offer_id) AS total_offers
-                FROM fct_offer_skill
-                GROUP BY skill_name
-                ORDER BY total_offers DESC
-                LIMIT 15;
-                """
-            )
-            rows = cur.fetchall()
-    return rows
+        return conn.execute(query).fetchall()
 
 
 def plot_top_skills(rows):
@@ -108,8 +100,8 @@ def plot_top_skills(rows):
     fig, ax = plt.subplots(figsize=(9, 5))
     ax.barh(skills, counts, color="#0284c7")
     ax.invert_yaxis()
-    ax.set_title(f"Top 15 Technologies (Mentions={total_mentions})")
-    ax.set_xlabel("Number of Postings")
+    ax.set_title(f"Top 15 Technologies (Offer-skill pairs in top 15={total_mentions})")
+    ax.set_xlabel("Unique offers (latest observation)")
     ax.set_ylabel("Technology")
     ax.grid(axis="x", linestyle="--", alpha=0.5)
     fig.savefig("docs/img/top_skills.png", bbox_inches="tight")
