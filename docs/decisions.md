@@ -79,32 +79,33 @@ I chose to skip dim_location to filter by city early in staging and flatten tech
 
 ## ADR-006 - Updating daily snapshot tables
 
-**Date:** 2026-09-26 · **Status:** Accepted
+**Date:** 2026-10-08 · **Status:** Accepted
 
 **Context**
-Rebuilding fully fact table is too slow and expensive.
+The incremental time filter can skip late observations. It also fails when the existing table is empty. Full rebuilds were fast on the small demo dataset.
 
 **Decision**
-Add new data each day only using a date filter `materialized='incremental'` with key on `unique_key=['date_id', 'raw_offer_id']` with filtering on `fetched_at`. 
+Use materialized='table' to rebuild offer facts from all retained observations. Measure rebuild time again as the history grows.
 
 **Consequences**
-- (+) Much faster performance and lower costs for the table growing over time
-- (-) Risks of missing data or older rows not matching with updated structure so we need to fully rebuild once a week with `--full-refresh` to fix data. 
+- (+) Late observations and corrections are included.
+- (+) The model is simpler and matches the stored source data.
+- (-) Rebuild time may increase as the history grows.
 
-## ADR-007 - Keeping raw data under 0.5gb cloud storage limit
+## ADR-007 - Keeping raw data
 
-**Date:** 2026-09-29 · **Status:** Accepted
+**Date:** 2026-10-08 · **Status:** Accepted
 
 **Context**
-Cloud- Neon's free plan gives us 0.5gb of storage. Daily raw data takes up to 1,2 mb. Neon's space will run out out in about 400 days.
+I built models from raw data. Deleting old observations would remove history from rebuilt models. Cloud storage is limited.
 
 **Decision**
-Keeping raw data for 30 days from `raw.offers` and `raw.rejected_records` using `sql/maintenance/prune_raw.sql` can allow us enough time to turn it into business logic we're interested in and catch bugs.
+Keep all data in raw.offers and raw.rejected_records. Check database size with sql/maintenance/check_storage.sql. Before deleting history, create an archive and test restoring it.
 
 **Consequences**
-- (+) Cloud size limit stays in the free limit.
-- (+) We have access to data from the last 30 days.
-- (-) Raw data older than 30 days cannot be turned into data business logic if buisness logic chaned.
+- (+) We can rebuild models from the stored history.
+- (+) Old observations remain available for analysis.
+- (-) Storage usage grows over time and must be monitored.
 
 ## ADR-008 - Github Actons for pipeline automation
 
