@@ -8,7 +8,7 @@ import httpx
 
 from poznan_it_market.ingest.client import fetch_url_with_retry, get_http_client
 
-JUSTJOINIT_API_URL = "https://api.justjoin.it/v2/user-panel/offers"
+JUSTJOINIT_API_URL = "https://justjoin.it/api/candidate-api/offers"
 
 
 def fetch_justjoinit_pages(
