@@ -109,44 +109,87 @@ def plot_top_skills(rows):
 
 
 def get_salary_by_level_data():
+    query_path = (
+        Path(__file__).resolve().parent.parent / "sql" / "analysis" / "05_salary_by_level.sql"
+    )
+    query = query_path.read_text(encoding="utf-8")
+
     with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                SELECT 
-                    experience_level,
-                    ROUND(AVG(salary_from)) AS avg_salary_from,
-                    COUNT(*) AS total_postings,
-                    COUNT(*) FILTER (WHERE salary_from IS NULL) AS missing_salaries
-                FROM fct_offer_snapshot
-                WHERE experience_level IS NOT NULL
-                GROUP BY experience_level
-                ORDER BY avg_salary_from ASC NULLS FIRST;
-                """
-            )
-            rows = cur.fetchall()
-    return rows
+        return conn.execute(query).fetchall()
 
 
 def plot_salary_by_level(rows):
-    levels = [r[0] for r in rows]
-    salaries = [float(r[1]) if r[1] is not None else 0.0 for r in rows]
-    total_n = sum(r[2] for r in rows)
-    total_missing = sum(r[3] for r in rows)
-    missing_pct = (total_missing / total_n * 100) if total_n > 0 else 0.0
+    groups = {}
+    for level, contract, unit, is_gross, average, count in rows:
+        groups.setdefault((contract, unit, is_gross), []).append((level, average, count))
 
-    fig, ax = plt.subplots(figsize=(8, 5))
-    x_positions = range(len(levels))
-    ax.bar(x_positions, salaries, color="#059669", width=0.5)
-    ax.set_xticks(x_positions)
-    ax.set_xticklabels(levels)
-    ax.set_title(
-        f"Average Base Salary by Seniority (N={total_n}, Missing Salary={missing_pct:.1f}%)"
+    panel_count = max(1, len(groups))
+    fig, axes = plt.subplots(
+        panel_count,
+        1,
+        figsize=(9, 3 * panel_count),
+        squeeze=False,
     )
-    ax.set_xlabel("Seniority Level")
-    ax.set_ylabel("Average Minimum Salary (PLN)")
-    ax.grid(axis="y", linestyle="--", alpha=0.5)
-    fig.savefig("docs/img/salary_by_level.png", bbox_inches="tight")
+
+    if not groups:
+        ax = axes[0, 0]
+        ax.text(
+            0.5,
+            0.5,
+            "No comparable salary data",
+            ha="center",
+            va="center",
+            transform=ax.transAxes,
+        )
+        ax.set_axis_off()
+    else:
+        for ax, (key, values) in zip(axes[:, 0], groups.items(), strict=True):
+            contract, unit, is_gross = key
+            values = sorted(values, key=lambda row: row[1], reverse=True)
+            labels = [f"{level} (n={count})" for level, average, count in values]
+            salaries = [float(average) for level, average, count in values]
+            positions = range(len(values))
+            contract_label = {
+                "b2b": "B2B",
+                "permanent": "Employment contract",
+            }.get(contract, contract)
+            basis = "gross" if is_gross else "net"
+
+            bars = ax.barh(positions, salaries, height=0.4, color="#0284c7")
+            ax.set_yticks(positions, labels)
+            ax.invert_yaxis()
+            ax.bar_label(
+                bars,
+                labels=[f"{salary:,.2f} PLN/{unit}" for salary in salaries],
+                padding=6,
+            )
+            ax.set_xlim(0, max(max(salaries) * 1.3, 1))
+            ax.set_ylim(len(values) - 0.5, -0.5)
+            period = "Hourly" if unit == "hour" else "Monthly"
+            ax.set_title(
+                f"{period} pay · {contract_label} · {basis}",
+                loc="left",
+                fontweight="bold",
+            )
+            ax.set_xlabel(f"PLN per {unit}")
+            ax.set_axisbelow(True)
+            ax.grid(axis="x", linestyle="--", alpha=0.3)
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
+
+    fig.suptitle("Mean advertised minimum pay", fontsize=15)
+    fig.text(
+        0.5,
+        0.015,
+        "Latest observation per offer · Original PLN amounts · n = offers with a minimum",
+        ha="center",
+        fontsize=9,
+    )
+    fig.tight_layout(rect=(0, 0.05, 1, 0.94))
+
+    output_path = Path(__file__).resolve().parent.parent / "docs/img/salary_by_level.png"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path, dpi=160, bbox_inches="tight")
     plt.close(fig)
 
 

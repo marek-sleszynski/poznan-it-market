@@ -30,7 +30,15 @@ renamed as (
         (payload->'employmentTypes'->0->>'to')::numeric as salary_to,
         lower(payload->'employmentTypes'->0->>'currency') as currency,
         payload->'employmentTypes'->0->>'type' as employment_type,
-        (payload->'employmentTypes'->0->>'from') is not null as is_salary_disclosed,
+        exists (
+            select 1
+            from jsonb_array_elements(payload->'employmentTypes') as salary(value)
+            where salary.value->>'currencySource' = 'original'
+              and (
+                  salary.value->>'fromPerUnit' is not null
+                  or salary.value->>'toPerUnit' is not null
+              )
+        ) as is_salary_disclosed,
        
         payload->'requiredSkills' as required_skills
 
