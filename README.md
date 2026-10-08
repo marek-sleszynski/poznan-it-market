@@ -67,14 +67,14 @@ uv run python scripts/make_charts.py
 
 ## What the data shows
 
-- **Junior-level postings:** Around **10–20%** of all postings are marked as junior positions.
+- **Junior postings:** The chart shows the share of listings marked as `junior`. Demo results do not describe the current market.
 - **Salary transparency:** About **20%** of postings do not disclose salary ranges (these are excluded from salary stats to avoid misleading averages).
 - **Core technologies:** Python and SQL are the most frequently requested skills across backend and data roles.
 
 ## Limitations
 
 - **Single source:** Currently tracks only justjoin.it. Adding No Fluff Jobs is planned next.
-- **Single city:** Focuses only on Poznań. Filtered on `multilocation[0]` to exclude mislabeled remote offers.
+- **Location:** Includes listings with top-level `city` equal to `Poznań` or `Poznan`, including remote jobs. Other cities are not counted.
 - **Disclosed salaries only:** Missing salary ranges are treated as missing data, not zero.
 
 ## Documentation

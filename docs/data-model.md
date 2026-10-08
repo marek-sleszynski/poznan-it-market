@@ -2,7 +2,7 @@
 2. Which technologies and skills have the highest demand for junior candidates, and which most frequently appear together?
 3. How many postings changed their salary range over time, and in which direction?
 4. What percentage of postings have visible salary ranges, and does it change based on experience?
-5. Which companies publish the most postings, and how long do their postings remain active?
+5. Which companies have the most unique listings in the stored history?		
 
 ## Fact table grain
 

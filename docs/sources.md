@@ -18,7 +18,11 @@ Endpoint: `https://justjoin.it/api/candidate-api/offers`
 
 ## Data limits
 
-- The city filter may include remote offers or offers in other locations. Check locations before including offers in the report.
+- Includes jobs where the primary city is Poznań (or Poznan), including remote roles.
+- Excludes jobs where Poznań is only listed as an additional or secondary location.
+- Counts raw job posts, without removing duplicates across cities.
+- Only tracks offers tagged as "junior" (it does not detect internships written in job titles).
+- Includes offers from all experience levels.
 - Salary values can be `null`. Missing salary is not zero.
 - A timestamp ending in `Z` uses UTC. Keep timezone information when parsing it.
 - JSON can use the key `from`. In Python models, use another field name with an alias.
