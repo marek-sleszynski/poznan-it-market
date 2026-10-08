@@ -223,3 +223,72 @@ def test_status_write_failure_preserves_original_error(db_conn, monkeypatch):
 
     with pytest.raises(RuntimeError, match="Original fetch failure"):
         loader.run_pipeline(mode="live")
+
+
+def test_same_day_import_keeps_previously_seen_offers(db_conn):
+    first_fetch = datetime(2026, 10, 8, 10, tzinfo=UTC)
+    second_fetch = datetime(2026, 10, 8, 12, tzinfo=UTC)
+    first_offers = [
+        {"slug": "offer-a", "title": "Old title"},
+        {"slug": "offer-b"},
+    ]
+    second_offers = [
+        {"slug": "offer-a", "title": "New title"},
+        {"slug": "offer-c"},
+    ]
+
+    load_raw_offers(
+        db_conn,
+        first_offers,
+        "justjoin.it",
+        uuid.uuid4(),
+        first_fetch,
+        data_mode="live",
+    )
+    load_raw_offers(
+        db_conn,
+        second_offers,
+        "justjoin.it",
+        uuid.uuid4(),
+        second_fetch,
+        data_mode="live",
+    )
+
+    rows = db_conn.execute(
+        """
+        SELECT source_offer_id, payload, fetched_at
+        FROM raw.offers
+        ORDER BY source_offer_id;
+        """
+    ).fetchall()
+
+    assert [row[0] for row in rows] == ["offer-a", "offer-b", "offer-c"]
+    assert rows[0][1]["title"] == "New title"
+    assert rows[0][2] == second_fetch
+    assert rows[1][2] == first_fetch
+
+
+def test_next_day_import_creates_new_observation(db_conn):
+    first_fetch = datetime(2026, 10, 8, 10, tzinfo=UTC)
+    second_fetch = datetime(2026, 10, 9, 10, tzinfo=UTC)
+
+    for fetched_at in (first_fetch, second_fetch):
+        load_raw_offers(
+            db_conn,
+            [{"slug": "offer-a"}],
+            "justjoin.it",
+            uuid.uuid4(),
+            fetched_at,
+            data_mode="live",
+        )
+
+    rows = db_conn.execute(
+        """
+        SELECT fetched_at
+        FROM raw.offers
+        WHERE source_offer_id = 'offer-a'
+        ORDER BY fetched_at;
+        """
+    ).fetchall()
+
+    assert rows == [(first_fetch,), (second_fetch,)]
