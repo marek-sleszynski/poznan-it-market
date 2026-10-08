@@ -4,7 +4,7 @@
 ) }}
 
 select
-    fetched_at::date as date_id,
+    (fetched_at AT TIME ZONE 'UTC')::date as date_id,
     md5(lower(trim(company_name))) as company_key,
     raw_offer_id,
     source,

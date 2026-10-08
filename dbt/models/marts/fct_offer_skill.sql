@@ -1,7 +1,7 @@
 {{ config(materialized='table') }}
 
 select
-    fetched_at::date as date_id,
+    (fetched_at AT TIME ZONE 'UTC')::date as date_id,
     raw_offer_id,
     source,
     source_offer_id,

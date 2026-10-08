@@ -1,7 +1,7 @@
 import json
 import time
 from collections.abc import Iterator
-from datetime import date
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
@@ -57,7 +57,7 @@ def fetch_justjoinit_pages(
 
 def save_raw_pages(pages: Iterator[dict], target_date: str | None = None) -> list[Path]:
     if target_date is None:
-        target_date = date.today().isoformat()
+        target_date = datetime.now(UTC).date().isoformat()
 
     output_dir = Path("data/raw") / target_date
     output_dir.mkdir(parents=True, exist_ok=True)
