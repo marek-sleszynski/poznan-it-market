@@ -32,6 +32,8 @@ jobs:
               f.write(f'POSTGRES_DB={url.path.lstrip(\"/\")}\n')
               f.write('DB_SSLMODE=require\n')
           "
+      - name: Check live data freshness
+        run: uv run dbt source freshness --project-dir dbt --profiles-dir dbt --select source:raw.offers
       - name: Run dbt build
         run: make dbt
       - name: Generate analytics charts
