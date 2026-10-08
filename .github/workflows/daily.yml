@@ -3,6 +3,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '00 4 * * *'
+concurrency:
+  group: poznan-it-market-live
+  cancel-in-progress: false
+  queue: max
 jobs:
   pipeline:
     runs-on: ubuntu-latest
@@ -37,13 +41,16 @@ jobs:
       - name: Run dbt build
         run: make dbt
       - name: Generate analytics charts
-        run: make charts
+        run: |
+          rm -f docs/img/*.png
+          make charts
       - name: Archive generated charts
-        if: always()
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: market-charts
           path: docs/img/*.png
+          if-no-files-found: error
       - name: Archive diagnostic logs
         if: always()
         uses: actions/upload-artifact@v4
