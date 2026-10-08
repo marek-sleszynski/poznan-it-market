@@ -16,13 +16,15 @@ from poznan_it_market.ingest.validation import validate_offers
 logger = logging.getLogger(__name__)
 
 INSERT_OFFERS_QUERY = """
-INSERT INTO raw.offers (source, source_offer_id, payload, fetched_at, run_id)
-VALUES (%s, %s, %s, %s, %s)
+INSERT INTO raw.offers
+    (source, source_offer_id, payload, fetched_at, run_id, data_mode)
+VALUES (%s, %s, %s, %s, %s, %s)
 ON CONFLICT (source, source_offer_id, (raw.to_date_utc(fetched_at)))
 DO UPDATE SET
     payload = EXCLUDED.payload,
     fetched_at = EXCLUDED.fetched_at,
-    run_id = EXCLUDED.run_id;
+    run_id = EXCLUDED.run_id,
+    data_mode = EXCLUDED.data_mode;
 """
 
 START_RUN_QUERY = """
@@ -54,8 +56,9 @@ def load_raw_offers(
     source: str,
     run_id: uuid.UUID,
     fetched_at: datetime,
+    data_mode: str = "unknown",
 ) -> int:
-    records = [(source, o["slug"], Jsonb(o), fetched_at, run_id) for o in offers]
+    records = [(source, o["slug"], Jsonb(o), fetched_at, run_id, data_mode) for o in offers]
     with conn.transaction():
         with conn.cursor() as cur:
             cur.executemany(INSERT_OFFERS_QUERY, records)
@@ -189,7 +192,14 @@ def run_pipeline(mode: str = "demo") -> None:
             stage = "write"
             logger.info("run_id=%s stage=write", run_id)
             with conn.transaction():
-                loaded_count = load_raw_offers(conn, accepted, "justjoin.it", run_id, observed_at)
+                loaded_count = load_raw_offers(
+                    conn,
+                    accepted,
+                    "justjoin.it",
+                    run_id,
+                    observed_at,
+                    data_mode=mode,
+                )
                 rejected_count = load_rejected_offers(conn, rejected, run_id)
                 log_run_finish(
                     conn,

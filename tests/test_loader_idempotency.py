@@ -130,7 +130,7 @@ def test_pipeline_saves_valid_offer_and_rejection(db_conn, sample_offers, monkey
         monkeypatch.setattr(loader, "read_live_offers", lambda: ([valid, invalid], 1))
     loader.run_pipeline(mode=mode)
 
-    accepted_row = db_conn.execute("SELECT payload, run_id FROM raw.offers;").fetchone()
+    accepted_row = db_conn.execute("SELECT payload, run_id, data_mode FROM raw.offers;").fetchone()
     rejected_row = db_conn.execute(
         """
         SELECT payload, error_type, error_message, run_id
@@ -148,6 +148,7 @@ def test_pipeline_saves_valid_offer_and_rejection(db_conn, sample_offers, monkey
     assert rejected_row is not None
     assert run_row is not None
     assert accepted_row[0] == valid
+    assert accepted_row[2] == mode
     assert rejected_row[0] == invalid
     assert rejected_row[1] == "validation_error"
     assert "slug must not be empty" in rejected_row[2]
