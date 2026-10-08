@@ -209,6 +209,20 @@ def test_fetch_failure_is_recorded(db_conn, monkeypatch, mode):
     )
     assert row[7] is not None
     assert db_conn.execute("SELECT count(*) FROM raw.offers;").fetchone()[0] == 0
+    data_mode, observed_date, started_at = db_conn.execute(
+        """
+    SELECT data_mode, observed_date, started_at
+    FROM raw.ingestion_runs;
+    """
+    ).fetchone()
+
+    expected_date = (
+        datetime(2026, 8, 11, tzinfo=UTC).date()
+        if mode == "demo"
+        else started_at.astimezone(UTC).date()
+    )
+    assert data_mode == mode
+    assert observed_date == expected_date
 
 
 def test_status_write_failure_preserves_original_error(db_conn, monkeypatch):

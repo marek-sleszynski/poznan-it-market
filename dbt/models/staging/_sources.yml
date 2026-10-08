@@ -12,3 +12,5 @@ sources:
           warn_after:
             count: 26
             period: hour
+      - name: ingestion_runs
+        description: "Import status, counters and observation dates."

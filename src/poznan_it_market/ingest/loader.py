@@ -28,8 +28,9 @@ DO UPDATE SET
 """
 
 START_RUN_QUERY = """
-INSERT INTO raw.ingestion_runs (run_id, started_at, status)
-VALUES (%s, %s, 'running');
+INSERT INTO raw.ingestion_runs
+    (run_id, started_at, status, data_mode, observed_date)
+VALUES (%s, %s, 'running', %s, %s);
 """
 
 FINISH_RUN_QUERY = """
@@ -65,9 +66,18 @@ def load_raw_offers(
             return cur.rowcount
 
 
-def log_run_start(conn: psycopg.Connection, run_id: uuid.UUID, started_at: datetime) -> None:
+def log_run_start(
+    conn: psycopg.Connection,
+    run_id: uuid.UUID,
+    started_at: datetime,
+    mode: str,
+    observed_at: datetime,
+) -> None:
     with conn.transaction():
-        conn.execute(START_RUN_QUERY, (run_id, started_at))
+        conn.execute(
+            START_RUN_QUERY,
+            (run_id, started_at, mode, observed_at.astimezone(UTC).date()),
+        )
 
 
 def log_run_finish(
@@ -176,7 +186,7 @@ def run_pipeline(mode: str = "demo") -> None:
     stage = "fetch"
 
     with get_connection(database_url) as conn:
-        log_run_start(conn, run_id, started_at)
+        log_run_start(conn, run_id, started_at, mode, observed_at)
         try:
             logger.info("run_id=%s mode=%s stage=fetch", run_id, mode)
             if mode == "demo":
