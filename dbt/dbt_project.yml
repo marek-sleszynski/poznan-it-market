@@ -31,3 +31,6 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   poznan_it_market:
+snapshots:
+  poznan_it_market:
+    +enabled: false

@@ -32,8 +32,6 @@ jobs:
               f.write(f'POSTGRES_DB={url.path.lstrip(\"/\")}\n')
               f.write('DB_SSLMODE=require\n')
           "
-      - name: Run dbt snapshots
-        run: make snapshot
       - name: Run dbt build
         run: make dbt
       - name: Generate analytics charts
