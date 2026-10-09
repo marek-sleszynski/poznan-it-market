@@ -62,10 +62,13 @@ To load demo data and build the models:
 ```bash
 make demo
 make dbt-demo
+make charts-demo
+uv run --locked python scripts/check_demo_report.py
 ```
 
 The demo uses the saved sample, keeps its date and uses `DEMO_DATABASE_URL`.
-It does not need Neon or API access.
+It does not need Neon or API access. Demo charts are saved in `docs/img/`.
+For another local port, change `POSTGRES_PORT` in `.env`; the example database URLs follow it.
 
 To check the code and run tests:
 
