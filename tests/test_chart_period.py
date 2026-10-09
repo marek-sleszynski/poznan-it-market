@@ -20,6 +20,10 @@ REPORTS = [
             ["--start-date", "2026-08-10", "--end-date", "2026-08-11"],
             (date(2026, 8, 10), date(2026, 8, 11)),
         ),
+        (
+            ["--start-date", "2026-08-09", "--end-date", "2026-08-12"],
+            (date(2026, 8, 9), date(2026, 8, 12)),
+        ),
         (["--start-date", "2026-08-10"], (date(2026, 8, 10), None)),
         (["--end-date", "2026-08-11"], (None, date(2026, 8, 11))),
     ],
@@ -31,13 +35,13 @@ def test_chart_cli_uses_same_period_for_all_reports(monkeypatch, arguments, expe
     def fake_getter(name):
         def get_data(start_date, end_date):
             fetched.append((name, start_date, end_date))
-            return [(name,)]
+            return [(date(2026, 8, 10), name), (date(2026, 8, 11), name)]
 
         return get_data
 
     def fake_plotter(name):
-        def plot(rows):
-            plotted.append((name, rows))
+        def plot(rows, period):
+            plotted.append((name, rows, period))
 
         return plot
 
@@ -47,7 +51,12 @@ def test_chart_cli_uses_same_period_for_all_reports(monkeypatch, arguments, expe
 
     make_charts.main(arguments)
     assert fetched == [(getter, *expected_period) for getter, _ in REPORTS]
-    assert plotted == [(plotter, [(getter,)]) for getter, plotter in REPORTS]
+    start = expected_period[0] or date(2026, 8, 10)
+    end = expected_period[1] or date(2026, 8, 11)
+    assert plotted == [
+        (plotter, [(date(2026, 8, 10), getter), (date(2026, 8, 11), getter)], f"{start} to {end}")
+        for getter, plotter in REPORTS
+    ]
 
 
 @pytest.mark.parametrize(

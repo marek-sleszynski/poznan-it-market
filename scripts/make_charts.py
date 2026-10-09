@@ -2,10 +2,14 @@ import argparse
 from datetime import date
 from pathlib import Path
 
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import psycopg
+from matplotlib.ticker import MaxNLocator
 
 from poznan_it_market.config import DATABASE_URL, require_database_url
+
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "docs/img"
 
 
 def get_analysis_data(filename: str, params: dict | None = None):
@@ -29,53 +33,11 @@ def get_postings_over_time_data(start_date=None, end_date=None):
     )
 
 
-def plot_postings_over_time(rows):
-    dates = [r[0] for r in rows]
-    counts = [r[1] for r in rows]
-    no_salaries = [r[2] for r in rows]
-
-    total_n = sum(counts)
-    total_no_salaries = sum(no_salaries)
-    missing_pct = (total_no_salaries / total_n * 100) if total_n > 0 else 0.0
-
-    fig, ax = plt.subplots(figsize=(8, 4))
-    ax.plot(dates, counts, marker="o", color="#2563eb", linewidth=2)
-    ax.set_title(f"Volume Trend (N={total_n}, Missing Salary={missing_pct:.1f}%)")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Number of Postings")
-    ax.grid(True, linestyle="--", alpha=0.5)
-    fig.savefig("docs/img/postings_over_time.png", bbox_inches="tight")
-    plt.close(fig)
-
-
 def get_junior_share_data(start_date=None, end_date=None):
     return get_analysis_data(
         "07_junior_share.sql",
         {"start_date": start_date, "end_date": end_date},
     )
-
-
-def plot_junior_share(rows):
-    dates = [r[0] for r in rows]
-    counts = [r[1] for r in rows]
-    no_juniors = [r[2] for r in rows]
-
-    total_n = sum(counts)
-    total_no_juniors = sum(no_juniors)
-    daily_shares = [
-        (j / c * 100) if c > 0 else 0.0 for j, c in zip(no_juniors, counts, strict=True)
-    ]
-    overall_share = (total_no_juniors / total_n * 100) if total_n > 0 else 0.0
-
-    fig, ax = plt.subplots(figsize=(8, 4))
-    ax.plot(dates, daily_shares, marker="s", color="#16a34a", linewidth=2)
-    ax.set_ylim(bottom=0, top=max(daily_shares) * 1.2 if max(daily_shares) > 0 else 10)
-    ax.set_title(f"Junior Postings Share Over Time (N={total_n}, Overall={overall_share:.1f}%)")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Share of Postings (%)")
-    ax.grid(True, linestyle="--", alpha=0.5)
-    fig.savefig("docs/img/junior_share_over_time.png", bbox_inches="tight")
-    plt.close(fig)
 
 
 def get_top_skills_data(start_date=None, end_date=None):
@@ -85,22 +47,6 @@ def get_top_skills_data(start_date=None, end_date=None):
     )
 
 
-def plot_top_skills(rows):
-    skills = [r[0] for r in rows]
-    counts = [r[1] for r in rows]
-    total_mentions = sum(counts)
-
-    fig, ax = plt.subplots(figsize=(9, 5))
-    ax.barh(skills, counts, color="#0284c7")
-    ax.invert_yaxis()
-    ax.set_title(f"Top 15 Technologies (Offer-skill pairs in top 15={total_mentions})")
-    ax.set_xlabel("Unique offers (latest observation)")
-    ax.set_ylabel("Technology")
-    ax.grid(axis="x", linestyle="--", alpha=0.5)
-    fig.savefig("docs/img/top_skills.png", bbox_inches="tight")
-    plt.close(fig)
-
-
 def get_salary_by_level_data(start_date=None, end_date=None):
     return get_analysis_data(
         "05_salary_by_level.sql",
@@ -108,30 +54,114 @@ def get_salary_by_level_data(start_date=None, end_date=None):
     )
 
 
-def plot_salary_by_level(rows):
+def save_chart(fig, filename, period, note):
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    fig.text(
+        0.5,
+        0.02,
+        f"Period (UTC): {period}\n{note}",
+        ha="center",
+        va="bottom",
+        fontsize=9,
+    )
+    fig.tight_layout(rect=(0, 0.12, 1, 0.94))
+    try:
+        fig.savefig(OUTPUT_DIR / filename, dpi=160, bbox_inches="tight")
+    finally:
+        plt.close(fig)
+
+
+def show_no_data(ax, message):
+    ax.text(0.5, 0.5, message, ha="center", va="center", transform=ax.transAxes)
+    ax.set_axis_off()
+
+
+def format_date_axis(ax, dates):
+    if len(dates) == 1:
+        ax.set_xticks(dates)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+    else:
+        locator = mdates.AutoDateLocator(minticks=3, maxticks=7)
+        ax.xaxis.set_major_locator(locator)
+        ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(locator))
+
+
+def plot_postings_over_time(rows, period="Not specified"):
+    fig, ax = plt.subplots(figsize=(9, 4))
+    ax.set_title("Observed offers per day")
+    total = sum(row[1] for row in rows)
+    note = f"N = {total} offer-day observations"
+    if not rows or total == 0:
+        show_no_data(ax, "No offer observations")
+    else:
+        dates = [row[0] for row in rows]
+        counts = [row[1] for row in rows]
+        missing = sum(row[2] for row in rows)
+        ax.plot(dates, counts, marker="o", color="#2563eb", linewidth=2)
+        ax.set_xlabel("Date (UTC)")
+        ax.set_ylabel("Offers per day")
+        ax.set_ylim(bottom=0)
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.grid(True, linestyle="--", alpha=0.3)
+        format_date_axis(ax, dates)
+        note += f" · Without disclosed salary: {100 * missing / total:.1f}%"
+    save_chart(fig, "postings_over_time.png", period, note)
+
+
+def plot_junior_share(rows, period="Not specified"):
+    fig, ax = plt.subplots(figsize=(9, 4))
+    ax.set_title("Junior share per day")
+    total = sum(row[1] for row in rows)
+    note = f"N = {total} offer-day observations"
+    if not rows or total == 0:
+        show_no_data(ax, "No junior observations")
+    else:
+        dates = [row[0] for row in rows]
+        shares = [100 * row[2] / row[1] if row[1] > 0 else float("nan") for row in rows]
+        juniors = sum(row[2] for row in rows)
+        ax.plot(dates, shares, marker="s", color="#16a34a", linewidth=2)
+        ax.set_ylim(0, 100)
+        ax.set_xlabel("Date (UTC)")
+        ax.set_ylabel("Junior offers (%)")
+        ax.grid(True, linestyle="--", alpha=0.3)
+        format_date_axis(ax, dates)
+        note += f" · Junior share across observations: {100 * juniors / total:.1f}%"
+    save_chart(fig, "junior_share_over_time.png", period, note)
+
+
+def plot_top_skills(rows, period="Not specified"):
+    fig, ax = plt.subplots(figsize=(10, max(4, 0.33 * len(rows) + 1.6)))
+    ax.set_title("Top 15 skills")
+    total = sum(row[1] for row in rows)
+    if not rows:
+        show_no_data(ax, "No skill data")
+    else:
+        skills = [row[0] for row in rows]
+        counts = [row[1] for row in rows]
+        bars = ax.barh(skills, counts, color="#0284c7")
+        ax.invert_yaxis()
+        ax.bar_label(bars, padding=3)
+        ax.set_xlim(0, max(max(counts) * 1.3, 1))
+        ax.set_xlabel("Offers per skill")
+        ax.set_ylabel("Skill")
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.set_axisbelow(True)
+        ax.grid(axis="x", linestyle="--", alpha=0.3)
+    note = f"N = {total} offer-skill pairs in shown skills · Latest observation per offer in period"
+    save_chart(fig, "top_skills.png", period, note)
+
+
+def plot_salary_by_level(rows, period="Not specified"):
     groups = {}
     for level, contract, unit, is_gross, average, count in rows:
+        if average is None or count <= 0:
+            continue
         groups.setdefault((contract, unit, is_gross), []).append((level, average, count))
 
     panel_count = max(1, len(groups))
-    fig, axes = plt.subplots(
-        panel_count,
-        1,
-        figsize=(9, 3 * panel_count),
-        squeeze=False,
-    )
-
+    fig, axes = plt.subplots(panel_count, 1, figsize=(9, 3 * panel_count), squeeze=False)
     if not groups:
-        ax = axes[0, 0]
-        ax.text(
-            0.5,
-            0.5,
-            "No comparable salary data",
-            ha="center",
-            va="center",
-            transform=ax.transAxes,
-        )
-        ax.set_axis_off()
+        show_no_data(axes[0, 0], "No salary data")
     else:
         for ax, (key, values) in zip(axes[:, 0], groups.items(), strict=True):
             contract, unit, is_gross = key
@@ -144,7 +174,6 @@ def plot_salary_by_level(rows):
                 "permanent": "Employment contract",
             }.get(contract, contract)
             basis = "gross" if is_gross else "net"
-
             bars = ax.barh(positions, salaries, height=0.4, color="#0284c7")
             ax.set_yticks(positions, labels)
             ax.invert_yaxis()
@@ -155,9 +184,9 @@ def plot_salary_by_level(rows):
             )
             ax.set_xlim(0, max(max(salaries) * 1.3, 1))
             ax.set_ylim(len(values) - 0.5, -0.5)
-            period = "Hourly" if unit == "hour" else "Monthly"
+            unit_label = "Hourly" if unit == "hour" else "Monthly"
             ax.set_title(
-                f"{period} pay · {contract_label} · {basis}",
+                f"{unit_label} pay · {contract_label} · {basis}",
                 loc="left",
                 fontweight="bold",
             )
@@ -168,19 +197,11 @@ def plot_salary_by_level(rows):
             ax.spines["right"].set_visible(False)
 
     fig.suptitle("Mean advertised minimum pay", fontsize=15)
-    fig.text(
-        0.5,
-        0.015,
-        "Latest observation per offer · Original PLN amounts · n = offers with a minimum",
-        ha="center",
-        fontsize=9,
+    note = (
+        "Original PLN · n = offers with a disclosed minimum"
+        " · Latest observation per offer in period"
     )
-    fig.tight_layout(rect=(0, 0.05, 1, 0.94))
-
-    output_path = Path(__file__).resolve().parent.parent / "docs/img/salary_by_level.png"
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=160, bbox_inches="tight")
-    plt.close(fig)
+    save_chart(fig, "salary_by_level.png", period, note)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -202,12 +223,14 @@ def main(argv: list[str] | None = None) -> None:
     if not datasets[0]:
         parser.error("No offer observations in the selected period.")
 
-    start = args.start_date or "first saved date"
-    end = args.end_date or "last saved date"
+    dates = [row[0] for row in datasets[0]]
+    start = args.start_date or min(dates)
+    end = args.end_date or max(dates)
+    period = f"{start} to {end}"
     print(f"Report period (UTC): {start} to {end}")
     for (name, _, plot), rows in zip(reports, datasets, strict=True):
         print(f"Generating chart: {name}...")
-        plot(rows)
+        plot(rows, period)
     print("All charts generated successfully in docs/img/!")
 
 
