@@ -36,4 +36,12 @@ where previous_observed_at is not null
       old_salary_from is distinct from new_salary_from
       or old_salary_to is distinct from new_salary_to
   )
+  and (
+      %(start_date)s::date is null
+      or (observed_at at time zone 'UTC')::date >= %(start_date)s::date
+  )
+  and (
+      %(end_date)s::date is null
+      or (observed_at at time zone 'UTC')::date <= %(end_date)s::date
+  )
 order by observed_at, source, source_offer_id;

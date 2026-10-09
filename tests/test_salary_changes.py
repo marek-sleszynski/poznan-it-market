@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 
@@ -78,7 +78,8 @@ def test_salary_changes_detects_only_comparable_changes(db_conn):
         )
 
     query_path = Path(__file__).resolve().parent.parent / "sql/analysis/04_salary_changes.sql"
-    rows = db_conn.execute(query_path.read_text(encoding="utf-8")).fetchall()
+    query = query_path.read_text(encoding="utf-8")
+    rows = db_conn.execute(query, {"start_date": None, "end_date": None}).fetchall()
 
     assert [row[6].day for row in rows] == [2, 4, 5, 6]
     assert [row[8:] for row in rows] == [
@@ -88,3 +89,16 @@ def test_salary_changes_detects_only_comparable_changes(db_conn):
         (120, 250, None, None),
     ]
     assert all(row[:6] == ("source-a", "offer-1", "b2b", "pln", "hour", False) for row in rows)
+    # Date filters use UTC and must not remove the previous observation before LAG.
+    db_conn.execute("SET LOCAL TIME ZONE 'Pacific/Honolulu';")
+    cases = [
+        (date(2026, 10, 1), date(2026, 10, 1), []),
+        (date(2026, 10, 2), date(2026, 10, 2), [rows[0]]),
+        (date(2026, 10, 4), date(2026, 10, 4), [rows[1]]),
+        (None, date(2026, 10, 4), rows[:2]),
+        (date(2026, 10, 5), None, rows[2:]),
+        (date(2026, 10, 10), date(2026, 10, 10), []),
+    ]
+    for start_date, end_date, expected in cases:
+        actual = db_conn.execute(query, {"start_date": start_date, "end_date": end_date}).fetchall()
+        assert actual == expected, (start_date, end_date, actual)

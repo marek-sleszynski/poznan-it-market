@@ -1,3 +1,5 @@
+import argparse
+from datetime import date
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -6,22 +8,25 @@ import psycopg
 from poznan_it_market.config import DATABASE_URL, require_database_url
 
 
-def get_postings_over_time_data():
+def get_analysis_data(filename: str, params: dict | None = None):
+    if params is not None:
+        start_date = params.get("start_date")
+        end_date = params.get("end_date")
+        if start_date is not None and end_date is not None and start_date > end_date:
+            raise ValueError("start_date cannot be after end_date.")
+
+    query_path = Path(__file__).resolve().parent.parent / "sql" / "analysis" / filename
+    query = query_path.read_text(encoding="utf-8")
+
     with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                SELECT 
-                    date_id, 
-                    COUNT(*), 
-                    COUNT(*) FILTER (WHERE salary_from IS NULL) 
-                FROM fct_offer_snapshot  
-                GROUP BY date_id 
-                ORDER BY date_id ASC;
-                """
-            )
-            rows = cur.fetchall()
-    return rows
+        return conn.execute(query, params).fetchall()
+
+
+def get_postings_over_time_data(start_date=None, end_date=None):
+    return get_analysis_data(
+        "06_postings_over_time.sql",
+        {"start_date": start_date, "end_date": end_date},
+    )
 
 
 def plot_postings_over_time(rows):
@@ -43,22 +48,11 @@ def plot_postings_over_time(rows):
     plt.close(fig)
 
 
-def get_junior_share_data():
-    with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                SELECT 
-                    date_id, 
-                    COUNT(*), 
-                    COUNT(*) FILTER (WHERE experience_level = 'junior') 
-                FROM fct_offer_snapshot  
-                GROUP BY date_id 
-                ORDER BY date_id ASC;
-                """
-            )
-            rows = cur.fetchall()
-    return rows
+def get_junior_share_data(start_date=None, end_date=None):
+    return get_analysis_data(
+        "07_junior_share.sql",
+        {"start_date": start_date, "end_date": end_date},
+    )
 
 
 def plot_junior_share(rows):
@@ -84,12 +78,11 @@ def plot_junior_share(rows):
     plt.close(fig)
 
 
-def get_top_skills_data():
-    query_path = Path(__file__).resolve().parent.parent / "sql" / "analysis" / "03_top_skills.sql"
-    query = query_path.read_text(encoding="utf-8")
-
-    with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
-        return conn.execute(query).fetchall()
+def get_top_skills_data(start_date=None, end_date=None):
+    return get_analysis_data(
+        "03_top_skills.sql",
+        {"start_date": start_date, "end_date": end_date},
+    )
 
 
 def plot_top_skills(rows):
@@ -108,14 +101,11 @@ def plot_top_skills(rows):
     plt.close(fig)
 
 
-def get_salary_by_level_data():
-    query_path = (
-        Path(__file__).resolve().parent.parent / "sql" / "analysis" / "05_salary_by_level.sql"
+def get_salary_by_level_data(start_date=None, end_date=None):
+    return get_analysis_data(
+        "05_salary_by_level.sql",
+        {"start_date": start_date, "end_date": end_date},
     )
-    query = query_path.read_text(encoding="utf-8")
-
-    with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
-        return conn.execute(query).fetchall()
 
 
 def plot_salary_by_level(rows):
@@ -193,17 +183,33 @@ def plot_salary_by_level(rows):
     plt.close(fig)
 
 
-if __name__ == "__main__":
-    print("Generating chart 1: Postings over time...")
-    plot_postings_over_time(get_postings_over_time_data())
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description="Generate charts for an observation period.")
+    parser.add_argument("--start-date", type=date.fromisoformat, help="First UTC date, YYYY-MM-DD.")
+    parser.add_argument("--end-date", type=date.fromisoformat, help="Last UTC date, YYYY-MM-DD.")
+    args = parser.parse_args(argv)
+    if args.start_date is not None and args.end_date is not None:
+        if args.start_date > args.end_date:
+            parser.error("start-date cannot be after end-date.")
 
-    print("Generating chart 2: Junior share over time...")
-    plot_junior_share(get_junior_share_data())
+    reports = [
+        ("Postings over time", get_postings_over_time_data, plot_postings_over_time),
+        ("Junior share", get_junior_share_data, plot_junior_share),
+        ("Top skills", get_top_skills_data, plot_top_skills),
+        ("Salary by level", get_salary_by_level_data, plot_salary_by_level),
+    ]
+    datasets = [get_data(args.start_date, args.end_date) for _, get_data, _ in reports]
+    if not datasets[0]:
+        parser.error("No offer observations in the selected period.")
 
-    print("Generating chart 3: Top 15 skills...")
-    plot_top_skills(get_top_skills_data())
-
-    print("Generating chart 4: Salary by level...")
-    plot_salary_by_level(get_salary_by_level_data())
-
+    start = args.start_date or "first saved date"
+    end = args.end_date or "last saved date"
+    print(f"Report period (UTC): {start} to {end}")
+    for (name, _, plot), rows in zip(reports, datasets, strict=True):
+        print(f"Generating chart: {name}...")
+        plot(rows)
     print("All charts generated successfully in docs/img/!")
+
+
+if __name__ == "__main__":
+    main()
