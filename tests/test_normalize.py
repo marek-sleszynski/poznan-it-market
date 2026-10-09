@@ -1,6 +1,6 @@
 import pytest
 
-from poznan_it_market.transform.normalize import (
+from learning.python.normalize import (
     is_main_location,
     normalize_company_name,
     parse_salary,

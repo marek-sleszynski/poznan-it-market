@@ -41,7 +41,7 @@ psycopg.connect = forbidden_connection
     [
         "poznan_it_market.ingest.justjoinit",
         "scripts.make_charts",
-        "scripts.load_scratch",
+        "learning.python.load_scratch",
     ],
 )
 def test_import_does_not_require_database_or_api_settings(module):
@@ -124,7 +124,7 @@ def test_scratch_loader_requires_database_before_connecting():
         """
 import tempfile
 from pathlib import Path
-from scripts import load_scratch
+from learning.python import load_scratch
 
 with tempfile.TemporaryDirectory() as directory:
     sample = Path(directory) / "sample.json"

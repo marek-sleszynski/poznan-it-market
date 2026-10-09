@@ -11,7 +11,7 @@ format:
 test:
 	uv run --locked pytest
 sample:
-	uv run python scripts/fetch_sample.py
+	uv run --locked python scripts/fetch_sample.py
 db-up:
 	docker compose up -d
 db-shell:
