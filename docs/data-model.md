@@ -52,7 +52,7 @@ Company names are grouped using `lower(trim(company_name))`; the company key is 
 ## History and reports
 
 Facts are rebuilt from retained raw observations. `dim_company` is a view over those observations.
-The dbt SCD2 snapshot is disabled and kept as a learning example. Existing snapshot history is kept.
+Daily observations use `fct_offer_snapshot`. Existing database history is retained.
 
 Daily charts count offer-day observations. Company, skill and salary summaries use the latest
 observation per offer within the selected period. The latest saved observation does not prove

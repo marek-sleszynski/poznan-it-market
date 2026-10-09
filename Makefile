@@ -1,4 +1,4 @@
-.PHONY: charts-demo install lint test sample db-up db-shell db-reset ingest snapshot dbt charts migrate demo format dbt-demo db-prepare
+.PHONY: charts-demo install lint test sample db-up db-shell db-reset ingest dbt charts migrate demo format dbt-demo db-prepare
 
 install:
 	uv sync --locked
@@ -24,8 +24,6 @@ ingest:
 
 demo:
 	uv run --locked poznan-it-market --mode demo
-snapshot:
-	cd dbt && uv run --locked dbt snapshot --profiles-dir .
 dbt:
 	uv run --locked python scripts/build_dbt.py --mode live
 dbt-demo:

@@ -7,7 +7,6 @@ analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
-snapshot-paths: ["snapshots"]
 
 clean-targets:
   - "target"
@@ -16,7 +15,3 @@ clean-targets:
 models:
   poznan_it_market:
     +materialized: view
-
-snapshots:
-  poznan_it_market:
-    +enabled: false

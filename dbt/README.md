@@ -11,7 +11,7 @@ make dbt
 Both build models and run data tests. The shared build script prepares the connection settings.
 
 Staging filters the selected data mode and city. Marts contain daily observations,
-skills and salary variants. The SCD2 snapshot is disabled and kept as a learning example.
+skills and salary variants.
 
 The daily workflow runs live source freshness separately before the build.
 See [the data model](../docs/data-model.md) and [quality checks](../docs/data-quality.md).

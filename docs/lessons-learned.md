@@ -25,7 +25,6 @@ are marked `legacy_demo` and excluded from reports.
 
 Python handles API requests, validation and database writes. dbt builds models and tests.
 SQL reports share their queries with the charts. GitHub Actions runs CI and defines the daily workflow.
-Learning examples are kept in `learning/`. The dbt SCD2 example is disabled.
 
 I have not built streaming, Spark or Airflow systems. This project uses daily batch processing.
 

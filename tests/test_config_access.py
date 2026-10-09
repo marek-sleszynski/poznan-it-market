@@ -41,7 +41,6 @@ psycopg.connect = forbidden_connection
     [
         "poznan_it_market.ingest.justjoinit",
         "scripts.make_charts",
-        "learning.python.load_scratch",
     ],
 )
 def test_import_does_not_require_database_or_api_settings(module):
@@ -115,26 +114,5 @@ except ValueError as error:
     assert "DATABASE_URL" in str(error)
 else:
     raise AssertionError("Expected a missing database configuration error.")
-"""
-    )
-
-
-def test_scratch_loader_requires_database_before_connecting():
-    run_without_settings(
-        """
-import tempfile
-from pathlib import Path
-from learning.python import load_scratch
-
-with tempfile.TemporaryDirectory() as directory:
-    sample = Path(directory) / "sample.json"
-    sample.write_text('{"data": []}', encoding="utf-8")
-    load_scratch.SAMPLE_PATH = sample
-    try:
-        load_scratch.load_sample()
-    except ValueError as error:
-        assert "DATABASE_URL" in str(error)
-    else:
-        raise AssertionError("Expected a missing database configuration error.")
 """
     )
