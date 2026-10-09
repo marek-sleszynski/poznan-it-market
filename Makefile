@@ -39,7 +39,7 @@ migrate:
 	        docker compose exec -T db sh -c 'psql -X -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -v ON_ERROR_STOP=1' < "$$f" || exit 1; \
 	done
 db-prepare: db-up
-	docker compose exec -T db sh -c 'until pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"; do sleep 1; done'
+	docker compose exec -T db sh -c 'until pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"; do sleep 1; done'
 	for database in poznan_it_market_demo poznan_it_market_test; do \
 	        docker compose exec -T db sh -c 'psql -X -U "$$POSTGRES_USER" -d postgres -v ON_ERROR_STOP=1 -v database_name="$$1"' sh "$$database" < sql/maintenance/create_local_database.sql || exit 1; \
 	        for file in sql/ddl/*.sql; do \
