@@ -1,27 +1,35 @@
 # Lessons learned
 
-## Where I started (03-08-2026)
-Basic Python, university SQL, and about 125 LeetCode Easy problems. Zero portfolio projects, no Docker experience, and never built a real data pipeline.
+## Starting point - 2026-08-03
 
-## Where I ended (06-10-2026)
-Built and automated daily pipeline from zero:
-- Ingestion: API scraper in Python with retries, exponential backoff, and Pydantic validation.
-- Storage: Idempotent loading to PostgreSQL, keeping raw responses as JSONB.
-- Modeling: dbt star schema using incremental models and SCD2 snapshots to track history.
-- Automation: Scheduled GitHub Actions every day, writing to PostgreSQL database in cloud (Neon).
-- Quality & Docs: Automated data tests and written ADRs for key design choices.
+I knew basic Python and university SQL, and had solved about 125 LeetCode Easy problems.
+This was my first portfolio project. I had no Docker or data pipeline experience.
 
-## Three things I would do differently: 
-- Lock down the fact grain earlier: I had to rewrite part of the staging layer because I didn't decide on the daily grain upfront.
-- Add schema tests sooner: Silent API changes can corrupt snapshot histories without noticing.
-- Set up CI path filters immediately: Adding paths-ignore stops burning CI minutes on simple misspelling fixes.
+## Earlier version - 2026-10-06
 
-## What I still cannot do:
-- Streaming: Everything is daily batch. I do not have experience with Kafka.
-- Spark: At ~300 postings a day, PostgreSQL is fast and cheap. Using Spark would be overengineering.
-- Orchestration tools: No Terraform, Kubernetes, or Airflow yet.
+The earlier version used incremental facts and SCD2 snapshots. Those designs were simplified
+during the review. Some early imports reused the demo sample; the matching cloud observations
+are marked `legacy_demo` and excluded from reports.
 
-## Next steps 
-- Keep pipeline running daily to collect months of job market trends.
-- Add second data source (NoFluffJobs) and handle deduplication
-- Polish CV to target 2027 Data internships.
+## What I learned
+
+- Demo data needs a separate database and a clear observation date.
+- Pagination must finish before an import is treated as complete.
+- Tests should check failures, repeats and exact report results.
+- Daily observations and unique offers are different counts.
+- Salary comparisons need the same currency, contract, unit and gross/net basis.
+- A simpler full rebuild is useful when the dataset is small.
+- Documentation should describe the code that actually runs.
+
+## Current scope
+
+Python handles API requests, validation and database writes. dbt builds models and tests.
+SQL reports share their queries with the charts. GitHub Actions runs CI and defines the daily workflow.
+Learning examples are kept in `learning/`. The dbt SCD2 example is disabled.
+
+I have not built streaming, Spark or Airflow systems. This project uses daily batch processing.
+
+## Next steps
+
+Finish the walkthrough, report and clean-clone demo check. Then use the project in applications
+for data internships. A second source or dashboard can be a later extension.

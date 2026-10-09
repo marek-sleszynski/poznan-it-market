@@ -1,23 +1,41 @@
-# Data Quality
+# Data quality
 
-## Tests & Rationale
+## Import checks
 
-| Test | Layer | Rule | Action | Why |
-|---|---|---|---|---|
-| Freshness | `raw` | `max(fetched_at)` < 26h | warn | Data is delayed or stopped loading |
-| Completeness | `marts` | Daily count > 60% of 7d avg | **halt (error)** | Catch API format changes or empty loads |
-| Uniqueness | `staging` | Unique `(source, source_offer_id, date)` | error | Prevent duplicates and keeps idempotency |
-| Integrity | `marts` | Company exists in `dim_company` | error | Prevents broken links between tables |
+The import checks API structure, pagination and offer fields before writing data.
+Rejected records are saved with their errors. Accepted offers and rejections are written in one
+transaction. Failed imports record their stage and error when the database is available.
 
-## Warn vs Error Policy
+## Report checks
 
-Rule: **Halt the pipeline only when data would be misleading.**
+| Check | Rule | Result |
+|---|---|---|
+| Live freshness | Latest live observation is older than 26 hours | Warning |
+| Live freshness | Latest live observation is older than 48 hours, or none exists | Error |
+| Daily import | Latest attempt for the expected UTC day and mode must finish successfully with valid counters and accepted offers | Error |
+| Daily report | At least one report offer must exist for the expected day | Error |
+| Offer volume | Daily count below 60% of the previous seven-day average | Error |
+| Rejections | More than 10% of fetched records are rejected | Error |
+| Offer grain | Unique `(source, source_offer_id, date_id)` in offer facts | Error |
+| Skill grain | Unique offer-day-skill; required fields and valid observation links | Error |
+| Company and date links | Fact keys must exist in their dimensions | Error |
+| Salaries | No negative, non-finite or reversed salary ranges | Error |
+| Companies | Normalized name and hash must match the model rule | Error |
 
-* **Warning (`warn`):** Data is incomplete or delayed, but reports are still useful.
-* **Error (`halt`):** Structural corruption or massive data loss (>40% drop). Publishing this would show a fake market crash on the dashboard.
+The volume baseline uses only days whose latest import finished successfully, with valid counters,
+report offers and an acceptable rejection rate. If no valid baseline exists, that comparison is skipped.
+The other checks still run. Thresholds can be changed through dbt variables.
 
-## Past incidents
+## When reports are published
 
-| Date | Incident | Caught By | Resolution |
-|---|---|---|---|
-| 2026-09-02 | Postings dropped by 94% | Completeness test | API payload format changed- updated the parser |
+The daily workflow runs live freshness separately, then builds models and runs dbt tests.
+Warnings allow the workflow to continue. Errors block chart publication.
+Generated charts are uploaded only after a successful run.
+
+Demo and CI builds use an explicit expected date. CI loads synthetic data before the dbt build
+and checks the exact report results.
+
+## Past incident
+
+On 2026-09-02, a bug in my code caused a 94% drop in the number of offers.
+The drop came from my code and should not be read as a change in the market.

@@ -1,7 +1,7 @@
 [project]
 name = "poznan-it-market"
 version = "0.1.0"
-description = "Add your description here"
+description = "Daily IT job offer data and reports for Poznań."
 readme = "README.md"
 authors = [
     { name = "Marek Śleszyński", email = "mareksles@gmail.com" }
