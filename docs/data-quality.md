@@ -3,7 +3,7 @@
 | Check | Where | Result on failure |
 |---|---|---|
 | API format and complete pagination | Python | Import fails before offer writes |
-| Required fields, aware dates and nonempty IDs/skills | Pydantic | Record is rejected |
+| API field names, ISO dates with a timezone and nonempty IDs/skills | Pydantic | Record is rejected |
 | Finite, nonnegative, ordered salaries and boolean `gross` | Pydantic | Record is rejected |
 | Unique offer-day and offer-day-skill rows | Database and dbt | Error |
 | Required keys, company/date links and matching skill observations | dbt | Error |
@@ -34,6 +34,3 @@ Demo uses the sample date from Python configuration.
 
 Tests cover retries, pagination, validation, repeat imports, rollback, reports and charts.
 Database tests require `TEST_DATABASE_URL` and check the database name before clearing tables.
-
-On 2026-09-02, a code bug caused a 94% drop in collected offers.
-That was a collection failure, not a market change.

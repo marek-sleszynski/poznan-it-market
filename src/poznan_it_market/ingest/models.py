@@ -7,7 +7,6 @@ from decimal import Decimal
 from pydantic import (
     AwareDatetime,
     BaseModel,
-    ConfigDict,
     Field,
     StrictBool,
     field_validator,
@@ -16,12 +15,6 @@ from pydantic import (
 
 
 class EmploymentType(BaseModel):
-    salary_from: Decimal | None = Field(
-        default=None, validation_alias="from", ge=0, allow_inf_nan=False
-    )
-    salary_to: Decimal | None = Field(
-        default=None, validation_alias="to", ge=0, allow_inf_nan=False
-    )
     salary_from_per_unit: Decimal | None = Field(
         default=None, validation_alias="fromPerUnit", ge=0, allow_inf_nan=False
     )
@@ -35,8 +28,6 @@ class EmploymentType(BaseModel):
     type: str | None = None
 
     @field_validator(
-        "salary_from",
-        "salary_to",
         "salary_from_per_unit",
         "salary_to_per_unit",
         mode="before",
@@ -59,13 +50,6 @@ class EmploymentType(BaseModel):
     @model_validator(mode="after")
     def check_order(self) -> EmploymentType:
         if (
-            self.salary_from is not None
-            and self.salary_to is not None
-            and self.salary_from > self.salary_to
-        ):
-            raise ValueError("salary_from cannot exceed salary_to")
-
-        if (
             self.salary_from_per_unit is not None
             and self.salary_to_per_unit is not None
             and self.salary_from_per_unit > self.salary_to_per_unit
@@ -87,7 +71,6 @@ class Skill(BaseModel):
 
 
 class RawOffer(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
     slug: str = Field(validation_alias="slug")
     title: str = Field(validation_alias="title")
     company_name: str = Field(validation_alias="companyName")
@@ -103,6 +86,23 @@ class RawOffer(BaseModel):
     def check_slug(cls, value: str) -> str:
         if not value.strip():
             raise ValueError("slug must not be empty.")
+        return value
+
+    @field_validator("published_at", mode="before")
+    @classmethod
+    def check_publication_format(cls, value: object) -> str:
+        message = "publishedAt must be an ISO 8601 string with a timezone."
+        if not isinstance(value, str):
+            raise ValueError(message)
+
+        try:
+            parsed = datetime.fromisoformat(value)
+        except ValueError:
+            raise ValueError(message) from None
+
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise ValueError(message)
+
         return value
 
     @field_validator("published_at")

@@ -17,8 +17,6 @@ def offer_payload():
         "publishedAt": "2026-08-11T10:00:00.000Z",
         "employmentTypes": [
             {
-                "from": 10000,
-                "to": 18000,
                 "fromPerUnit": 10000,
                 "toPerUnit": 18000,
                 "gross": False,
@@ -38,8 +36,6 @@ def test_raw_offer_valid(offer_payload):
     assert offer.company_name == "Corp"
     assert len(offer.employment_types) == 1
     employment = offer.employment_types[0]
-    assert employment.salary_from == Decimal("10000")
-    assert employment.salary_to == Decimal("18000")
     assert employment.salary_from_per_unit == Decimal("10000")
     assert employment.salary_to_per_unit == Decimal("18000")
     assert employment.gross is False
@@ -49,6 +45,13 @@ def test_raw_offer_valid(offer_payload):
     assert employment.type == "b2b"
 
 
+def test_raw_offer_requires_api_company_name(offer_payload):
+    offer_payload["company_name"] = offer_payload.pop("companyName")
+
+    with pytest.raises(ValidationError, match="companyName"):
+        RawOffer.model_validate(offer_payload)
+
+
 def test_raw_offer_future_date_rejected(offer_payload):
     offer_payload["publishedAt"] = (datetime.now(UTC) + timedelta(days=1)).isoformat()
 
@@ -56,19 +59,12 @@ def test_raw_offer_future_date_rejected(offer_payload):
         RawOffer.model_validate(offer_payload)
 
 
-@pytest.mark.parametrize(
-    "payload",
-    [
-        {"from": 25000, "to": 15000},
-        {"fromPerUnit": 25000, "toPerUnit": 15000},
-    ],
-)
-def test_employment_type_salary_order(payload):
+def test_employment_type_salary_order():
     with pytest.raises(ValidationError):
-        EmploymentType.model_validate(payload)
+        EmploymentType.model_validate({"fromPerUnit": 25000, "toPerUnit": 15000})
 
 
-@pytest.mark.parametrize("field", ["from", "to", "fromPerUnit", "toPerUnit"])
+@pytest.mark.parametrize("field", ["fromPerUnit", "toPerUnit"])
 @pytest.mark.parametrize(
     "value",
     [
@@ -135,22 +131,15 @@ def test_employment_type_rejects_invalid_gross(value):
 def test_employment_type_accepts_missing_salary():
     employment = EmploymentType.model_validate({})
 
-    assert employment.salary_from is None
-    assert employment.salary_to is None
     assert employment.salary_from_per_unit is None
     assert employment.salary_to_per_unit is None
     assert employment.gross is None
 
 
-def test_employment_type_accepts_fractional_salary():
-    employment = EmploymentType.model_validate({"from": 12345.67})
-    assert employment.salary_from == Decimal("12345.67")
-
-
 def test_employment_type_accepts_foreign_currency():
-    employment = EmploymentType.model_validate({"from": 500, "currency": "USD"})
+    employment = EmploymentType.model_validate({"fromPerUnit": 500, "currency": "USD"})
 
-    assert employment.salary_from == Decimal("500")
+    assert employment.salary_from_per_unit == Decimal("500")
     assert employment.currency == "USD"
 
 
@@ -173,8 +162,12 @@ def test_raw_offer_rejects_invalid_skills(offer_payload, skills):
         RawOffer.model_validate(offer_payload)
 
 
-def test_raw_offer_rejects_date_without_timezone(offer_payload):
-    offer_payload["publishedAt"] = "2026-08-11T10:00:00"
+@pytest.mark.parametrize(
+    "published_at",
+    ["2026-08-11T10:00:00", 1700000000, "1700000000"],
+)
+def test_raw_offer_rejects_invalid_publication_date(offer_payload, published_at):
+    offer_payload["publishedAt"] = published_at
 
     with pytest.raises(ValidationError, match="timezone"):
         RawOffer.model_validate(offer_payload)
