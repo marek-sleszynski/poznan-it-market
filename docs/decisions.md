@@ -34,7 +34,7 @@ Derive model dates with `(fetched_at AT TIME ZONE 'UTC')::date`.
 - (-) Displayed timestamps still depend on the database session timezone.
 
 PostgreSQL stores `timestamptz` values as UTC and displays them in the session timezone.
-It does not retain the original timezone name. See the [PostgreSQL documentation](https://www.postgresql.org/docs/16/datatype-datetime.html).
+It does not retain the original timezone name.
 
 ## ADR-003 - City filter and remote offers
 

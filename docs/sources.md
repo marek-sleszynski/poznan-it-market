@@ -1,32 +1,32 @@
-# Data source
+# Source
 
-The project uses job offers from JustJoinIT.
+JustJoinIT endpoint: `https://justjoin.it/api/candidate-api/offers`.
 
-## API and pagination
+The response format was checked on 2026-10-09. It may change.
 
-API response checked on 2026-10-09.
-
-Endpoint: `https://justjoin.it/api/candidate-api/offers`
+## Pagination
 
 - Start with `city=Poznań`, `cityRadius=0` and `from=0`.
-- Read offers from `data` and send `meta.next.cursor` as the next `from` value.
-- Stop when `meta.from + len(data)` reaches `meta.totalItems`. The API may return a non-null cursor at the end.
-- If `totalItems` is missing, stop when the next cursor is `null`.
-- Wait two seconds between pages. Use the shared HTTP client and retries.
-- Fail on an invalid response, repeated cursor or incomplete download at the 500-page limit.
+- Read `data`; use `meta.next.cursor` as the next `from`.
+- Stop when `meta.from + len(data)` reaches `meta.totalItems`.
+- Without `totalItems`, stop when the next cursor is `null`.
+- Wait two seconds between pages. The HTTP client retries temporary failures.
+- Invalid responses, repeated cursors or an incomplete download at 500 pages fail the import.
 
-## Report scope
+All pages must finish before offers are saved.
 
-- Raw data keeps accepted offers before the city filter.
-- Reports include top-level `city` equal to `Poznań` or `Poznan`, including remote jobs.
-- All experience levels are included. The junior measure counts only `experienceLevel = 'junior'`.
-- Titles are not used to detect internships or trainee roles.
-- Offers are identified by `(source, source_offer_id)`, where `source_offer_id` is the slug.
-- Different slugs are separate offers; similar job titles are not merged.
+## Scope and limits
 
-## Important details
+Accepted raw offers are kept before the city filter.
+Reports include top-level `city` equal to `Poznań` or `Poznan`, including remote jobs.
+Offers listing Poznań only in other location fields are excluded.
 
-- Missing salary is not zero. Salary reports use original PLN variants.
-- Keep timezone information in timestamps. Observation days use UTC.
-- JSON keys such as `from` use aliases in Python models.
-- Demo data uses a saved sample and its original observation date.
+Juniors require `experienceLevel = 'junior'`. Titles are not used to detect trainee roles.
+Source and slug identify an offer. Different slugs remain separate offers.
+
+This is one provider's listings, not the whole local job market.
+A saved observation does not prove that an offer is still active.
+
+Observation days use UTC. Publication dates must include a timezone.
+Salary reports use original PLN variants and keep missing values.
+The demo uses the saved sample dated 2026-08-11, not current market data.
