@@ -39,7 +39,7 @@ flowchart LR
 
 ## Stack
 
-- **Python 3.12** — data ingestion, validation, and chart generation
+- **Python 3.14** — data ingestion, validation, and chart generation
 - **PostgreSQL 16** — database for raw JSONB payloads and analytics marts
 - **dbt-core** — SQL transformations, dimensional models, and automated tests
 - **Docker Compose** — local PostgreSQL container
@@ -49,21 +49,37 @@ flowchart LR
 
 ## Getting Started
 
-To run the project locally:
+## Getting Started
+
+You need Python 3.14, uv, Docker Compose and Make. On Windows, use WSL with Docker Desktop.
+
+For a new setup:
 
 ```bash
-cp .env.example .env                                # fill in database local credentials
-cp dbt/profiles.yml.example dbt/profiles.yml        # set up local dbt profile
-make db-up                                          # start PostgreSQL in Docker (remember to start Docker locally)
-make migrate                                        # apply initial DDL schemas and tables
-make ingest && make dbt                             # fetch raw data, transform models and run tests
+cp .env.example .env
+make install
+make db-prepare
 ```
 
-To regenerate charts manually:
+To run the demo:
 
 ```bash
-uv run python scripts/make_charts.py
+make demo
+make dbt-demo
 ```
+
+The demo uses the saved sample and `DEMO_DATABASE_URL`. It does not need Neon or API access.
+
+To check the code and run tests:
+
+```bash
+make lint
+make test
+```
+
+Tests use `TEST_DATABASE_URL`. Run `make format` to fix imports and formatting.
+
+For live data, `make ingest` gets offers from the API and `make dbt` builds the models. Both use `DATABASE_URL`.
 
 ## What the data shows
 

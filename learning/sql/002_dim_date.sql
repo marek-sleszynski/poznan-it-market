@@ -1,4 +1,4 @@
-  --  calendar dimension 2020-01-01 to 2030-12-31, one row per day
+-- Learning example. The active dim_date table is built by dbt.
 CREATE TABLE IF NOT EXISTS dim_date (
     date_id  DATE PRIMARY KEY,
     year     INTEGER NOT NULL,
