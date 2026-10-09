@@ -126,3 +126,5 @@ The images in this README are saved examples and are updated manually.
 ## Status
 
 Educational project in active development.
+
+Live observations start on **2026-10-09**. Earlier sample imports are marked as `legacy_demo` and are excluded from live reports.
