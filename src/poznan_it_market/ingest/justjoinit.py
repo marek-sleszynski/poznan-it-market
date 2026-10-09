@@ -36,18 +36,38 @@ def fetch_justjoinit_pages(
         if not isinstance(next_page, dict) or "cursor" not in next_page:
             raise ValueError("Invalid API response: missing next cursor.")
 
+        page_end = cursor + len(payload["data"])
+        reached_end = False
+        has_total = "totalItems" in meta
+        if has_total:
+            total_items = meta["totalItems"]
+            if type(total_items) is not int or total_items < 0:
+                raise ValueError("Invalid API response: unsupported totalItems.")
+            if page_end > total_items:
+                raise ValueError("Invalid API response: page exceeds totalItems.")
+            reached_end = page_end == total_items
+            if not payload["data"] and not reached_end:
+                raise ValueError("Invalid API response: empty page before totalItems.")
+
         next_cursor = next_page["cursor"]
         if next_cursor is not None:
             if type(next_cursor) is not int or next_cursor < 0:
                 raise ValueError("Invalid API response: unsupported cursor.")
-            if next_cursor in seen_cursors:
+            # The API repeats the cursor on an empty page at the end.
+            empty_end = reached_end and not payload["data"] and next_cursor == cursor
+            if next_cursor in seen_cursors and not empty_end:
                 raise ValueError("API returned a repeated cursor.")
-            if page_number == max_pages:
-                raise RuntimeError("Page limit reached before import completed.")
+            if has_total and next_cursor != page_end:
+                raise ValueError("Invalid API response: unexpected next cursor.")
+        elif has_total and not reached_end:
+            raise ValueError("API ended before totalItems was reached.")
+
+        if not reached_end and next_cursor is not None and page_number == max_pages:
+            raise RuntimeError("Page limit reached before import completed.")
 
         yield payload
 
-        if next_cursor is None:
+        if reached_end or next_cursor is None:
             return
 
         seen_cursors.add(next_cursor)

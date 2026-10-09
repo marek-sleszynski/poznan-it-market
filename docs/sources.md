@@ -4,13 +4,14 @@ The project uses job offers from JustJoinIT.
 
 ## API and pagination
 
-API response checked on 2026-10-06.
+API response checked on 2026-10-09.
 
 Endpoint: `https://justjoin.it/api/candidate-api/offers`
 
 - Start with `city=Poznań`, `cityRadius=0` and `from=0`.
 - Read offers from `data` and send `meta.next.cursor` as the next `from` value.
-- Stop when the next cursor is `null`.
+- Stop when `meta.from + len(data)` reaches `meta.totalItems`. The API may return a non-null cursor at the end.
+- If `totalItems` is missing, stop when the next cursor is `null`.
 - Wait two seconds between pages. Use the shared HTTP client and retries.
 - Fail on an invalid response, repeated cursor or incomplete download at the 500-page limit.
 
