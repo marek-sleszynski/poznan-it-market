@@ -6,9 +6,8 @@ from pathlib import Path
 
 import httpx
 
+from poznan_it_market.config import JJIT_API_URL
 from poznan_it_market.ingest.client import fetch_url_with_retry, get_http_client
-
-JUSTJOINIT_API_URL = "https://justjoin.it/api/candidate-api/offers"
 
 
 def fetch_justjoinit_pages(
@@ -22,7 +21,7 @@ def fetch_justjoinit_pages(
 
     for page_number in range(1, max_pages + 1):
         params = {"city": city, "cityRadius": 0, "from": cursor}
-        response = fetch_url_with_retry(client, JUSTJOINIT_API_URL, params=params)
+        response = fetch_url_with_retry(client, JJIT_API_URL, params=params)
         payload = response.json()
 
         if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):

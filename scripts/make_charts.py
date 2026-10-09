@@ -3,11 +3,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import psycopg
 
-from poznan_it_market.config import DATABASE_URL
+from poznan_it_market.config import DATABASE_URL, require_database_url
 
 
 def get_postings_over_time_data():
-    with psycopg.connect(DATABASE_URL) as conn:
+    with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
@@ -44,7 +44,7 @@ def plot_postings_over_time(rows):
 
 
 def get_junior_share_data():
-    with psycopg.connect(DATABASE_URL) as conn:
+    with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
@@ -88,7 +88,7 @@ def get_top_skills_data():
     query_path = Path(__file__).resolve().parent.parent / "sql" / "analysis" / "03_top_skills.sql"
     query = query_path.read_text(encoding="utf-8")
 
-    with psycopg.connect(DATABASE_URL) as conn:
+    with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
         return conn.execute(query).fetchall()
 
 
@@ -114,7 +114,7 @@ def get_salary_by_level_data():
     )
     query = query_path.read_text(encoding="utf-8")
 
-    with psycopg.connect(DATABASE_URL) as conn:
+    with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
         return conn.execute(query).fetchall()
 
 

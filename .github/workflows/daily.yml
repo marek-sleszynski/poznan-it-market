@@ -25,17 +25,7 @@ jobs:
       - name: Setup dbt profiles and credentials
         run: |
           cp dbt/profiles.yml.example dbt/profiles.yml
-          python -c "
-          import os, urllib.parse
-          url = urllib.parse.urlparse(os.environ['DATABASE_URL'])
-          with open(os.environ['GITHUB_ENV'], 'a') as f:
-              f.write(f'DB_HOST={url.hostname}\n')
-              f.write(f'DB_PORT={url.port or 5432}\n')
-              f.write(f'POSTGRES_USER={url.username}\n')
-              f.write(f'POSTGRES_PASSWORD={url.password}\n')
-              f.write(f'POSTGRES_DB={url.path.lstrip(\"/\")}\n')
-              f.write('DB_SSLMODE=require\n')
-          "
+          uv run python scripts/export_dbt_env.py
       - name: Check live data freshness
         run: uv run dbt source freshness --project-dir dbt --profiles-dir dbt --select source:raw.offers
       - name: Run dbt build

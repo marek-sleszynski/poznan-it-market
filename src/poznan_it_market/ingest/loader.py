@@ -8,7 +8,7 @@ import psycopg
 from psycopg.conninfo import conninfo_to_dict
 from psycopg.types.json import Jsonb
 
-from poznan_it_market.config import DATABASE_URL, DEMO_DATABASE_URL
+from poznan_it_market.config import DATABASE_URL, DEMO_DATABASE_URL, require_database_url
 from poznan_it_market.ingest.client import get_http_client
 from poznan_it_market.ingest.justjoinit import fetch_justjoinit_pages
 from poznan_it_market.ingest.validation import validate_offers
@@ -48,7 +48,8 @@ WHERE run_id = %s;
 
 
 def get_connection(db_uri: str | None = None) -> psycopg.Connection:
-    return psycopg.connect(db_uri or DATABASE_URL)
+    database_url = DATABASE_URL if db_uri is None else db_uri
+    return psycopg.connect(require_database_url(database_url))
 
 
 def load_raw_offers(
