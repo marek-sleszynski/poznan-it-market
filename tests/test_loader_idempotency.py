@@ -4,8 +4,10 @@ from pathlib import Path
 
 import pytest
 
-from poznan_it_market.ingest import loader
-from poznan_it_market.ingest.loader import load_raw_offers, run_pipeline
+from poznan_it_market import pipeline
+from poznan_it_market.ingest import justjoinit, loader
+from poznan_it_market.ingest.loader import load_raw_offers
+from poznan_it_market.pipeline import run_pipeline
 
 
 def test_load_raw_offers_is_idempotent_on_same_day(db_conn, sample_offers):
@@ -59,9 +61,9 @@ def test_demo_reads_sample_and_preserves_observation_date(db_conn, sample_offers
         sample_paths.append(path)
         return [offer]
 
-    monkeypatch.setattr(loader, "read_demo_offers", fake_read_demo_offers)
+    monkeypatch.setattr(pipeline, "read_demo_offers", fake_read_demo_offers)
 
-    loader.run_pipeline()
+    pipeline.run_pipeline()
 
     assert sample_paths == [Path("data/raw/sample/jjit_2026-08-11.json")]
 
@@ -81,11 +83,11 @@ def test_live_uses_api_data(db_conn, sample_offers, monkeypatch):
     def forbidden_demo_read(path):
         raise AssertionError("Live import must not read the demo sample.")
 
-    monkeypatch.setattr(loader, "read_live_offers", fake_read_live_offers)
-    monkeypatch.setattr(loader, "read_demo_offers", forbidden_demo_read)
+    monkeypatch.setattr(justjoinit, "read_live_offers", fake_read_live_offers)
+    monkeypatch.setattr(pipeline, "read_demo_offers", forbidden_demo_read)
 
     before = datetime.now(UTC)
-    loader.run_pipeline(mode="live")
+    pipeline.run_pipeline(mode="live")
     after = datetime.now(UTC)
 
     rows = db_conn.execute("SELECT payload, fetched_at FROM raw.offers;").fetchall()
@@ -125,10 +127,10 @@ def test_pipeline_saves_valid_offer_and_rejection(db_conn, sample_offers, monkey
     offers = [valid, invalid]
 
     if mode == "demo":
-        monkeypatch.setattr(loader, "read_demo_offers", lambda path: offers)
+        monkeypatch.setattr(pipeline, "read_demo_offers", lambda path: offers)
     else:
-        monkeypatch.setattr(loader, "read_live_offers", lambda: ([valid, invalid], 1))
-    loader.run_pipeline(mode=mode)
+        monkeypatch.setattr(justjoinit, "read_live_offers", lambda: ([valid, invalid], 1))
+    pipeline.run_pipeline(mode=mode)
 
     accepted_row = db_conn.execute("SELECT payload, run_id, data_mode FROM raw.offers;").fetchone()
     rejected_row = db_conn.execute(
@@ -160,7 +162,7 @@ def test_pipeline_rolls_back_offer_when_rejection_write_fails(db_conn, sample_of
     valid = sample_offers["data"][0]
     invalid = {**valid, "slug": ""}
 
-    monkeypatch.setattr(loader, "read_live_offers", lambda: ([valid, invalid], 1))
+    monkeypatch.setattr(justjoinit, "read_live_offers", lambda: ([valid, invalid], 1))
 
     def fail_rejection_write(conn, rejected, run_id):
         count = conn.execute("SELECT count(*) FROM raw.offers;").fetchone()[0]
@@ -170,7 +172,7 @@ def test_pipeline_rolls_back_offer_when_rejection_write_fails(db_conn, sample_of
     monkeypatch.setattr(loader, "load_rejected_offers", fail_rejection_write)
 
     with pytest.raises(RuntimeError, match="rejection write failure"):
-        loader.run_pipeline(mode="live")
+        pipeline.run_pipeline(mode="live")
 
     assert db_conn.execute("SELECT count(*) FROM raw.offers;").fetchone()[0] == 0
     assert db_conn.execute("SELECT count(*) FROM raw.rejected_records;").fetchone()[0] == 0
@@ -182,11 +184,11 @@ def test_fetch_failure_is_recorded(db_conn, monkeypatch, mode):
     def fail_fetch(*args):
         raise RuntimeError("Simulated fetch failure")
 
-    monkeypatch.setattr(loader, "read_demo_offers", fail_fetch)
-    monkeypatch.setattr(loader, "read_live_offers", fail_fetch)
+    monkeypatch.setattr(pipeline, "read_demo_offers", fail_fetch)
+    monkeypatch.setattr(justjoinit, "read_live_offers", fail_fetch)
 
     with pytest.raises(RuntimeError, match="Simulated fetch failure"):
-        loader.run_pipeline(mode=mode)
+        pipeline.run_pipeline(mode=mode)
 
     row = db_conn.execute(
         """
@@ -232,11 +234,11 @@ def test_status_write_failure_preserves_original_error(db_conn, monkeypatch):
     def fail_status_write(*args, **kwargs):
         raise OSError("Simulated status write failure")
 
-    monkeypatch.setattr(loader, "read_live_offers", fail_fetch)
+    monkeypatch.setattr(justjoinit, "read_live_offers", fail_fetch)
     monkeypatch.setattr(loader, "log_run_finish", fail_status_write)
 
     with pytest.raises(RuntimeError, match="Original fetch failure"):
-        loader.run_pipeline(mode="live")
+        pipeline.run_pipeline(mode="live")
 
 
 def test_same_day_import_keeps_previously_seen_offers(db_conn):

@@ -3,7 +3,7 @@ import json
 import httpx
 import pytest
 
-from poznan_it_market.ingest import justjoinit, loader
+from poznan_it_market.ingest import justjoinit
 
 
 def test_fetches_two_pages_and_stops(monkeypatch):
@@ -118,9 +118,9 @@ def test_live_reader_counts_pages_and_closes_client(monkeypatch):
         )
 
     client = httpx.Client(transport=httpx.MockTransport(fake_api))
-    monkeypatch.setattr(loader, "get_http_client", lambda: client)
+    monkeypatch.setattr(justjoinit, "get_http_client", lambda: client)
 
-    offers, pages_fetched = loader.read_live_offers()
+    offers, pages_fetched = justjoinit.read_live_offers()
 
     assert offers == [{"slug": "offer-0"}, {"slug": "offer-10"}]
     assert pages_fetched == 2

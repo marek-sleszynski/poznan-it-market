@@ -4,7 +4,8 @@ import httpx
 import pytest
 from tenacity import wait_none
 
-from poznan_it_market.ingest import justjoinit, loader
+from poznan_it_market import pipeline
+from poznan_it_market.ingest import justjoinit
 
 
 def make_offer(slug):
@@ -35,7 +36,7 @@ def mock_api(monkeypatch):
 
     def install(handler):
         client = httpx.Client(transport=httpx.MockTransport(handler))
-        monkeypatch.setattr(loader, "get_http_client", lambda: client)
+        monkeypatch.setattr(justjoinit, "get_http_client", lambda: client)
         return client
 
     return install
@@ -58,7 +59,7 @@ def test_two_page_pipeline_saves_offers_rejection_and_metrics(db_conn, mock_api)
         return httpx.Response(200, json=make_page([second], 10, None))
 
     client = mock_api(handler)
-    loader.run_pipeline(mode="live")
+    pipeline.run_pipeline(mode="live")
 
     assert requested_cursors == [0, 10]
     assert client.is_closed
@@ -110,7 +111,7 @@ def test_second_page_failure_saves_no_partial_data(db_conn, mock_api):
 
     client = mock_api(handler)
     with pytest.raises(httpx.HTTPStatusError) as error:
-        loader.run_pipeline(mode="live")
+        pipeline.run_pipeline(mode="live")
 
     assert error.value.response.status_code == 503
     assert requested_cursors == [0, 10, 10, 10, 10, 10]

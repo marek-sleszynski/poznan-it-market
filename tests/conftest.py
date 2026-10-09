@@ -24,10 +24,12 @@ def db_conn(monkeypatch):
     if not test_url:
         pytest.fail("TEST_DATABASE_URL must be set for database tests.")
 
+    from poznan_it_market import pipeline
     from poznan_it_market.ingest import loader
 
     monkeypatch.setattr(loader, "DATABASE_URL", test_url)
-    monkeypatch.setattr(loader, "DEMO_DATABASE_URL", test_url)
+    monkeypatch.setattr(pipeline, "DATABASE_URL", test_url)
+    monkeypatch.setattr(pipeline, "DEMO_DATABASE_URL", test_url)
 
     with loader.get_connection() as conn:
         if conn.info.dbname != "poznan_it_market_test":

@@ -54,6 +54,18 @@ def fetch_justjoinit_pages(
         time.sleep(2.0)
 
 
+def read_live_offers() -> tuple[list[dict], int]:
+    offers: list[dict] = []
+    pages_fetched = 0
+
+    with get_http_client() as client:
+        for page in fetch_justjoinit_pages(client):
+            offers.extend(page["data"])
+            pages_fetched += 1
+
+    return offers, pages_fetched
+
+
 def save_raw_pages(pages: Iterator[dict], target_date: str | None = None) -> list[Path]:
     if target_date is None:
         target_date = datetime.now(UTC).date().isoformat()
