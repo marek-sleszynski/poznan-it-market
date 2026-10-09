@@ -30,4 +30,3 @@ Endpoint: `https://justjoin.it/api/candidate-api/offers`
 - Keep timezone information in timestamps. Observation days use UTC.
 - JSON keys such as `from` use aliases in Python models.
 - Demo data uses a saved sample and its original observation date.
-- Saved page downloads have separate folders. Only folders with `manifest.json` are complete.

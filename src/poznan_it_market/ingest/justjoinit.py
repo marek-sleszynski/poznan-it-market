@@ -1,9 +1,5 @@
-import json
 import time
-import uuid
 from collections.abc import Iterator
-from datetime import UTC, datetime
-from pathlib import Path
 
 import httpx
 
@@ -85,45 +81,3 @@ def read_live_offers() -> tuple[list[dict], int]:
             pages_fetched += 1
 
     return offers, pages_fetched
-
-
-def save_raw_pages(pages: Iterator[dict], target_date: str | None = None) -> list[Path]:
-    if target_date is None:
-        target_date = datetime.now(UTC).date().isoformat()
-
-    # Each download has its own folder, even when repeated on the same day.
-    output_dir = Path("data/raw") / target_date / uuid.uuid4().hex
-    output_dir.mkdir(parents=True, exist_ok=False)
-
-    saved_paths: list[Path] = []
-    for page_num, page_data in enumerate(pages, start=1):
-        file_path = output_dir / f"page_{page_num:03d}.json"
-        file_path.write_text(
-            json.dumps(page_data, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
-        saved_paths.append(file_path)
-
-    # Only folders with a manifest contain a completed download.
-    manifest = {
-        "complete": True,
-        "saved_at": datetime.now(UTC).isoformat(),
-        "pages": [path.name for path in saved_paths],
-    }
-    temporary_manifest = output_dir / "manifest.json.tmp"
-    temporary_manifest.write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
-    temporary_manifest.replace(output_dir / "manifest.json")
-
-    return saved_paths
-
-
-def fetch_and_save(city: str = "Poznań", max_pages: int = 500) -> list[Path]:
-    with get_http_client() as client:
-        pages = fetch_justjoinit_pages(client, city=city, max_pages=max_pages)
-        return save_raw_pages(pages)
-
-
-if __name__ == "__main__":
-    fetch_and_save()

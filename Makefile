@@ -1,4 +1,4 @@
-.PHONY: charts-demo install lint test sample db-up db-shell db-reset ingest dbt charts migrate demo format dbt-demo db-prepare
+.PHONY: charts-demo install lint test db-up db-shell db-reset ingest dbt charts migrate demo format dbt-demo db-prepare
 
 install:
 	uv sync --locked
@@ -10,8 +10,6 @@ format:
 	uv run --locked ruff format .
 test:
 	uv run --locked pytest
-sample:
-	uv run --locked python scripts/fetch_sample.py
 db-up:
 	docker compose up -d
 db-shell:
