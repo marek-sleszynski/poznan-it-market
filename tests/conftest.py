@@ -1,6 +1,5 @@
 import json
 import os
-from pathlib import Path
 
 import pytest
 from dotenv import load_dotenv
@@ -12,8 +11,9 @@ os.environ["DATABASE_URL"] = os.environ.get("TEST_DATABASE_URL", "")
 
 @pytest.fixture
 def sample_offers():
-    SAMPLE_PATH = Path(__file__).parent.parent / "data/raw/sample/jjit_2026-08-11.json"
-    with open(SAMPLE_PATH, encoding="utf-8") as f:
+    from poznan_it_market import config
+
+    with config.DEMO_SAMPLE_PATH.open(encoding="utf-8") as f:
         data = json.load(f)
     return data
 

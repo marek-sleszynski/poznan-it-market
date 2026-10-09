@@ -61,9 +61,8 @@ To load demo data and build the models:
 
 ```bash
 make demo
-make dbt-demo
 make charts-demo
-uv run --locked python scripts/check_demo_report.py
+uv run --locked python scripts/check_results.py --mode demo
 ```
 
 The demo uses the saved sample, keeps its date and uses `DEMO_DATABASE_URL`.

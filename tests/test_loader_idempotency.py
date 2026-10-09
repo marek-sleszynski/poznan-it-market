@@ -1,6 +1,5 @@
 import uuid
 from datetime import UTC, datetime
-from pathlib import Path
 
 import pytest
 
@@ -65,7 +64,7 @@ def test_demo_reads_sample_and_preserves_observation_date(db_conn, sample_offers
 
     pipeline.run_pipeline()
 
-    assert sample_paths == [Path("data/raw/sample/jjit_2026-08-11.json")]
+    assert sample_paths == [pipeline.config.DEMO_SAMPLE_PATH]
 
     rows = db_conn.execute("SELECT payload, fetched_at FROM raw.offers;").fetchall()
 

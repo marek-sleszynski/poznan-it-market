@@ -6,13 +6,17 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import psycopg
 from matplotlib.ticker import MaxNLocator
+from psycopg.conninfo import conninfo_to_dict
 
+from poznan_it_market import config
 from poznan_it_market.config import DATABASE_URL, require_database_url
 
 OUTPUT_DIR = Path(__file__).resolve().parent.parent / "docs/img"
 
 
-def get_analysis_data(filename: str, params: dict | None = None):
+def get_analysis_data(
+    filename: str, params: dict | None = None, *, database_url: str | None = None
+):
     if params is not None:
         start_date = params.get("start_date")
         end_date = params.get("end_date")
@@ -22,35 +26,41 @@ def get_analysis_data(filename: str, params: dict | None = None):
     query_path = Path(__file__).resolve().parent.parent / "sql" / "analysis" / filename
     query = query_path.read_text(encoding="utf-8")
 
-    with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
+    url = DATABASE_URL if database_url is None else database_url
+
+    with psycopg.connect(require_database_url(url)) as conn:
         return conn.execute(query, params).fetchall()
 
 
-def get_postings_over_time_data(start_date=None, end_date=None):
+def get_postings_over_time_data(start_date=None, end_date=None, *, database_url: str | None = None):
     return get_analysis_data(
         "06_postings_over_time.sql",
         {"start_date": start_date, "end_date": end_date},
+        database_url=database_url,
     )
 
 
-def get_junior_share_data(start_date=None, end_date=None):
+def get_junior_share_data(start_date=None, end_date=None, *, database_url: str | None = None):
     return get_analysis_data(
         "07_junior_share.sql",
         {"start_date": start_date, "end_date": end_date},
+        database_url=database_url,
     )
 
 
-def get_top_skills_data(start_date=None, end_date=None):
+def get_top_skills_data(start_date=None, end_date=None, *, database_url: str | None = None):
     return get_analysis_data(
         "03_top_skills.sql",
         {"start_date": start_date, "end_date": end_date},
+        database_url=database_url,
     )
 
 
-def get_salary_by_level_data(start_date=None, end_date=None):
+def get_salary_by_level_data(start_date=None, end_date=None, *, database_url: str | None = None):
     return get_analysis_data(
         "05_salary_by_level.sql",
         {"start_date": start_date, "end_date": end_date},
+        database_url=database_url,
     )
 
 
@@ -206,6 +216,7 @@ def plot_salary_by_level(rows, period="Not specified"):
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Generate charts for an observation period.")
+    parser.add_argument("--mode", choices=["live", "demo"], default="live")
     parser.add_argument("--start-date", type=date.fromisoformat, help="First UTC date, YYYY-MM-DD.")
     parser.add_argument("--end-date", type=date.fromisoformat, help="Last UTC date, YYYY-MM-DD.")
     args = parser.parse_args(argv)
@@ -213,13 +224,35 @@ def main(argv: list[str] | None = None) -> None:
         if args.start_date > args.end_date:
             parser.error("start-date cannot be after end-date.")
 
+    database_args = {}
+    if args.mode == "demo":
+        url = config.DEMO_DATABASE_URL
+        if not url:
+            raise ValueError("DEMO_DATABASE_URL is required for demo charts.")
+        settings = conninfo_to_dict(url)
+        if (
+            settings.get("host") not in {"localhost", "127.0.0.1", "::1"}
+            or settings.get("dbname") != "poznan_it_market_demo"
+        ):
+            raise ValueError("Demo charts require the local poznan_it_market_demo database.")
+        for supplied_date in (args.start_date, args.end_date):
+            if supplied_date is not None and supplied_date != config.DEMO_DATE:
+                parser.error("Demo charts must use the saved sample date.")
+        args.start_date = config.DEMO_DATE
+        args.end_date = config.DEMO_DATE
+        database_args["database_url"] = url
+
+    plt.switch_backend("Agg")
+
     reports = [
         ("Postings over time", get_postings_over_time_data, plot_postings_over_time),
         ("Junior share", get_junior_share_data, plot_junior_share),
         ("Top skills", get_top_skills_data, plot_top_skills),
         ("Salary by level", get_salary_by_level_data, plot_salary_by_level),
     ]
-    datasets = [get_data(args.start_date, args.end_date) for _, get_data, _ in reports]
+    datasets = [
+        get_data(args.start_date, args.end_date, **database_args) for _, get_data, _ in reports
+    ]
     if not datasets[0]:
         parser.error("No offer observations in the selected period.")
 

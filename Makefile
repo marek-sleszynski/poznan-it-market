@@ -22,14 +22,16 @@ ingest:
 
 demo:
 	uv run --locked poznan-it-market --mode demo
+	$(MAKE) dbt-demo
+	$(MAKE) charts-demo
 dbt:
 	uv run --locked python scripts/build_dbt.py --mode live
 dbt-demo:
-	uv run --locked python scripts/build_dbt.py --mode demo --expected-date 2026-08-11
+	uv run --locked python scripts/build_dbt.py --mode demo
 charts:
 	uv run --locked python scripts/make_charts.py
 charts-demo:
-	uv run --locked python scripts/make_demo_charts.py
+	uv run --locked python scripts/make_charts.py --mode demo
 migrate:
 	for f in sql/ddl/*.sql; do \
 	        docker compose exec -T db sh -c 'psql -X -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -v ON_ERROR_STOP=1' < "$$f" || exit 1; \

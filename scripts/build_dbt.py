@@ -24,7 +24,7 @@ def build_dbt(mode: str, expected_date: str | None = None) -> None:
         ] not in {"poznan_it_market_demo", "poznan_it_market_test"}:
             raise ValueError("Demo builds require a local demo or test database.")
         if expected_date is None:
-            raise ValueError("Demo builds require an explicit expected date.")
+            expected_date = config.DEMO_DATE.isoformat()
 
     variables = {"data_mode": mode}
     if expected_date is not None:

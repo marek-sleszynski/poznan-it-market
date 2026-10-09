@@ -7,6 +7,7 @@ from pathlib import Path
 
 from psycopg.conninfo import conninfo_to_dict
 
+from poznan_it_market import config
 from poznan_it_market.config import DATABASE_URL, DEMO_DATABASE_URL, LOG_LEVEL
 from poznan_it_market.ingest import justjoinit, loader
 from poznan_it_market.ingest.validation import validate_offers
@@ -28,7 +29,7 @@ def run_pipeline(mode: str = "demo") -> None:
         try:
             logger.info("run_id=%s mode=%s stage=fetch", run_id, mode)
             if mode == "demo":
-                offers = read_demo_offers(Path("data/raw/sample/jjit_2026-08-11.json"))
+                offers = read_demo_offers(config.DEMO_SAMPLE_PATH)
                 pages_fetched = 1
             else:
                 offers, pages_fetched = justjoinit.read_live_offers()
@@ -100,7 +101,7 @@ def get_import_settings(mode: str, started_at: datetime) -> tuple[str, datetime]
             raise ValueError("Demo import requires a demo or test database.")
 
         database_url = DEMO_DATABASE_URL
-        observed_at = datetime(2026, 8, 11, tzinfo=UTC)
+        observed_at = datetime.combine(config.DEMO_DATE, datetime.min.time(), tzinfo=UTC)
     elif mode == "live":
         if not DATABASE_URL:
             raise ValueError("DATABASE_URL is required for live import.")

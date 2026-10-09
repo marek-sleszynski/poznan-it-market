@@ -1,6 +1,10 @@
+import os
 from datetime import date
+from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
+from dotenv import load_dotenv
 
 from scripts import make_charts
 
@@ -90,3 +94,110 @@ def test_chart_cli_rejects_empty_period_before_plotting(monkeypatch):
     with pytest.raises(SystemExit) as error:
         make_charts.main(["--start-date", "2026-08-12", "--end-date", "2026-08-12"])
     assert error.value.code == 2
+
+
+def test_demo_charts_use_demo_database_and_shared_date(monkeypatch):
+    url = "postgresql://postgres:postgres@localhost:55432/poznan_it_market_demo"
+    sample_date = date(2020, 2, 3)
+    monkeypatch.setattr(make_charts.config, "DEMO_DATABASE_URL", url)
+    monkeypatch.setattr(make_charts.config, "DEMO_DATE", sample_date)
+    monkeypatch.setattr(make_charts, "DATABASE_URL", "postgresql://example.invalid/live")
+
+    connection = MagicMock()
+    connection.__enter__.return_value = connection
+    connection.execute.return_value.fetchall.return_value = [(sample_date, 5, 1)]
+    connected_urls = []
+
+    def connect(database_url):
+        connected_urls.append(database_url)
+        return connection
+
+    monkeypatch.setattr(make_charts.psycopg, "connect", connect)
+    for _, plotter in REPORTS:
+        monkeypatch.setattr(make_charts, plotter, lambda rows, period: None)
+
+    make_charts.main(["--mode", "demo"])
+
+    assert connected_urls == [url] * 4
+    assert connection.execute.call_count == 4
+    for call in connection.execute.call_args_list:
+        assert call.args[1] == {"start_date": sample_date, "end_date": sample_date}
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        None,
+        "",
+        "postgresql://postgres:postgres@example.invalid/poznan_it_market_demo",
+        "postgresql://postgres:postgres@localhost/poznan_it_market",
+    ],
+)
+def test_demo_charts_reject_missing_or_wrong_database(monkeypatch, url):
+    monkeypatch.setattr(make_charts.config, "DEMO_DATABASE_URL", url)
+
+    def forbidden_connection(*args, **kwargs):
+        pytest.fail("Invalid demo settings must fail before database access.")
+
+    monkeypatch.setattr(make_charts.psycopg, "connect", forbidden_connection)
+    with pytest.raises(ValueError, match="demo|Demo"):
+        make_charts.main(["--mode", "demo"])
+
+
+def test_demo_chart_failure_propagates(monkeypatch):
+    monkeypatch.setattr(
+        make_charts.config,
+        "DEMO_DATABASE_URL",
+        "postgresql://postgres:postgres@localhost/poznan_it_market_demo",
+    )
+    failure = RuntimeError("Chart query failed.")
+
+    def failed_connection(*args, **kwargs):
+        raise failure
+
+    monkeypatch.setattr(make_charts.psycopg, "connect", failed_connection)
+    with pytest.raises(RuntimeError) as error:
+        make_charts.main(["--mode", "demo"])
+    assert error.value is failure
+
+
+@pytest.mark.parametrize(
+    "arguments",
+    [
+        ["--start-date", "2026-08-10"],
+        ["--end-date", "2026-08-12"],
+    ],
+)
+def test_demo_charts_reject_dates_outside_sample(monkeypatch, arguments):
+    monkeypatch.setattr(
+        make_charts.config,
+        "DEMO_DATABASE_URL",
+        "postgresql://postgres:postgres@localhost/poznan_it_market_demo",
+    )
+    monkeypatch.setattr(make_charts.config, "DEMO_DATE", date(2026, 8, 11))
+
+    def forbidden_connection(*args, **kwargs):
+        pytest.fail("Invalid demo dates must fail before database access.")
+
+    monkeypatch.setattr(make_charts.psycopg, "connect", forbidden_connection)
+    with pytest.raises(SystemExit) as error:
+        make_charts.main(["--mode", "demo", *arguments])
+    assert error.value.code == 2
+
+
+@pytest.mark.parametrize("port", [None, "55432"])
+def test_example_database_urls_follow_local_port(monkeypatch, port):
+    env = {} if port is None else {"POSTGRES_PORT": port}
+    monkeypatch.setattr(os, "environ", env)
+    root = Path(__file__).resolve().parent.parent
+    load_dotenv(root / ".env.example")
+
+    expected_port = port or "5432"
+    for variable, database in (
+        ("DATABASE_URL", "poznan_it_market"),
+        ("DEMO_DATABASE_URL", "poznan_it_market_demo"),
+        ("TEST_DATABASE_URL", "poznan_it_market_test"),
+    ):
+        assert (
+            env[variable] == f"postgresql://postgres:postgres@localhost:{expected_port}/{database}"
+        )

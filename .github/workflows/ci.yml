@@ -1,85 +1,12 @@
-on: push
+"on": push
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: poznan_it_market
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.14"
-
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
-        with:
-          enable-cache: true
-      - run: uv sync --locked
-      - run: uv run ruff check
-      - run: uv run ruff format --check
-      - run: uv run mypy src
-      - name: Migrate database schema
-        env:
-          PGPASSWORD: postgres
-        run: |
-          for file in sql/ddl/*.sql; do
-            psql -h localhost -U postgres -d poznan_it_market -v ON_ERROR_STOP=1 -f "$file" || exit 1
-          done
-      - name: Prepare test database
-        env:
-          PGPASSWORD: postgres
-        run: |
-          createdb -h localhost -U postgres poznan_it_market_test
-          psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/001_raw_schema.sql
-          psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/003_rejected_records.sql
-          psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/004_ingestion_runs.sql
-          psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/006_ingestion_run_errors.sql
-          psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/007_offer_data_mode.sql
-          psql -h localhost -U postgres -d poznan_it_market_test -v ON_ERROR_STOP=1 -f sql/ddl/008_ingestion_run_context.sql
-      - name: Run Python tests
-        run: uv run pytest
-        env:
-          JJIT_API_URL: "https://justjoin.it/api/candidate-api/offers"
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market"
-          TEST_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
-      - name: Load deterministic CI data
-        run: uv run python scripts/load_ci_fixture.py
-        env:
-          JJIT_API_URL: "https://justjoin.it/api/candidate-api/offers"
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
-          TEST_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
-      - name: Prepare dbt configuration
-        run: |
-          cp dbt/profiles.yml.example dbt/profiles.yml
-          uv run python scripts/export_dbt_env.py
-        env:
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
-      - name: Run dbt build
-        run: |
-          uv run dbt build --project-dir dbt --profiles-dir dbt --vars '{"data_mode": "demo", "expected_date": "2026-08-11"}'
-      - name: Verify CI fixture results
-        run: uv run python scripts/check_ci_results.py
-        env:
-          TEST_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
-
-  demo_check:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
     env:
-      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_demo"
+      JJIT_API_URL: "https://justjoin.it/api/candidate-api/offers"
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
+      TEST_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
       DEMO_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_demo"
 
     services:
@@ -88,7 +15,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: poznan_it_market_demo
+          POSTGRES_DB: poznan_it_market_test
         ports:
           - 5432:5432
         options: >-
@@ -105,32 +32,48 @@ jobs:
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
         with:
           enable-cache: true
-      - run: make install
-      - name: Prepare demo schema
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Check lint and formatting
+        run: |
+          uv run --locked ruff check .
+          uv run --locked ruff format --check .
+
+      - name: Check source types
+        run: uv run --locked mypy src
+
+      - name: Prepare isolated test and demo databases
         env:
           PGPASSWORD: postgres
         run: |
-          for file in sql/ddl/*.sql; do
-            psql -X -h localhost -U postgres -d poznan_it_market_demo -v ON_ERROR_STOP=1 -f "$file" || exit 1
+          createdb -h localhost -U postgres poznan_it_market_demo
+          for database in poznan_it_market_test poznan_it_market_demo; do
+            for file in sql/ddl/*.sql; do
+              psql -X -h localhost -U postgres -d "$database" \
+                -v ON_ERROR_STOP=1 -f "$file" || exit 1
+            done
           done
-      - run: make demo
-      - run: make dbt-demo
-      - name: Check demo report numbers
-        run: uv run --locked python scripts/check_demo_report.py
-      - name: Generate fresh demo charts
-        run: |
-          rm -f docs/img/postings_over_time.png docs/img/junior_share_over_time.png docs/img/top_skills.png docs/img/salary_by_level.png
-          make charts-demo
-          uv run --locked python - <<'PY'
-          from pathlib import Path
-          from PIL import Image
 
-          for name in (
-              "postings_over_time.png", "junior_share_over_time.png",
-              "top_skills.png", "salary_by_level.png",
-          ):
-              with Image.open(Path("docs/img") / name) as picture:
-                  assert picture.format == "PNG"
-                  picture.verify()
-          print("PASS: all four demo charts were generated.")
-          PY
+      - name: Run Python tests
+        run: uv run --locked pytest
+
+      - name: Load deterministic CI data
+        run: uv run --locked python scripts/load_ci_fixture.py
+
+      - name: Build models for the CI fixture
+        env:
+          DEMO_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
+        run: |
+          uv run --locked python scripts/build_dbt.py \
+            --mode demo --expected-date 2026-08-11
+
+      - name: Verify exact CI results
+        run: uv run --locked python scripts/check_results.py --mode ci
+
+      - name: Run the complete public demo command
+        run: make demo
+
+      - name: Verify demo data and reports
+        run: uv run --locked python scripts/check_results.py --mode demo

@@ -1,5 +1,6 @@
 import json
 import subprocess
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -66,8 +67,8 @@ def test_selected_mode_controls_database_and_models(monkeypatch, mode):
         (None, "2026-08-11", "DEMO_DATABASE_URL is required"),
         (
             "postgresql://user:fake_password@localhost/poznan_it_market_demo",
-            None,
-            "explicit expected date",
+            "not-a-date",
+            "Invalid isoformat string",
         ),
     ],
 )
@@ -97,3 +98,23 @@ def test_dbt_failure_is_not_reported_as_success(monkeypatch):
     with pytest.raises(subprocess.CalledProcessError) as error:
         build_dbt.build_dbt("demo", "2026-08-11")
     assert error.value is failure
+
+
+def test_demo_build_uses_shared_sample_date(monkeypatch):
+    monkeypatch.setattr(
+        build_dbt.config,
+        "DEMO_DATABASE_URL",
+        "postgresql://user:fake_password@localhost:55432/poznan_it_market_demo",
+    )
+    monkeypatch.setattr(build_dbt.config, "DEMO_DATE", date(2020, 2, 3))
+    captured_variables = []
+
+    def capture_command(command, **kwargs):
+        assert kwargs["check"] is True
+        captured_variables.append(json.loads(command[command.index("--vars") + 1]))
+
+    monkeypatch.setattr(build_dbt.subprocess, "run", capture_command)
+
+    build_dbt.build_dbt("demo")
+
+    assert captured_variables == [{"data_mode": "demo", "expected_date": "2020-02-03"}]
