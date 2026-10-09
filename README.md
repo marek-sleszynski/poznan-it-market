@@ -9,6 +9,8 @@ A Python and SQL project that collects IT job offers from JustJoinIT and builds 
 Demo chart: **5 offer observations on 2026-08-11**.
 Source: [saved JustJoinIT sample](data/raw/sample/jjit_2026-08-11.json).
 
+[Read the demo report](docs/reports/demo-2026-08-11.md) - verified on 2026-10-09.
+
 ## Why this exists
 
 As a student looking for my first IT job, I wanted to learn more about the local job market.
