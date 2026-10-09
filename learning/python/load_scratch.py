@@ -3,7 +3,7 @@ import json
 import psycopg
 from psycopg.types.json import Jsonb
 
-from poznan_it_market.config import DATABASE_URL
+from poznan_it_market.config import DATABASE_URL, require_database_url
 
 SAMPLE_PATH = "data/raw/sample/jjit_2026-08-11.json"
 
@@ -17,7 +17,7 @@ def load_sample():
     print(f"Found {len(offers)} offers in sample.")
     print("Connecting to database...")
 
-    with psycopg.connect(DATABASE_URL) as conn:
+    with psycopg.connect(require_database_url(DATABASE_URL)) as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 CREATE SCHEMA IF NOT EXISTS scratch;

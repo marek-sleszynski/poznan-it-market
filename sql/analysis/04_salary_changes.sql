@@ -1,20 +1,47 @@
-WITH offers_history AS (
-    SELECT
+with compared as (
+    select
+        source,
         source_offer_id,
-        company_name,
-        LAG(salary_from) OVER (PARTITION BY source_offer_id ORDER BY dbt_valid_from) AS old_salary_from,
-        LAG(salary_to) OVER (PARTITION BY source_offer_id ORDER BY dbt_valid_from) AS old_salary_to,
-        salary_from AS new_salary_from,
-        salary_to AS new_salary_to,
-        dbt_valid_from AS changed_at
-    FROM snapshots.snap_offers)
-SELECT
-    source_offer_id,
-    company_name,
-    old_salary_from,
-    old_salary_to,
-    new_salary_from,
-    new_salary_to,
-    changed_at
-FROM offers_history
-WHERE old_salary_from IS NOT NULL;
+        employment_type,
+        currency,
+        salary_unit,
+        is_gross,
+        fetched_at as observed_at,
+        lag(fetched_at) over salary_history as previous_observed_at,
+        lag(salary_from) over salary_history as old_salary_from,
+        lag(salary_to) over salary_history as old_salary_to,
+        salary_from as new_salary_from,
+        salary_to as new_salary_to
+    from offer_salary_history
+    where employment_type is not null
+      and currency is not null
+      and salary_unit is not null
+      and is_gross is not null
+    window salary_history as (
+        partition by
+            source,
+            source_offer_id,
+            employment_type,
+            currency,
+            salary_unit,
+            is_gross
+        order by fetched_at, raw_offer_id
+    )
+)
+
+select *
+from compared
+where previous_observed_at is not null
+  and (
+      old_salary_from is distinct from new_salary_from
+      or old_salary_to is distinct from new_salary_to
+  )
+  and (
+      %(start_date)s::date is null
+      or (observed_at at time zone 'UTC')::date >= %(start_date)s::date
+  )
+  and (
+      %(end_date)s::date is null
+      or (observed_at at time zone 'UTC')::date <= %(end_date)s::date
+  )
+order by observed_at, source, source_offer_id;

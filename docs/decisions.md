@@ -1,125 +1,137 @@
 # Architecture decisions
 
+Updated on 2026-10-09 to describe the current implementation. Original decision dates are kept.
 
-## ADR-001 — Store raw API responses unchanged
+## ADR-001 - Keep original offer JSON
 
 **Date:** 2026-08-20 · **Status:** Accepted
 
 **Context**
-API data can be loaded directly into typed relational columns or stored as raw responses first. The JustJoin.it API is undocumented and its format may change without notice.
+The API format can change. Raw fields are useful for debugging and rebuilding models.
 
 **Decision**
-Store untouched JSON responses directly in a `payload jsonb` column in `raw.offers` table before transforming them downstream with dbt.
+Validate offers and keep their original JSON in `raw.offers.payload`. Save rejected records separately.
 
 **Consequences**
-- (+) Keeps full history, so you can remodel or backfill data without calling the API again.
-- (+) Easier debugging using the original API responses.
-- (−) Requires more database storage than regular database tables.
-- (−) Adds an extra staging transformation layer in dbt.
+- (+) Models can be rebuilt from retained observations.
+- (+) Original fields remain available for debugging.
+- (-) Raw history needs storage.
 
-## ADR-002 - Why I use timestamptz for all colums 
+## ADR-002 - Use timezone-aware timestamps and UTC days
 
 **Date:** 2026-09-06 · **Status:** Accepted
 
 **Context**
-Having dates without timezones can lead to bugs when e.g. if someone create an offer at "14:00" in Poland, the database cannot tell in which country it's time
+Local dates can differ near midnight. A timestamp without a timezone can be ambiguous.
 
 **Decision**
-Always use 'timestamptz' instead of 'timestamp' across all database tables.
+Require timezone-aware input and use `timestamptz` for timestamps. Use UTC for observation days.
+Derive model dates with `(fetched_at AT TIME ZONE 'UTC')::date`.
 
 **Consequences**
-- (+) SQL standardizes for all timestamps to UTC.
-- (+) Eliminates misses when converting to local timezones. 
+- (+) Raw keys and report dates use the same day.
+- (+) Timestamps represent a clear point in time.
+- (-) Displayed timestamps still depend on the database session timezone.
 
-## ADR-003 - Primary location and remote offers
+PostgreSQL stores `timestamptz` values as UTC and displays them in the session timezone.
+It does not retain the original timezone name. See the [PostgreSQL documentation](https://www.postgresql.org/docs/16/datatype-datetime.html).
+
+## ADR-003 - City filter and remote offers
 
 **Date:** 2026-09-09 · **Status:** Accepted
 
 **Context**
-Searching for 'city=Poznan' can return postings outside of Poznań, not just local. In my sample 50% of offers are from other city, and 70% are remote. Without the primary location filter it would falsify the statistic.
+The API city filter can return listings with another top-level city.
 
-**Decision** 
-Filter job postings by primary location `locations[0].city == 'Poznań'`. Keep postings only if primary location is Poznań (even if remote).
+**Decision**
+Reports include top-level `city` equal to `Poznań` or `Poznan`. Keep remote offers that match.
+Keep accepted offers in raw before applying this report filter.
 
 **Consequences**
-- (+) Eliminates misleading information from other city postings.
-- (+) Gives more reliable market information in Poznań.
-- (-) Throws away around 50% of postings returned by raw API during staging.
+- (+) The filter is clear and matches the SQL.
+- (+) Raw data remains available for other analyses.
+- (-) Offers listing Poznań only in other location fields are excluded.
 
-## ADR-004 - Same-day re-run strategy
+## ADR-004 - Same-day repeats
 
 **Date:** 2026-09-14 · **Status:** Accepted
 
 **Context**
-Pipeline can run more than once a day. If a network issue causes pipeline to stop, I might need to rerun it manually. Table raw.offers does not allow duplicates. We need to decide what to do if we see the same offer- reject the new offer or update it.
+An import can run more than once a day. Repeating it should not create duplicate observations.
 
 **Decision**
-Overwrite existing records.
+Update an existing offer for the same source, offer ID and UTC day. Keep offers seen earlier that
+day even if a later import does not return them. Write the full import in one transaction.
 
 **Consequences**
-- (+) Updated version is the latest version and the most accurate.
-- (+) If pipeline goes wrong I can rerun it easly to update the data.
-- (-) Updating it (in larger numbers) is less efficient than ignoring duplicates.
-- (-) We lose data from the primary unupdated offer (date and id).
+- (+) Repeats are safe and do not create duplicates.
+- (+) A day contains offers seen during any successful import that day.
+- (-) Earlier versions from the same day are replaced.
+- (-) A daily count is not the exact result of the last import.
 
-## ADR-005 — Simplified dimensional model instead of snowflake normalization
+## ADR-005 - Simple company and skill models
 
 **Date:** 2026-09-18 · **Status:** Accepted
 
 **Context**
-A standard Kimball model handles many-to-many relationships with a bridge table and a dim_technology dimension. Location could also be split into dim_location. Because we only track one city from a single data source, these extra tables add unnecessary join overhead.
+The reports need company groups and skill counts. Extra dimension tables add complexity.
 
 **Decision**
-I chose to skip dim_location to filter by city early in staging and flatten technologies by making one row per job-skill pair instead of creating a bridge table and dim_technology.
+Group company names with `lower(trim(company_name))`. Store one normalized skill per offer
+observation in `fct_offer_skill`. Keep the city filter in staging.
 
 **Consequences**
-- (+) Finding top technologies requires a simple GROUP BY without multi-table joins.
-- (+) Faster dbt runs and simpler data lineage.
-- (−) If we want to add more cities we would need to add dedicated dimension tables later.
+- (+) Reports use simple joins and grouping.
+- (+) One observation can have several deduplicated skills.
+- (-) Different spellings or legal suffixes can remain separate company names.
 
-## ADR-006 - Updating daily snapshot tables
+## ADR-006 - Rebuild daily offer facts
 
-**Date:** 2026-09-26 · **Status:** Accepted
+**Date:** 2026-10-08 · **Status:** Accepted
 
 **Context**
-Rebuilding fully fact table is too slow and expensive.
+The incremental time filter can skip late observations and fails when the existing table is empty.
+Full rebuilds were fast on the small demo dataset.
 
 **Decision**
-Add new data each day only using a date filter `materialized='incremental'` with key on `unique_key=['date_id', 'raw_offer_id']` with filtering on `fetched_at`. 
+Use `materialized='table'` to rebuild offer facts from all retained observations.
+Measure rebuild time again as the history grows.
 
 **Consequences**
-- (+) Much faster performance and lower costs for the table growing over time
-- (-) Risks of missing data or older rows not matching with updated structure so we need to fully rebuild once a week with `--full-refresh` to fix data. 
+- (+) Late observations and corrections are included.
+- (+) The model is simpler and matches stored source data.
+- (-) Rebuild time may increase as history grows.
 
-## ADR-007 - Keeping raw data under 0.5gb cloud storage limit
+## ADR-007 - Keep raw history
 
-**Date:** 2026-09-29 · **Status:** Accepted
+**Date:** 2026-10-08 · **Status:** Accepted
 
 **Context**
-Cloud- Neon's free plan gives us 0.5gb of storage. Daily raw data takes up to 1,2 mb. Neon's space will run out out in about 400 days.
+Models are rebuilt from raw data. Deleting observations would remove history from those models.
+Cloud storage is limited.
 
 **Decision**
-Keeping raw data for 30 days from `raw.offers` and `raw.rejected_records` using `sql/maintenance/prune_raw.sql` can allow us enough time to turn it into business logic we're interested in and catch bugs.
+Keep `raw.offers` and `raw.rejected_records`. Check size with `sql/maintenance/check_storage.sql`.
+Before deleting history, create an archive and test restoring it.
 
 **Consequences**
-- (+) Cloud size limit stays in the free limit.
-- (+) We have access to data from the last 30 days.
-- (-) Raw data older than 30 days cannot be turned into data business logic if buisness logic chaned.
+- (+) Models can be rebuilt from stored history.
+- (+) Old observations remain available for analysis.
+- (-) Storage grows and must be monitored.
 
-## ADR-008 - Github Actons for pipeline automation
+## ADR-008 - GitHub Actions for daily runs
 
 **Date:** 2026-10-02 · **Status:** Accepted
 
 **Context**
-I need to run pipeline daily in order to keep offers updated (~300 offers per day). I need to decide whether to use Airflow, Github Actions or cron.
+The project needs a daily batch run and a simple place to inspect failures.
 
 **Decision**
-Github actions is the most suitable for the project. I run it only ~3 minutes per day. It is costless, simple and does not need to run on servers in comparision to other options.
+Use GitHub Actions for import, quality checks, dbt and charts. Queue runs for the same live
+database. Upload charts only after success and keep diagnostic logs after failures.
 
 **Consequences**
-- (+) Zero cost
-- (+) Simpler because of lack of servers
-- (+) Emails in case of malfunction
-- (-) No backfill
-- (-) No task-level retries in case of malfunction
-- (-) No DAG
+- (+) Workflow steps and logs are visible in GitHub.
+- (+) One live workflow runs at a time.
+- (-) Missing days cannot be reconstructed without saved observations.
+- (-) Notifications depend on account settings and need to be checked.

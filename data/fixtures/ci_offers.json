@@ -1,0 +1,132 @@
+{
+  "description": "Synthetic offers for CI. Not market data.",
+  "source": "ci-fixture",
+  "batches": [
+    {
+      "observed_at": "2026-08-10T10:00:00Z",
+      "offers": [
+        {
+          "slug": "ci-junior",
+          "title": "CI junior developer",
+          "companyName": "CI Example",
+          "city": "Poznań",
+          "experienceLevel": "junior",
+          "publishedAt": "2026-08-09T10:00:00Z",
+          "employmentTypes": [
+            {
+              "type": "b2b",
+              "currency": "PLN",
+              "currencySource": "original",
+              "unit": "month",
+              "gross": false,
+              "from": 10000,
+              "to": 15000,
+              "fromPerUnit": 10000,
+              "toPerUnit": 15000
+            }
+          ],
+          "requiredSkills": [
+            {
+              "name": "Python",
+              "level": 3
+            },
+            {
+              "name": "SQL",
+              "level": 3
+            }
+          ]
+        },
+        {
+          "slug": "ci-senior",
+          "title": "CI senior developer",
+          "companyName": "CI Example",
+          "city": "Poznań",
+          "experienceLevel": "senior",
+          "publishedAt": "2026-08-09T10:00:00Z",
+          "employmentTypes": [
+            {
+              "type": "b2b",
+              "currency": "PLN",
+              "currencySource": "original",
+              "unit": "month",
+              "gross": false,
+              "from": null,
+              "to": null,
+              "fromPerUnit": null,
+              "toPerUnit": null
+            }
+          ],
+          "requiredSkills": [
+            {
+              "name": "Python",
+              "level": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "observed_at": "2026-08-11T10:00:00Z",
+      "offers": [
+        {
+          "slug": "ci-junior",
+          "title": "CI junior developer",
+          "companyName": "CI Example",
+          "city": "Poznań",
+          "experienceLevel": "junior",
+          "publishedAt": "2026-08-09T10:00:00Z",
+          "employmentTypes": [
+            {
+              "type": "b2b",
+              "currency": "PLN",
+              "currencySource": "original",
+              "unit": "month",
+              "gross": false,
+              "from": 12000,
+              "to": 17000,
+              "fromPerUnit": 12000,
+              "toPerUnit": 17000
+            }
+          ],
+          "requiredSkills": [
+            {
+              "name": "Python",
+              "level": 3
+            },
+            {
+              "name": " python ",
+              "level": 5
+            }
+          ]
+        },
+        {
+          "slug": "ci-senior",
+          "title": "CI senior developer",
+          "companyName": "CI Example",
+          "city": "Poznań",
+          "experienceLevel": "senior",
+          "publishedAt": "2026-08-09T10:00:00Z",
+          "employmentTypes": [
+            {
+              "type": "b2b",
+              "currency": "PLN",
+              "currencySource": "original",
+              "unit": "month",
+              "gross": false,
+              "from": null,
+              "to": null,
+              "fromPerUnit": null,
+              "toPerUnit": null
+            }
+          ],
+          "requiredSkills": [
+            {
+              "name": "Python",
+              "level": 5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

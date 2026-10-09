@@ -3,12 +3,20 @@ version: 2
 sources:
   - name: raw
     schema: raw
-    description: "Raw data loaded by scripts."
+    description: "Raw offers and import metrics."
     tables:
       - name: offers
-        description: "Raw offers from justjoinit api."
-        loaded_at_field: fetched_at
-        freshness:
-          warn_after:
-            count: 26
-            period: hour
+        description: "Job listings from Just Join IT."
+        config:
+          loaded_at_field: fetched_at
+          freshness:
+            warn_after:
+              count: 26
+              period: hour
+            error_after:
+              count: 48
+              period: hour
+            filter: "data_mode = 'live'"
+
+      - name: ingestion_runs
+        description: "Import status, counters and observation dates."

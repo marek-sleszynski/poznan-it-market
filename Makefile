@@ -1,14 +1,17 @@
-.PHONY: install lint test sample db-up db-shell db-reset ingest snapshot dbt charts migrate
+.PHONY: charts-demo install lint test sample db-up db-shell db-reset ingest snapshot dbt charts migrate demo format dbt-demo db-prepare
 
 install:
-	uv sync
+	uv sync --locked
 lint:
-	uv run ruff format .
-	uv run ruff check --fix .
+	uv run --locked ruff check .
+	uv run --locked ruff format --check .
+format:
+	uv run --locked ruff check --fix .
+	uv run --locked ruff format .
 test:
-	uv run pytest
+	uv run --locked pytest
 sample:
-	uv run python scripts/fetch_sample.py
+	uv run --locked python scripts/fetch_sample.py
 db-up:
 	docker compose up -d
 db-shell:
@@ -17,14 +20,29 @@ db-reset:
 	docker compose down -v
 	docker compose up -d
 ingest:
-	uv run python -m poznan_it_market.ingest.loader
+	uv run --locked poznan-it-market --mode live
+
+demo:
+	uv run --locked poznan-it-market --mode demo
 snapshot:
-	cd dbt && uv run dbt snapshot --profiles-dir .
+	cd dbt && uv run --locked dbt snapshot --profiles-dir .
 dbt:
-	cd dbt && uv run dbt build --profiles-dir .
+	uv run --locked python scripts/build_dbt.py --mode live
+dbt-demo:
+	uv run --locked python scripts/build_dbt.py --mode demo --expected-date 2026-08-11
 charts:
-	uv run python scripts/make_charts.py
+	uv run --locked python scripts/make_charts.py
+charts-demo:
+	uv run --locked python scripts/make_demo_charts.py
 migrate:
 	for f in sql/ddl/*.sql; do \
-		docker compose exec -T db sh -c 'psql -X -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -v ON_ERROR_STOP=1' < "$$f" || exit 1; \
+	        docker compose exec -T db sh -c 'psql -X -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -v ON_ERROR_STOP=1' < "$$f" || exit 1; \
+	done
+db-prepare: db-up
+	docker compose exec -T db sh -c 'until pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"; do sleep 1; done'
+	for database in poznan_it_market_demo poznan_it_market_test; do \
+	        docker compose exec -T db sh -c 'psql -X -U "$$POSTGRES_USER" -d postgres -v ON_ERROR_STOP=1 -v database_name="$$1"' sh "$$database" < sql/maintenance/create_local_database.sql || exit 1; \
+	        for file in sql/ddl/*.sql; do \
+	                docker compose exec -T db sh -c 'psql -X -U "$$POSTGRES_USER" -d "$$1" -v ON_ERROR_STOP=1' sh "$$database" < "$$file" || exit 1; \
+	        done; \
 	done

@@ -1,25 +1,33 @@
-## First observations
-- Offers `candidate-api/offers` has a city filter, but still returns remote jobs. I will need to filter by primary city later.
-- I only use "city", "cityRadius", "sortBy", "orderBy" in my requests. I skip 'isPromoted=true' because it returns only paid listings, not the full set of postings.
-- `publishedAt` is in UTC. The format is `YYYY-MM-DDTHH:MM:SS.ffffffZ`- I will need to change timezone conversion for local-time reporting.
+# Data source
 
-## Gotchas
-**The city filter returns companies outside of Poznań**
-- 50% postings are primarly in other cities. To only get local offers `locations[0].city` must be used.
-**Paging past the end causes a 500 error**
-- Requesting pages beyond last result (from=99999) crashes the server with an 500 error insted of returning an empty list. Always stop the loop when meta.next.cursor is null or meta.next.itemsCount == 0.
-**No rate limit warnings**
-- The api does not return rare limit headers like. To avoid IP bans, slow down request to 1 every 2 seconds and set cutom User-Agent.
+The project uses job offers from JustJoinIT.
 
-## First observations
-- Minimum and maximum wages are often null.
-- `publishedAt` include "Z", python will raise an error.
-- API uses `from` as a important phrase in python. It will raise an error.
+## API and pagination
 
-## Gotchas
-**Null in salary ranges**
-- Always check `is not None` before using them to avoid error.
-**ISO timestamps**
-- Always use `datetime.now(timezone.utc)` when using from `publishedAt`.
-**Reserved word in python**
-- Always use `validation_alias="from"` to avoid `from` conflicts with python.
+API response checked on 2026-10-09.
+
+Endpoint: `https://justjoin.it/api/candidate-api/offers`
+
+- Start with `city=Poznań`, `cityRadius=0` and `from=0`.
+- Read offers from `data` and send `meta.next.cursor` as the next `from` value.
+- Stop when `meta.from + len(data)` reaches `meta.totalItems`. The API may return a non-null cursor at the end.
+- If `totalItems` is missing, stop when the next cursor is `null`.
+- Wait two seconds between pages. Use the shared HTTP client and retries.
+- Fail on an invalid response, repeated cursor or incomplete download at the 500-page limit.
+
+## Report scope
+
+- Raw data keeps accepted offers before the city filter.
+- Reports include top-level `city` equal to `Poznań` or `Poznan`, including remote jobs.
+- All experience levels are included. The junior measure counts only `experienceLevel = 'junior'`.
+- Titles are not used to detect internships or trainee roles.
+- Offers are identified by `(source, source_offer_id)`, where `source_offer_id` is the slug.
+- Different slugs are separate offers; similar job titles are not merged.
+
+## Important details
+
+- Missing salary is not zero. Salary reports use original PLN variants.
+- Keep timezone information in timestamps. Observation days use UTC.
+- JSON keys such as `from` use aliases in Python models.
+- Demo data uses a saved sample and its original observation date.
+- Saved page downloads have separate folders. Only folders with `manifest.json` are complete.

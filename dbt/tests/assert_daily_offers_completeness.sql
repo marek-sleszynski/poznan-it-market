@@ -1,35 +1,57 @@
-with daily_counts as (
+{% set expected_date = var(
+    'expected_date',
+    run_started_at.strftime('%Y-%m-%d')
+) %}
+
+with settings as (
     select
-        date_id,
-        count(*) as offer_count
+        '{{ expected_date }}'::date as expected_date,
+        '{{ var("data_mode", "live") }}'::text as data_mode
+),
+
+latest_run as (
+    select runs.*
+    from {{ source('raw', 'ingestion_runs') }} runs
+    cross join settings
+    where runs.observed_date = settings.expected_date
+      and runs.data_mode = settings.data_mode
+    order by runs.started_at desc, runs.run_id desc
+    limit 1
+),
+
+daily_volume as (
+    select count(*) as offer_count
     from {{ ref('fct_offer_snapshot') }}
-    group by date_id
+    cross join settings
+    where date_id = settings.expected_date
 ),
 
-latest_snapshot as (
-    select max(date_id) as latest_date
-    from daily_counts
-),
-
-past_7_days_avg as (
-    select avg(offer_count) as avg_7d_count
-    from daily_counts
-    cross join latest_snapshot
-    where daily_counts.date_id < latest_snapshot.latest_date
-      and daily_counts.date_id >= latest_snapshot.latest_date - interval '7 days'
-),
-
-today_volume as (
-    select daily_counts.offer_count
-    from daily_counts
-    cross join latest_snapshot
-    where daily_counts.date_id = latest_snapshot.latest_date
+checked as (
+    select
+        settings.expected_date,
+        settings.data_mode,
+        runs.status,
+        volume.offer_count,
+        case
+            when runs.run_id is null then 'missing_import'
+            when runs.status <> 'success'
+              or runs.finished_at is null
+              or runs.stage is distinct from 'finished'
+                then 'unfinished_or_failed_import'
+            when coalesce(runs.pages_fetched, 0) <= 0
+              or runs.records_accepted is null
+              or runs.records_rejected is null
+              or runs.records_accepted < 0
+              or runs.records_rejected < 0
+                then 'invalid_import_counters'
+            when runs.records_accepted = 0 then 'no_accepted_offers'
+            when volume.offer_count = 0 then 'no_report_offers'
+        end as failure_reason
+    from settings
+    cross join daily_volume volume
+    left join latest_run runs on true
 )
 
-select
-    today_volume.offer_count,
-    past_7_days_avg.avg_7d_count
-from today_volume
-cross join past_7_days_avg
-where past_7_days_avg.avg_7d_count is not null
-  and today_volume.offer_count < 0.60 * past_7_days_avg.avg_7d_count
+select *
+from checked
+where failure_reason is not null

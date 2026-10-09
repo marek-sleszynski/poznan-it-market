@@ -1,15 +1,17 @@
-Welcome to your new dbt project!
+# dbt models
 
-### Using the starter project
+Run commands from the project root:
 
-Try running the following commands:
-- dbt run
-- dbt test
+```bash
+make dbt-demo
+make dbt
+```
 
+`dbt-demo` uses the local demo database and the sample date. `dbt` uses the live database.
+Both build models and run data tests. The shared build script prepares the connection settings.
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+Staging filters the selected data mode and city. Marts contain daily observations,
+skills and salary variants. The SCD2 snapshot is disabled and kept as a learning example.
+
+The daily workflow runs live source freshness separately before the build.
+See [the data model](../docs/data-model.md) and [quality checks](../docs/data-quality.md).

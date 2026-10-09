@@ -1,10 +1,7 @@
-{{ config(
-    materialized='incremental',
-    unique_key=['date_id', 'raw_offer_id']
-) }}
+{{ config(materialized='table') }}
 
 select
-    fetched_at::date as date_id,
+    (fetched_at AT TIME ZONE 'UTC')::date as date_id,
     md5(lower(trim(company_name))) as company_key,
     raw_offer_id,
     source,
@@ -21,6 +18,3 @@ select
 
 from {{ ref('stg_offers') }}
 
-{% if is_incremental() %}
-  where fetched_at > (select max(fetched_at) from {{ this }})
-{% endif %}

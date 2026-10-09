@@ -1,3 +1,5 @@
+-- Learning example, disabled in dbt_project.yml.
+-- Existing snapshot history is kept.
 {% snapshot snap_offers %}
 {{
     config(

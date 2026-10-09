@@ -2,94 +2,129 @@
 
 ![CI](https://github.com/marek-sleszynski/poznan-it-market/actions/workflows/ci.yml/badge.svg)
 
-A daily data pipeline that collects IT job postings from justjoin.it, tracks how they change over time, and shows how the Poznań tech job market evolves.
+A Python and SQL project that collects IT job offers from JustJoinIT and builds reports for Poznań.
 
-![Job Postings Over Time](docs/img/postings_over_time.png)
+![Demo: offers observed per day](docs/img/postings_over_time.png)
+
+Demo chart: **5 offer observations on 2026-08-11**.
+Source: [saved JustJoinIT sample](data/raw/sample/jjit_2026-08-11.json).
+
+[Read the demo report](docs/reports/demo-2026-08-11.md) - verified on 2026-10-09.
 
 ## Why this exists
 
-Public reports on the Polish IT market are quarterly and nationwide. As a student looking for my first job, I wanted daily and local data.
-
-I also wanted to learn by building a system that deals with real data engineering problems: handling API pagination, saving raw data safely, building dimensional models in dbt, and automating runs with GitHub Actions.
+As a student looking for my first IT job, I wanted to learn more about the local job market.
+I built this project to practise API requests, PostgreSQL, dbt, testing and GitHub Actions.
 
 ## What it does
 
-- Pulls job postings daily from the justjoin.it public API with retries and validation.
-- Saves raw responses unchanged in PostgreSQL as JSONB so data is never lost.
-- Transforms data with dbt into staging views and dimensional marts.
-- Tracks salary and offer status changes over time (SCD Type 2 snapshots).
-- Runs data quality tests (freshness, completeness, referential integrity).
-- Generates trend charts automatically after each run.
+- Gets all API pages with retries and checks the response format.
+- Validates offers and saves original JSON in PostgreSQL.
+- Saves rejected records with their errors and records the import status.
+- Builds daily observations and checks data quality with dbt.
+- Reports offer counts, junior share, skills and comparable salaries.
+- Compares salary values between observations using SQL `LAG()`.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    A[justjoin.it API] -->|httpx + tenacity| B[ingest / pydantic]
-    B -->|upsert| C[(raw.offers · JSONB)]
-    C -->|views| D[dbt staging]
-    D -->|tables| E[dbt marts · star schema]
-    E -->|snapshot| F[snap_offers · SCD2]
-    E -->|matplotlib| G[docs/img charts]
-    H[GitHub Actions] -.orchestration.-> B
-    H -.-> D
-    H -.-> E
-    H -.-> G
+    A[API or demo sample] --> B[Python validation]
+    B --> C[(PostgreSQL raw JSON)]
+    C --> D[dbt models and tests]
+    D --> E[SQL reports]
+    E --> F[Charts]
 ```
 
 ## Stack
 
-- **Python 3.12** — data ingestion, validation, and chart generation
-- **PostgreSQL 16** — database for raw JSONB payloads and analytics marts
-- **dbt-core** — SQL transformations, dimensional models, and automated tests
-- **Docker Compose** — local PostgreSQL container
-- **GitHub Actions** — automated daily runs and failure alerts via email
-- **Pydantic & Tenacity** — API data validation and HTTP retries
-- **matplotlib** — generating charts saved to documentation
+Python 3.14, PostgreSQL 16, dbt, Docker Compose and GitHub Actions.
+Python libraries include httpx, Pydantic, Tenacity, psycopg and matplotlib.
 
 ## Getting Started
 
-To run the project locally:
+You need uv, Docker Compose and Make. The project uses Python 3.14.
+On Windows, use WSL with Docker Desktop and enable Docker access for your WSL distribution.
+
+For a new local setup:
 
 ```bash
-cp .env.example .env                                # fill in database local credentials
-cp dbt/profiles.yml.example dbt/profiles.yml        # set up local dbt profile
-make db-up                                          # start PostgreSQL in Docker (remember to start Docker locally)
-make migrate                                        # apply initial DDL schemas and tables
-make ingest && make dbt                             # fetch raw data, transform models and run tests
+cp .env.example .env
+make install
+make db-prepare
 ```
 
-To regenerate charts manually:
+Keep the local database settings from `.env.example` for this setup.
+The first setup may download Python, packages and the Docker image.
+
+To load demo data and build the models:
 
 ```bash
-uv run python scripts/make_charts.py
+make demo
+make dbt-demo
+make charts-demo
+uv run --locked python scripts/check_demo_report.py
 ```
 
-## What the data shows
+The demo uses the saved sample, keeps its date and uses `DEMO_DATABASE_URL`.
+It does not need Neon or API access. Demo charts are saved in `docs/img/`.
+For another local port, change `POSTGRES_PORT` in `.env`; the example database URLs follow it.
 
-- **Junior-level postings:** Around **10–20%** of all postings are marked as junior positions.
-- **Salary transparency:** About **20%** of postings do not disclose salary ranges (these are excluded from salary stats to avoid misleading averages).
-- **Core technologies:** Python and SQL are the most frequently requested skills across backend and data roles.
+To check the code and run tests:
+
+```bash
+make lint
+make test
+```
+
+Tests use `TEST_DATABASE_URL`. Use `make format` to fix imports and formatting.
+
+To use the API with the local database from `.env.example`:
+
+```bash
+make migrate
+make ingest
+make dbt
+make charts
+```
+
+The live import, dbt build and charts use `DATABASE_URL`.
+
+## Reading the reports
+
+- **Daily offers:** offers seen on each UTC day. One offer seen on several days creates several observations.
+- **Company, skill and salary summaries:** use the latest observation of each unique offer within the selected period.
+- **Juniors:** listings with `experienceLevel` equal to `junior`.
+- **Skills:** counts of offers mentioning each skill. One offer can have several skills.
+- **Salaries:** original PLN amounts, grouped by contract, hour or month, and net or gross. The salary chart shows the mean advertised minimum.
+- **Missing salaries:** remain missing. Salary averages use only offers with a disclosed minimum.
 
 ## Limitations
 
-- **Single source:** Currently tracks only justjoin.it. Adding No Fluff Jobs is planned next.
-- **Single city:** Focuses only on Poznań. Filtered on `multilocation[0]` to exclude mislabeled remote offers.
-- **Disclosed salaries only:** Missing salary ranges are treated as missing data, not zero.
+- Only one source: JustJoinIT.
+- Includes offers with top-level `city` equal to `Poznań` or `Poznan`, including remote jobs.
+- Demo results are examples and do not describe the current market.
+- The latest saved observation does not prove that an offer is still active.
+- Salary changes are detected between saved observations; their exact time is unknown.
+
+## Daily runs
+
+The GitHub Actions workflow is set to run at **04:00 UTC**: 06:00 in summer and 05:00 in winter in Warsaw.
+It runs the live import, freshness check, dbt build and chart generation.
+
+Successful runs upload charts as the `market-charts` artifact.
+The images in this README are saved examples and are updated manually.
 
 ## Documentation
 
-- [Data sources & API traps](docs/sources.md)
-- [Data model & grain](docs/data-model.md)
-- [Architecture decisions (ADRs)](docs/decisions.md)
-- [Data quality tests](docs/data-quality.md)
+- [Data sources](docs/sources.md)
+- [Data model](docs/data-model.md)
+- [Architecture decisions](docs/decisions.md)
+- [Data quality](docs/data-quality.md)
 - [Database indexes experiment](docs/indexes.md)
-
-## Orchestration & Alerting
-
-The pipeline runs automatically once a day at 6:00 CET using GitHub Actions.
-Alerting is handled natively by GitHub Actions, which sends email notifications if a scheduled run or test fails. There is no need for extra third-party tools, achieving a zero-maintenance design.
 
 ## Status
 
-Educational project in active development, running daily via GitHub Actions.
+Educational project in active development.
+
+Live observations start on **2026-10-09**. Earlier sample imports are marked as `legacy_demo` and are excluded from live reports.

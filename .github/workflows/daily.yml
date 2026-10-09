@@ -3,47 +3,44 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '00 4 * * *'
+concurrency:
+  group: poznan-it-market-live
+  cancel-in-progress: false
+  queue: max
 jobs:
   pipeline:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      JJIT_API_URL: "https://api.justjoin.it/v2/user-panel/offers"
+      JJIT_API_URL: "https://justjoin.it/api/candidate-api/offers"
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-      - run: uv sync --frozen
+      - run: uv sync --locked
       - name: Ingest raw data
         run: make ingest
       - name: Setup dbt profiles and credentials
         run: |
           cp dbt/profiles.yml.example dbt/profiles.yml
-          python -c "
-          import os, urllib.parse
-          url = urllib.parse.urlparse(os.environ['DATABASE_URL'])
-          with open(os.environ['GITHUB_ENV'], 'a') as f:
-              f.write(f'DB_HOST={url.hostname}\n')
-              f.write(f'DB_PORT={url.port or 5432}\n')
-              f.write(f'POSTGRES_USER={url.username}\n')
-              f.write(f'POSTGRES_PASSWORD={url.password}\n')
-              f.write(f'POSTGRES_DB={url.path.lstrip(\"/\")}\n')
-              f.write('DB_SSLMODE=require\n')
-          "
-      - name: Run dbt snapshots
-        run: make snapshot
+          uv run python scripts/export_dbt_env.py
+      - name: Check live data freshness
+        run: uv run dbt source freshness --project-dir dbt --profiles-dir dbt --select source:raw.offers
       - name: Run dbt build
         run: make dbt
       - name: Generate analytics charts
-        run: make charts
+        run: |
+          rm -f docs/img/*.png
+          make charts
       - name: Archive generated charts
-        if: always()
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: market-charts
           path: docs/img/*.png
+          if-no-files-found: error
       - name: Archive diagnostic logs
         if: always()
         uses: actions/upload-artifact@v4

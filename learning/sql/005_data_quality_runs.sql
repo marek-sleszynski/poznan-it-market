@@ -1,3 +1,4 @@
+-- Learning example. The project checks data quality with dbt tests.
 create table if not exists raw.data_quality_runs (
     id bigserial primary key,
     run_id uuid,

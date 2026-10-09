@@ -3,11 +3,13 @@ poznan_it_market:
   outputs:
     dev:
       type: postgres
-      host: "{{ env_var('DB_HOST', 'localhost') }}"
-      user: "{{ env_var('POSTGRES_USER', 'postgres') }}"
-      password: "{{ env_var('POSTGRES_PASSWORD', 'postgres') }}"
+      host: "{{ env_var('DB_HOST') }}"
+      user: "{{ env_var('POSTGRES_USER') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
       port: "{{ env_var('DB_PORT', '5432') | as_number }}"
-      dbname: "{{ env_var('POSTGRES_DB', 'poznan_it_market') }}"
+      dbname: "{{ env_var('POSTGRES_DB') }}"
       schema: public
       sslmode: "{{ env_var('DB_SSLMODE', 'prefer') }}"
+      connect_timeout: "{{ env_var('DB_CONNECT_TIMEOUT', '10') | as_number }}"
+      application_name: "{{ env_var('DB_APPLICATION_NAME', 'dbt') }}"
       threads: 4

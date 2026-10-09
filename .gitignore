@@ -20,9 +20,9 @@ dbt/profiles.yml
 .idea/
 
 # Data
-data/raw/*.json
-!data/raw/sample/*.json
+data/raw/**
+!data/raw/sample/
+!data/raw/sample/jjit_2026-08-11.json
 *.csv
 tmp/
 .coverage
-
