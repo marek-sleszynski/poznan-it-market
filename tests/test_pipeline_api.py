@@ -42,10 +42,48 @@ def mock_api(monkeypatch):
     return install
 
 
-def test_two_page_pipeline_saves_offers_rejection_and_metrics(db_conn, mock_api):
+@pytest.mark.parametrize(
+    "invalid_salary, expected_error",
+    [
+        (
+            {"fromPerUnit": 25000, "toPerUnit": 15000},
+            "salary_from_per_unit cannot exceed salary_to_per_unit",
+        ),
+        ({"fromPerUnit": "not-a-number"}, "fromPerUnit"),
+        ({"gross": "unknown"}, "gross"),
+    ],
+    ids=["reversed-range", "invalid-amount", "invalid-gross"],
+)
+def test_two_page_pipeline_saves_offers_rejection_and_metrics(
+    db_conn, mock_api, invalid_salary, expected_error
+):
     first = make_offer("api-first")
+    first["employmentTypes"] = [
+        {
+            "fromPerUnit": "12345.67",
+            "toPerUnit": 18000,
+            "gross": False,
+            "unit": "month",
+            "currency": "PLN",
+            "currencySource": "original",
+            "type": "b2b",
+        }
+    ]
+    first["extraField"] = "keep"
     second = make_offer("api-second")
-    invalid = make_offer("")
+    invalid = make_offer("api-invalid-salary")
+    invalid["employmentTypes"] = [
+        {
+            "fromPerUnit": 10000,
+            "toPerUnit": 18000,
+            "gross": False,
+            "unit": "month",
+            "currency": "PLN",
+            "currencySource": "original",
+            "type": "b2b",
+            **invalid_salary,
+        }
+    ]
     requested_cursors = []
 
     def handler(request):
@@ -92,7 +130,7 @@ def test_two_page_pipeline_saves_offers_rejection_and_metrics(db_conn, mock_api)
     assert len(rejected) == 1
     assert rejected[0][0] == invalid
     assert rejected[0][1] == "validation_error"
-    assert "slug" in rejected[0][2]
+    assert expected_error in rejected[0][2]
     assert rejected[0][3] == run[0]
 
 
