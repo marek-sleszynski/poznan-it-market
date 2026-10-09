@@ -1,5 +1,6 @@
 import json
 import time
+import uuid
 from collections.abc import Iterator
 from datetime import UTC, datetime
 from pathlib import Path
@@ -70,8 +71,9 @@ def save_raw_pages(pages: Iterator[dict], target_date: str | None = None) -> lis
     if target_date is None:
         target_date = datetime.now(UTC).date().isoformat()
 
-    output_dir = Path("data/raw") / target_date
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # Each download has its own folder, even when repeated on the same day.
+    output_dir = Path("data/raw") / target_date / uuid.uuid4().hex
+    output_dir.mkdir(parents=True, exist_ok=False)
 
     saved_paths: list[Path] = []
     for page_num, page_data in enumerate(pages, start=1):
@@ -81,6 +83,18 @@ def save_raw_pages(pages: Iterator[dict], target_date: str | None = None) -> lis
             encoding="utf-8",
         )
         saved_paths.append(file_path)
+
+    # Only folders with a manifest contain a completed download.
+    manifest = {
+        "complete": True,
+        "saved_at": datetime.now(UTC).isoformat(),
+        "pages": [path.name for path in saved_paths],
+    }
+    temporary_manifest = output_dir / "manifest.json.tmp"
+    temporary_manifest.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    temporary_manifest.replace(output_dir / "manifest.json")
 
     return saved_paths
 
