@@ -8,10 +8,6 @@ select
     source_offer_id,
     title,
     experience_level,
-    employment_type,
-    salary_from,
-    salary_to,
-    currency,
     is_salary_disclosed,
     published_at,
     fetched_at

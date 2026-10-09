@@ -26,10 +26,6 @@ renamed as (
         payload->>'experienceLevel' as experience_level,
         (payload->>'publishedAt')::timestamptz as published_at,
 
-        (payload->'employmentTypes'->0->>'from')::numeric as salary_from,
-        (payload->'employmentTypes'->0->>'to')::numeric as salary_to,
-        lower(payload->'employmentTypes'->0->>'currency') as currency,
-        payload->'employmentTypes'->0->>'type' as employment_type,
         exists (
             select 1
             from jsonb_array_elements(payload->'employmentTypes') as salary(value)

@@ -33,9 +33,15 @@ def main():
         postings = analysis(conn, "06_postings_over_time.sql", all_history)
         assert postings == [(date(2026, 8, 10), 2, 1), (date(2026, 8, 11), 2, 1)], postings
 
-        latest_count = conn.execute("SELECT count(*) FROM public.latest_offers;").fetchone()[0]
+        observation_count, unique_offer_count = conn.execute(
+            """
+            SELECT count(*), count(DISTINCT (source, source_offer_id))
+            FROM public.fct_offer_snapshot;
+            """
+        ).fetchone()
         skill_count = conn.execute("SELECT count(*) FROM public.fct_offer_skill;").fetchone()[0]
-        assert latest_count == 2, latest_count
+        assert observation_count == 4, observation_count
+        assert unique_offer_count == 2, unique_offer_count
         assert skill_count == 5, skill_count
         assert analysis(conn, "01_top_companies.sql", all_history) == [("CI Example", 2)]
         assert analysis(conn, "03_top_skills.sql", all_history) == [("python", 2)]

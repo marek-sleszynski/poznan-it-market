@@ -30,9 +30,7 @@ The next day creates a new observation.
 | `dim_company` | One normalized company name | View |
 | `fct_offer_snapshot` | One offer observed on one UTC day | Table |
 | `fct_offer_skill` | One normalized skill for an offer observation | Table |
-| `latest_offers` | The latest saved observation of an offer | View |
 | `offer_salary_history` | One distinct original salary variant for an observation | View |
-| `offer_salaries` | A salary variant from the latest saved observation | View |
 
 Models use `data_mode=live` by default. Demo builds use `data_mode=demo`.
 Rows marked `unknown` or `legacy_demo` are excluded from both modes.
