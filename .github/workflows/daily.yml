@@ -47,3 +47,50 @@ jobs:
         with:
           name: dbt-logs
           path: dbt/logs/dbt.log
+
+  publish_charts:
+    needs: pipeline
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Download generated charts
+        uses: actions/download-artifact@v8
+        with:
+          name: market-charts
+          path: chart-artifact
+      - name: Publish charts branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          charts=(postings_over_time.png junior_share_over_time.png top_skills.png salary_by_level.png)
+          for chart in "${charts[@]}"; do
+            test -s "chart-artifact/$chart"
+          done
+
+          git init --initial-branch=charts chart-repo
+          cd chart-repo
+          gh auth setup-git --hostname github.com
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git ls-remote origin refs/heads/charts > ../chart-ref
+          if test -s ../chart-ref; then
+            git fetch --depth=1 origin charts
+            git checkout -B charts FETCH_HEAD
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for chart in "${charts[@]}"; do
+            cp "../chart-artifact/$chart" "$chart"
+          done
+          git add -- "${charts[@]}"
+          if git diff --cached --quiet; then
+            echo "Charts unchanged."
+            exit 0
+          fi
+          git commit -m "Update live charts"
+          git push origin HEAD:refs/heads/charts

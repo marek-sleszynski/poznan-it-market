@@ -72,8 +72,20 @@ The [sample](data/raw/sample/jjit_2026-08-11.json) is dated **2026-08-11**.
 It contains 10 offers. The city filter keeps **5**, including **1 junior offer (20%)**.
 Run `make demo` to repeat this example.
 
-One day is not a trend. README images are saved examples, updated manually.
+One day is not a trend. The demo image is a saved example.
 Live observations start on **2026-10-09**. Old sample imports are excluded from live reports.
+
+## Live results
+
+![Live: top skills](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/top_skills.png)
+
+The live chart is updated after successful daily runs. Its period is shown below the plot.
+
+On **2026-10-09 (UTC)**, **1,263 offers** passed the city filter.
+Python appeared in **312 offers**, and SQL in **231**.
+[Saved skills chart](docs/img/live-2026-10-09/top_skills.png),
+[offer count](docs/img/live-2026-10-09/postings_over_time.png).
+This is a one-day result, not a trend.
 
 ## What the reports mean
 
