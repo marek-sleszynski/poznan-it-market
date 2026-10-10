@@ -28,5 +28,7 @@ This is one provider's listings, not the whole local job market.
 A saved observation does not prove that an offer is still active.
 
 Observation days use UTC. Publication dates must include a timezone.
-Salary reports use original PLN variants and keep missing values.
+The average salary report uses original PLN variants.
+The salary change report compares observations within the same currency, contract type, unit and gross/net status.
+Missing salary values are kept in the history.
 The demo uses the saved sample dated 2026-08-11, not current market data.
