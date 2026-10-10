@@ -49,10 +49,29 @@ Tables are fully rebuilt from retained raw data.
 `fct_offer_snapshot` holds daily observations, not dbt SCD2 snapshots.
 Salary amounts come from `fromPerUnit` and `toPerUnit`.
 
+## dbt lineage
+
+Arrows show dbt inputs. `dim_date` builds its own calendar.
+
+```mermaid
+flowchart LR
+    raw["raw.offers"] --> staging["stg_offers"]
+    staging --> companies["dim_company"]
+    staging --> facts["fct_offer_snapshot"]
+    staging --> skills["fct_offer_skill"]
+    staging --> salaries["offer_salary_history"]
+    raw --> salaries
+    salaries --> salary_test["assert_salary_range_valid"]
+    dates["dim_date (calendar)"]
+```
+
 ## Report rules
 
 Daily reports count offer-day observations.
 Other summaries use the latest observation per offer within the selected period.
+
+Salary averages use PLN and give each offer the same weight within a group.
+For multiple variants, the offer's value is their average minimum salary.
 
 Salary changes use `LAG()` for the same source, offer, contract, currency, unit and gross/net basis.
 The date filter comes after the comparison, so an older observation can be the baseline.

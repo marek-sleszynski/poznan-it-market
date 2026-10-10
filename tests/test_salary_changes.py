@@ -1,4 +1,5 @@
 from datetime import UTC, date, datetime
+from decimal import Decimal
 from pathlib import Path
 
 
@@ -102,3 +103,40 @@ def test_salary_changes_detects_only_comparable_changes(db_conn):
     for start_date, end_date, expected in cases:
         actual = db_conn.execute(query, {"start_date": start_date, "end_date": end_date}).fetchall()
         assert actual == expected, (start_date, end_date, actual)
+
+
+def test_salary_average_weights_offers_equally(db_conn):
+    db_conn.execute("""
+        CREATE TEMP TABLE fct_offer_snapshot (
+            raw_offer_id bigint,
+            source text,
+            source_offer_id text,
+            date_id date,
+            fetched_at timestamptz
+        );
+        CREATE TEMP TABLE offer_salary_history (
+            raw_offer_id bigint,
+            source text,
+            source_offer_id text,
+            experience_level text,
+            employment_type text,
+            currency text,
+            salary_unit text,
+            is_gross boolean,
+            salary_from numeric
+        );
+
+        INSERT INTO fct_offer_snapshot VALUES
+            (1, 'source-a', 'offer-a', '2026-10-09', '2026-10-09T12:00:00Z'),
+            (2, 'source-a', 'offer-b', '2026-10-09', '2026-10-09T12:00:00Z');
+
+        INSERT INTO offer_salary_history VALUES
+            (1, 'source-a', 'offer-a', 'senior', 'b2b', 'pln', 'month', false, 10000),
+            (1, 'source-a', 'offer-a', 'senior', 'b2b', 'pln', 'month', false, 20000),
+            (2, 'source-a', 'offer-b', 'senior', 'b2b', 'pln', 'month', false, 30000);
+    """)
+
+    query_path = Path(__file__).resolve().parent.parent / "sql/analysis/05_salary_by_level.sql"
+    query = query_path.read_text(encoding="utf-8")
+    rows = db_conn.execute(query, {"start_date": None, "end_date": None}).fetchall()
+    assert rows == [("senior", "b2b", "month", False, Decimal("22500.00"), 2)]
