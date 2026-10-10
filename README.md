@@ -66,7 +66,7 @@ Charts are uploaded as `market-charts` after the checks pass.
 
 ## Example
 
-![Demo: daily offers](docs/img/postings_over_time.png)
+[Demo chart](docs/img/demo-2026-08-11/postings_over_time.png)
 
 The [sample](data/raw/sample/jjit_2026-08-11.json) is dated **2026-08-11**.
 It contains 10 offers. The city filter keeps **5**, including **1 junior offer (20%)**.
@@ -77,9 +77,14 @@ Live observations start on **2026-10-09**. Old sample imports are excluded from 
 
 ## Live results
 
-![Live: top skills](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/top_skills.png)
+![Live: daily offers](docs/img/postings_over_time.png)
 
-The live chart is updated after successful daily runs. Its period is shown below the plot.
+![Live: top skills](docs/img/top_skills.png)
+
+These charts come from the latest successful daily run. They are copied here manually through a pull request.
+The report period is shown below each plot.
+
+### Saved example: 2026-10-09
 
 On **2026-10-09 (UTC)**, **1,263 offers** passed the city filter.
 Python appeared in **312 offers**, and SQL in **231**.
