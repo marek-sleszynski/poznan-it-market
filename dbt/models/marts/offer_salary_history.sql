@@ -14,9 +14,7 @@ select distinct
     (offers.fetched_at AT TIME ZONE 'UTC')::date as date_id,
     offers.fetched_at
 from {{ ref('stg_offers') }} as offers
-inner join {{ source('raw', 'offers') }} as raw
-    on raw.id = offers.raw_offer_id
 cross join lateral jsonb_array_elements(
-    raw.payload->'employmentTypes'
+    offers.employment_types
 ) as salary(value)
 where salary.value->>'currencySource' = 'original'
