@@ -36,7 +36,8 @@ renamed as (
               )
         ) as is_salary_disclosed,
        
-        payload->'requiredSkills' as required_skills
+        payload->'requiredSkills' as required_skills,
+        payload->'employmentTypes' as employment_types
 
    from source
    where payload->>'city' in ('Poznań', 'Poznan')
