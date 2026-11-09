@@ -1,5 +1,10 @@
 .PHONY: charts-demo install lint test db-up db-shell db-reset ingest dbt charts migrate demo format dbt-demo db-prepare
 
+DBT := uv run --locked $(if $(wildcard .env),--env-file .env) dbt
+DBT_DIRS := --project-dir dbt --profiles-dir dbt
+DEMO_DB ?= poznan_it_market_demo
+DEMO_DATE ?= 2026-08-11
+
 install:
 	uv sync --locked
 lint:
@@ -25,9 +30,12 @@ demo:
 	$(MAKE) dbt-demo
 	$(MAKE) charts-demo
 dbt:
-	uv run --locked python scripts/build_dbt.py --mode live
+	$(DBT) build $(DBT_DIRS)
 dbt-demo:
-	uv run --locked python scripts/build_dbt.py --mode demo
+	@case "$(DEMO_DB)" in poznan_it_market_demo|poznan_it_market_test) ;; \
+		*) echo "dbt-demo requires poznan_it_market_demo or poznan_it_market_test" >&2; exit 1 ;; esac
+	DB_HOST=localhost POSTGRES_DB=$(DEMO_DB) $(DBT) build $(DBT_DIRS) \
+		--vars '{"data_mode": "demo", "expected_date": "$(DEMO_DATE)"}'
 charts:
 	uv run --locked python scripts/make_charts.py
 charts-demo:

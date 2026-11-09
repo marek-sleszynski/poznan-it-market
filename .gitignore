@@ -13,7 +13,6 @@ logs/
 dbt/target/
 dbt/logs/
 *.log
-dbt/profiles.yml
 dbt/.user.yml
 
 # IDE

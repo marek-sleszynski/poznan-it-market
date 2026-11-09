@@ -14,6 +14,11 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       JJIT_API_URL: "https://justjoin.it/api/candidate-api/offers"
+      DB_HOST: ${{ secrets.DB_HOST }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      DB_SSLMODE: require
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -22,10 +27,6 @@ jobs:
       - run: uv sync --locked
       - name: Ingest raw data
         run: make ingest
-      - name: Setup dbt profiles and credentials
-        run: |
-          cp dbt/profiles.yml.example dbt/profiles.yml
-          uv run python scripts/export_dbt_env.py
       - name: Check live data freshness
         run: uv run dbt source freshness --project-dir dbt --profiles-dir dbt --select source:raw.offers
       - name: Run dbt build

@@ -11,6 +11,10 @@ jobs:
       JJIT_API_URL: "https://justjoin.it/api/candidate-api/offers"
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
       TEST_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       DEMO_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_demo"
 
     services:
@@ -67,11 +71,7 @@ jobs:
         run: uv run --locked python scripts/load_ci_fixture.py
 
       - name: Build models for the CI fixture
-        env:
-          DEMO_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/poznan_it_market_test"
-        run: |
-          uv run --locked python scripts/build_dbt.py \
-            --mode demo --expected-date 2026-08-11
+        run: make dbt-demo DEMO_DB=poznan_it_market_test DEMO_DATE=2026-08-11
 
       - name: Verify exact CI results
         run: uv run --locked python scripts/check_results.py --mode ci
