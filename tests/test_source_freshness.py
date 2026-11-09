@@ -43,11 +43,6 @@ def test_live_source_freshness(db_conn, tmp_path, age_hours, expected_status, ex
         )
     db_conn.commit()
 
-    profile_dir = tmp_path / "profiles"
-    profile_dir.mkdir()
-    profile = (project_root / "dbt/profiles.yml.example").read_text(encoding="utf-8")
-    (profile_dir / "profiles.yml").write_text(profile, encoding="utf-8")
-
     env = os.environ.copy()
     env.update(
         DB_HOST=settings["host"],
@@ -68,7 +63,7 @@ def test_live_source_freshness(db_conn, tmp_path, age_hours, expected_status, ex
             "--project-dir",
             str(project_root / "dbt"),
             "--profiles-dir",
-            str(profile_dir),
+            str(project_root / "dbt"),
             "--target-path",
             str(target_dir),
             "--select",
