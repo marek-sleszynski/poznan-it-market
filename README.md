@@ -77,11 +77,15 @@ Live observations start on **2026-10-09**. Old sample imports are excluded from 
 
 ## Live results
 
-![Live: daily offers](docs/img/postings_over_time.png)
+![Live: daily offers](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/postings_over_time.png)
 
-![Live: top skills](docs/img/top_skills.png)
+![Live: junior share over time](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/junior_share_over_time.png)
 
-These charts come from the latest successful daily run. They are copied here manually through a pull request.
+![Live: salary by level](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/salary_by_level.png)
+
+![Live: top skills](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/top_skills.png)
+
+These charts come from the latest successful daily run.
 The report period is shown below each plot.
 
 ## What the reports mean
