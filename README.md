@@ -84,14 +84,6 @@ Live observations start on **2026-10-09**. Old sample imports are excluded from 
 These charts come from the latest successful daily run. They are copied here manually through a pull request.
 The report period is shown below each plot.
 
-### Saved example: 2026-10-09
-
-On **2026-10-09 (UTC)**, **1,263 offers** passed the city filter.
-Python appeared in **312 offers**, and SQL in **231**.
-[Saved skills chart](docs/img/live-2026-10-09/top_skills.png),
-[offer count](docs/img/live-2026-10-09/postings_over_time.png).
-This is a one-day result, not a trend.
-
 ## What the reports mean
 
 - Daily counts show offers seen on each UTC day.
