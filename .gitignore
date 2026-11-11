@@ -26,4 +26,3 @@ data/raw/**
 docs/img/*.png
 *.csv
 tmp/
-.coverage
