@@ -121,7 +121,3 @@ def load_rejected_offers(
                 records,
             )
             return cur.rowcount
-
-
-if __name__ == "__main__":
-    raise SystemExit("Use: poznan-it-market --mode demo|live")
