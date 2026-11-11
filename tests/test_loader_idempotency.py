@@ -36,7 +36,7 @@ def test_demo_reads_sample_and_preserves_observation_date(db_conn, sample_offers
 
     monkeypatch.setattr(pipeline, "read_demo_offers", fake_read_demo_offers)
 
-    pipeline.run_pipeline()
+    pipeline.run_pipeline(mode="demo")
 
     assert sample_paths == [pipeline.config.DEMO_SAMPLE_PATH]
 

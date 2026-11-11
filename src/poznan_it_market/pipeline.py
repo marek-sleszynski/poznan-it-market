@@ -15,7 +15,7 @@ from poznan_it_market.ingest.validation import validate_offers
 logger = logging.getLogger(__name__)
 
 
-def run_pipeline(mode: str = "demo") -> None:
+def run_pipeline(mode: str) -> None:
     started_at = datetime.now(UTC)
     run_id = uuid.uuid4()
 
