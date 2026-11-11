@@ -107,7 +107,7 @@ class RawOffer(BaseModel):
 
     @field_validator("published_at")
     @classmethod
-    def check_realistic(cls, v: datetime) -> datetime:
-        if v > datetime.now(UTC):
-            raise ValueError("data after current date")
-        return v
+    def check_realistic(cls, value: datetime) -> datetime:
+        if value > datetime.now(UTC):
+            raise ValueError("date after current date")
+        return value

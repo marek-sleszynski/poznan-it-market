@@ -15,17 +15,17 @@ from poznan_it_market.ingest.validation import validate_offers
 logger = logging.getLogger(__name__)
 
 
-def run_pipeline(mode: str = "demo") -> None:
+def run_pipeline(mode: str) -> None:
     started_at = datetime.now(UTC)
     run_id = uuid.uuid4()
 
-    database_url, observed_at = get_import_settings(mode, started_at)
+    database_url, fetched_at = get_import_settings(mode, started_at)
 
     pages_fetched: int | None = None
     stage = "fetch"
 
     with loader.get_connection(database_url) as conn:
-        loader.log_run_start(conn, run_id, started_at, mode, observed_at)
+        loader.log_run_start(conn, run_id, started_at, mode, fetched_at)
         try:
             logger.info("run_id=%s mode=%s stage=fetch", run_id, mode)
             if mode == "demo":
@@ -46,7 +46,7 @@ def run_pipeline(mode: str = "demo") -> None:
                     accepted,
                     "justjoin.it",
                     run_id,
-                    observed_at,
+                    fetched_at,
                     data_mode=mode,
                 )
                 rejected_count = loader.load_rejected_offers(conn, rejected, run_id)
@@ -101,16 +101,16 @@ def get_import_settings(mode: str, started_at: datetime) -> tuple[str, datetime]
             raise ValueError("Demo import requires a demo or test database.")
 
         database_url = DEMO_DATABASE_URL
-        observed_at = datetime.combine(config.DEMO_DATE, datetime.min.time(), tzinfo=UTC)
+        fetched_at = datetime.combine(config.DEMO_DATE, datetime.min.time(), tzinfo=UTC)
     elif mode == "live":
         if not DATABASE_URL:
             raise ValueError("DATABASE_URL is required for live import.")
         database_url = DATABASE_URL
-        observed_at = started_at
+        fetched_at = started_at
     else:
         raise ValueError("Mode must be demo or live.")
 
-    return database_url, observed_at
+    return database_url, fetched_at
 
 
 def read_demo_offers(sample_file: Path) -> list[dict]:
