@@ -6,7 +6,7 @@
 | API field names, ISO dates with a timezone and nonempty IDs/skills | Pydantic | Record is rejected |
 | Finite, nonnegative, ordered salaries and boolean `gross` | Pydantic | Record is rejected |
 | Unique offer-day and offer-day-skill rows | Database and dbt | Error |
-| Required keys, company/date links and matching skill observations | dbt | Error |
+| Required keys, company links and matching skill observations | dbt | Error |
 | Salary ranges and company normalization | dbt | Error |
 | Successful import for the expected day/mode, with valid counters | dbt | Error |
 | At least one report offer for the expected day | dbt | Error |

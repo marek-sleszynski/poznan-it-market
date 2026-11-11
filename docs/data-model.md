@@ -35,7 +35,6 @@ Both exclude `legacy_demo` and `unknown`.
 | Model | One row means | Stored as |
 |---|---|---|
 | `stg_offers` | An observation in the selected mode and city | View |
-| `dim_date` | A calendar day | Table |
 | `dim_company` | A normalized company name | View |
 | `fct_offer_snapshot` | An offer seen on one UTC day | Table |
 | `fct_offer_skill` | A skill linked to an observation | Table |
@@ -51,7 +50,7 @@ Salary amounts come from `fromPerUnit` and `toPerUnit`.
 
 ## dbt lineage
 
-Arrows show dbt inputs. `dim_date` builds its own calendar.
+Arrows show dbt inputs.
 
 ```mermaid
 flowchart LR
@@ -61,7 +60,6 @@ flowchart LR
     staging --> skills["fct_offer_skill"]
     staging --> salaries["offer_salary_history"]
     salaries --> salary_test["assert_salary_range_valid"]
-    dates["dim_date (calendar)"]
 ```
 
 ## Report rules
