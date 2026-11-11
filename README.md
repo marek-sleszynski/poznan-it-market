@@ -3,7 +3,6 @@
 ![CI](https://github.com/marek-sleszynski/poznan-it-market/actions/workflows/ci.yml/badge.svg)
 
 A Python and SQL project that collects JustJoinIT offers and builds reports for Poznań.
-I built it while looking for my first IT job and learning data engineering.
 
 ## How it works
 
