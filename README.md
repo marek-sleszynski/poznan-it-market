@@ -3,7 +3,6 @@
 ![CI](https://github.com/marek-sleszynski/poznan-it-market/actions/workflows/ci.yml/badge.svg)
 
 A Python and SQL project that collects JustJoinIT offers and builds reports for Poznań.
-I built it while looking for my first IT job and learning data engineering.
 
 ## How it works
 
@@ -17,6 +16,23 @@ flowchart LR
 ```
 
 Stack: Python 3.14, PostgreSQL 16, dbt, Docker Compose and GitHub Actions.
+
+## Where things are
+
+| What | Where |
+|---|---|
+| Import entry point | `src/poznan_it_market/pipeline.py` (`main`) |
+| API fetch and pagination | `src/poznan_it_market/ingest/justjoinit.py` (`fetch_justjoinit_pages`), `ingest/client.py` (retries) |
+| Offer validation | `src/poznan_it_market/ingest/models.py` (`RawOffer`), `ingest/validation.py` (`validate_offers`) |
+| Database writes | `src/poznan_it_market/ingest/loader.py` (`raw.offers`, `raw.rejected_records`, `raw.ingestion_runs`) |
+| Database schema | `sql/ddl/` |
+| dbt models | `dbt/models/staging/` (`stg_offers`), `dbt/models/marts/` |
+| dbt data tests | `dbt/tests/` (SQL tests), `.yml` files in `dbt/models/` (column tests) |
+| SQL reports | `sql/analysis/` |
+| Charts | `scripts/make_charts.py`, published daily to the `charts` branch |
+| CI result checks | `scripts/load_ci_fixture.py` loads `data/fixtures/ci_offers.json`, `scripts/check_results.py` compares report results |
+| Daily workflow and CI | `.github/workflows/daily.yml` (daily import), `.github/workflows/ci.yml` (checks every PR) |
+| Configuration | `src/poznan_it_market/config.py`, `.env.example`, `dbt/profiles.yml` |
 
 ## Local setup
 
@@ -81,9 +97,9 @@ Live observations start on **2026-10-09**. Old sample imports are excluded from 
 
 ![Live: junior share over time](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/junior_share_over_time.png)
 
-![Live: salary by level](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/salary_by_level.png)
+![Live: mean advertised minimum pay by level](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/salary_by_level.png)
 
-![Live: top skills](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/top_skills.png)
+![Live: top 15 skills](https://raw.githubusercontent.com/marek-sleszynski/poznan-it-market/charts/top_skills.png)
 
 These charts come from the latest successful daily run.
 The report period is shown below each plot.
