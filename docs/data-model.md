@@ -60,7 +60,6 @@ flowchart LR
     staging --> facts["fct_offer_snapshot"]
     staging --> skills["fct_offer_skill"]
     staging --> salaries["offer_salary_history"]
-    raw --> salaries
     salaries --> salary_test["assert_salary_range_valid"]
     dates["dim_date (calendar)"]
 ```
