@@ -23,6 +23,6 @@ dbt/.user.yml
 data/raw/**
 !data/raw/sample/
 !data/raw/sample/jjit_2026-08-11.json
+docs/img/*.png
 *.csv
 tmp/
-.coverage
