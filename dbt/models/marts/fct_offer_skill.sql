@@ -1,7 +1,7 @@
 {{ config(materialized='table') }}
 
 select distinct
-    (offers.fetched_at AT TIME ZONE 'UTC')::date as date_id,
+    offers.date_id,
     offers.raw_offer_id,
     offers.source,
     offers.source_offer_id,

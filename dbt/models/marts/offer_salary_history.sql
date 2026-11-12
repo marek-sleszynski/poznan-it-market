@@ -11,7 +11,7 @@ select distinct
     (salary.value->>'gross')::boolean as is_gross,
     (salary.value->>'fromPerUnit')::numeric as salary_from,
     (salary.value->>'toPerUnit')::numeric as salary_to,
-    (offers.fetched_at AT TIME ZONE 'UTC')::date as date_id,
+    offers.date_id,
     offers.fetched_at
 from {{ ref('stg_offers') }} as offers
 cross join lateral jsonb_array_elements(
