@@ -11,7 +11,9 @@ CREATE TABLE IF NOT EXISTS raw.offers (
     source_offer_id text NOT NULL,
     payload jsonb NOT NULL,
     fetched_at timestamptz NOT NULL,
-    run_id uuid NOT NULL
+    run_id uuid NOT NULL,
+    data_mode text NOT NULL DEFAULT 'unknown'
+        CHECK (data_mode IN ('unknown', 'live', 'demo', 'legacy_demo'))
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS offers_natural_key
