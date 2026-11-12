@@ -63,12 +63,12 @@ def log_run_start(
     run_id: uuid.UUID,
     started_at: datetime,
     mode: str,
-    observed_at: datetime,
+    fetched_at: datetime,
 ) -> None:
     with conn.transaction():
         conn.execute(
             START_RUN_QUERY,
-            (run_id, started_at, mode, observed_at.astimezone(UTC).date()),
+            (run_id, started_at, mode, fetched_at.astimezone(UTC).date()),
         )
 
 
