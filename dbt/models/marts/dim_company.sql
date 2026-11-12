@@ -11,4 +11,3 @@ select
     company_name,
     company_name_normalized
 from companies
-group by company_name_normalized, company_name
