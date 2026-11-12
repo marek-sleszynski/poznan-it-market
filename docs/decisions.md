@@ -26,7 +26,7 @@ Local dates can differ near midnight. A timestamp without a timezone can be ambi
 
 **Decision**
 Require timezone-aware input and use `timestamptz` for timestamps. Use UTC for observation days.
-Derive model dates with `(fetched_at AT TIME ZONE 'UTC')::date`.
+Calculate the day once in `stg_offers` with `(fetched_at AT TIME ZONE 'UTC')::date`.
 
 **Consequences**
 - (+) Raw keys and report dates use the same day.
@@ -90,7 +90,7 @@ observation in `fct_offer_skill`. Keep the city filter in staging.
 **Date:** 2026-10-08 · **Status:** Accepted
 
 **Context**
-The incremental time filter can skip late observations and fails when the existing table is empty.
+The incremental filter could miss late rows and failed when the table was empty.
 Full rebuilds were fast on the small demo dataset.
 
 **Decision**
