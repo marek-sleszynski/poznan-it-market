@@ -39,7 +39,7 @@ Stack: Python 3.14, PostgreSQL 16, dbt, Docker Compose and GitHub Actions.
 You need uv, Docker Compose and Make.
 On Windows, use WSL with Docker Desktop integration.
 
-For a new setup, keep the local settings from `.env.example`:
+For a new setup, copy the local settings from `.env.example`:
 
 ```bash
 cp .env.example .env
@@ -52,7 +52,7 @@ make demo
 It uses a separate local demo database. No API or Neon access is needed.
 The sample date and path are defined in `src/poznan_it_market/config.py`.
 
-For another local port, change `POSTGRES_PORT` in `.env`.
+To use a different local port, change `POSTGRES_PORT` in `.env`.
 
 ## Checks
 
@@ -67,7 +67,7 @@ Use `make format` to fix formatting.
 
 ## Live collection
 
-With the local database settings:
+To run the pipeline on your local database:
 
 ```bash
 make migrate
@@ -78,7 +78,7 @@ make charts
 
 These commands use `DATABASE_URL`.
 GitHub Actions runs the live pipeline daily at **04:00 UTC**.
-Charts are uploaded as `market-charts` after the checks pass.
+Charts are uploaded as `market-charts` after the checks pass and published to the `charts branch`.
 
 ## Example
 
@@ -89,7 +89,7 @@ It contains 10 offers. The city filter keeps **5**, including **1 junior offer (
 Run `make demo` to repeat this example.
 
 One day is not a trend. The demo image is a saved example.
-Live observations start on **2026-10-09**. Old sample imports are excluded from live reports.
+Live observations start on **2026-10-09**. Live reports don't include old sample imports.
 
 ## Live results
 
@@ -107,18 +107,18 @@ The report period is shown below each plot.
 ## What the reports mean
 
 - Daily counts show offers seen on each UTC day.
-- Company, skill and salary summaries use each offer's latest observation within the selected period.
-- Juniors have `experienceLevel = 'junior'`. Skills count offers mentioning each skill.
-- Salaries use original PLN amounts, grouped by contract, hour/month and gross/net.
-  The salary chart shows the mean advertised minimum. Missing salary is not zero.
+- Company, skill and salary summaries use each offer's latest version in the selected period.
+- Juniors have `experienceLevel = 'junior'`. The skill chart counts how many offers list each skill.
+- Salaries use original PLN amounts. They are grouped by contract, hour/month and gross/net.
+  The salary chart shows the mean advertised minimum. Offers without a salary are not counted as zero.
 
 ## Limits
 
-There is one source. Reports include top-level `city` equal to `Poznań` or `Poznan`,
+There is one source. Reports include offers where the main `city` is equal to `Poznań` or `Poznan`,
 including remote jobs. Other location fields are not checked.
 
 A saved offer may no longer be active.
-Salary changes show differences between observations, not the exact time of a change.
+Salary changes show differences between two saved observations, not the exact time of the change.
 
 ## Documentation
 

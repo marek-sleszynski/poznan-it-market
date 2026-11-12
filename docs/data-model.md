@@ -8,12 +8,12 @@
 | `raw.rejected_records` | A rejected record with its error and import ID |
 | `raw.ingestion_runs` | An import attempt with its status, mode and counters |
 
-`source_offer_id` identifies a listing within a source.
-`raw_offer_id` identifies an observation. `run_id` identifies an import attempt.
+`source_offer_id` is the offer ID from the source.
+`raw_offer_id` is the ID of one observation (one offer on one day). `run_id` is the ID of one import.
 
 The offer key is `(source, source_offer_id, UTC date of fetched_at)`.
-A same-day repeat updates the payload and `run_id`. Missing offers stay saved.
-The next day adds a new observation. Earlier versions from the same day are replaced.
+If an import runs again on the same day, it updates the JSON and `run_id`.
+Missing offers stay saved. The next day adds a new observation.
 
 ## Data modes
 
@@ -24,11 +24,11 @@ The next day adds a new observation. Earlier versions from the same day are repl
 | `legacy_demo` | Old sample imports |
 | `unknown` | Unconfirmed source |
 
-A past review found 30 Neon rows matching the sample.
-They were marked `legacy_demo`; their rows and timestamps were kept.
+A check found 30 rows in Neon that came from the sample.
+They were marked as `legacy_demo`, but not deleted.
 
 Models use `live` by default. Demo builds use `demo`.
-Both exclude `legacy_demo` and `unknown`.
+Both skip `legacy_demo` and `unknown` rows.
 
 ## dbt models
 
@@ -40,12 +40,12 @@ Both exclude `legacy_demo` and `unknown`.
 | `fct_offer_skill` | A skill linked to an observation | Table |
 | `offer_salary_history` | An original salary variant for an observation | View |
 
-Offer facts link to the company dimension. Skills link to a specific observation.
+Offer facts link to `dim_company`. Skills link to a specific observation.
 Company names use `lower(trim(company_name))`; the key is its MD5 hash.
 Skills are trimmed, lowercased and deduplicated.
 
-Tables are fully rebuilt from retained raw data.
-`fct_offer_snapshot` holds daily observations, not dbt SCD2 snapshots.
+dbt rebuilds all tables from raw data on every run.
+`fct_offer_snapshot` stores one row per offer per day. It is not a dbt SCD2 snapshot.
 Salary amounts come from `fromPerUnit` and `toPerUnit`.
 
 ## dbt lineage
@@ -64,15 +64,15 @@ flowchart LR
 
 ## Report rules
 
-Daily reports count offer-day observations.
-Other summaries use the latest observation per offer within the selected period.
+Daily reports count offers seen each day.
+Other reports count each offer once, using its latest version in the selected period.
 
-Salary averages use PLN and give each offer the same weight within a group.
-For multiple variants, the offer's value is their average minimum salary.
+In salary averages, each offer counts the same in its group.
+If an offer has more than one salary option, we use the average of their minimum salaries.
 
 Salary changes use `LAG()` for the same source, offer, contract, currency, unit and gross/net basis.
-The date filter comes after the comparison, so an older observation can be the baseline.
-Missing amounts or gross/net information stay missing.
+The date filter runs after this comparison, so an observation from before the period can be the starting point.
+Missing values are not filled in.
 
 ## One offer through the system
 
