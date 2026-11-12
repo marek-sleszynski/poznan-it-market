@@ -1,29 +1,171 @@
-import uuid
 from datetime import UTC, datetime
 
+import httpx
 import pytest
+from tenacity import wait_none
 
 from poznan_it_market import pipeline
 from poznan_it_market.ingest import justjoinit, loader
-from poznan_it_market.ingest.loader import load_raw_offers
 
 
-def test_load_raw_offers_updates_payload_and_run_id_on_conflict(db_conn):
-    now = datetime.now(UTC)
-    offer_v1 = {"slug": "offer-1", "employmentTypes": [{"toPerUnit": 15000}]}
-    offer_v2 = {"slug": "offer-1", "employmentTypes": [{"toPerUnit": 20000}]}
-    run_id_1, run_id_2, run_id_3 = [uuid.uuid4() for _ in range(3)]
+def make_offer(slug):
+    return {
+        "slug": slug,
+        "title": "Test developer",
+        "companyName": "Test Company",
+        "city": "Poznań",
+        "publishedAt": "2020-01-01T10:00:00Z",
+        "employmentTypes": [],
+        "requiredSkills": [{"name": "Python", "level": 3}],
+    }
 
-    load_raw_offers(db_conn, [offer_v1], "justjoin.it", run_id_1, now)
-    observation_id = db_conn.execute("SELECT id FROM raw.offers;").fetchone()[0]
 
-    load_raw_offers(db_conn, [offer_v1], "justjoin.it", run_id_2, now)
-    rows = db_conn.execute("SELECT id, payload, run_id FROM raw.offers;").fetchall()
-    assert rows == [(observation_id, offer_v1, run_id_2)]
+def make_page(offers, cursor, next_cursor):
+    return {
+        "data": offers,
+        "meta": {"from": cursor, "next": {"cursor": next_cursor}},
+    }
 
-    load_raw_offers(db_conn, [offer_v2], "justjoin.it", run_id_3, now)
-    rows = db_conn.execute("SELECT id, payload, run_id FROM raw.offers;").fetchall()
-    assert rows == [(observation_id, offer_v2, run_id_3)]
+
+@pytest.fixture
+def mock_api(monkeypatch):
+    # Keep pagination and retry rules, but disable real waiting.
+    fast_fetch = justjoinit.fetch_url_with_retry.retry_with(wait=wait_none(), sleep=lambda _: None)
+    monkeypatch.setattr(justjoinit, "fetch_url_with_retry", fast_fetch)
+    monkeypatch.setattr(justjoinit.time, "sleep", lambda _: None)
+
+    def install(handler):
+        client = httpx.Client(transport=httpx.MockTransport(handler))
+        monkeypatch.setattr(justjoinit, "get_http_client", lambda: client)
+        return client
+
+    return install
+
+
+@pytest.mark.parametrize(
+    "invalid_salary, expected_error",
+    [
+        (
+            {"fromPerUnit": 25000, "toPerUnit": 15000},
+            "salary_from_per_unit cannot exceed salary_to_per_unit",
+        ),
+        ({"fromPerUnit": "not-a-number"}, "fromPerUnit"),
+        ({"gross": "unknown"}, "gross"),
+    ],
+    ids=["reversed-range", "invalid-amount", "invalid-gross"],
+)
+def test_two_page_pipeline_saves_offers_rejection_and_metrics(
+    db_conn, mock_api, invalid_salary, expected_error
+):
+    first = make_offer("api-first")
+    first["employmentTypes"] = [
+        {
+            "fromPerUnit": "12345.67",
+            "toPerUnit": 18000,
+            "gross": False,
+            "unit": "month",
+            "currency": "PLN",
+            "currencySource": "original",
+            "type": "b2b",
+        }
+    ]
+    first["extraField"] = "keep"
+    second = make_offer("api-second")
+    invalid = make_offer("api-invalid-salary")
+    invalid["employmentTypes"] = [
+        {
+            "fromPerUnit": 10000,
+            "toPerUnit": 18000,
+            "gross": False,
+            "unit": "month",
+            "currency": "PLN",
+            "currencySource": "original",
+            "type": "b2b",
+            **invalid_salary,
+        }
+    ]
+    requested_cursors = []
+
+    def handler(request):
+        cursor = int(request.url.params["from"])
+        requested_cursors.append(cursor)
+        assert request.url.params["city"] == "Poznań"
+        assert request.url.params["cityRadius"] == "0"
+        if cursor == 0:
+            return httpx.Response(200, json=make_page([first, invalid], 0, 10))
+        assert cursor == 10
+        return httpx.Response(200, json=make_page([second], 10, None))
+
+    client = mock_api(handler)
+    pipeline.run_pipeline(mode="live")
+
+    assert requested_cursors == [0, 10]
+    assert client.is_closed
+    run = db_conn.execute("""
+        SELECT run_id, status, pages_fetched, records_accepted, records_rejected,
+               stage, data_mode, observed_date, finished_at, error_type,
+               error_message, started_at
+        FROM raw.ingestion_runs;
+    """).fetchone()
+    assert run is not None
+    assert run[1:7] == ("success", 2, 2, 1, "finished", "live")
+    assert run[7] == run[11].astimezone(UTC).date()
+    assert run[8] is not None
+    assert run[9:11] == (None, None)
+
+    saved = db_conn.execute("""
+        SELECT source_offer_id, payload, run_id, data_mode,
+               (fetched_at AT TIME ZONE 'UTC')::date
+        FROM raw.offers
+        ORDER BY source_offer_id;
+    """).fetchall()
+    assert saved == [
+        ("api-first", first, run[0], "live", run[7]),
+        ("api-second", second, run[0], "live", run[7]),
+    ]
+    rejected = db_conn.execute("""
+        SELECT payload, error_type, error_message, run_id
+        FROM raw.rejected_records;
+    """).fetchall()
+    assert len(rejected) == 1
+    assert rejected[0][0] == invalid
+    assert rejected[0][1] == "validation_error"
+    assert expected_error in rejected[0][2]
+    assert rejected[0][3] == run[0]
+
+
+def test_second_page_failure_saves_no_partial_data(db_conn, mock_api):
+    requested_cursors = []
+
+    def handler(request):
+        cursor = int(request.url.params["from"])
+        requested_cursors.append(cursor)
+        if cursor == 0:
+            return httpx.Response(
+                200, json=make_page([make_offer("api-first"), make_offer("")], 0, 10)
+            )
+        assert cursor == 10
+        return httpx.Response(503)
+
+    client = mock_api(handler)
+    with pytest.raises(httpx.HTTPStatusError) as error:
+        pipeline.run_pipeline(mode="live")
+
+    assert error.value.response.status_code == 503
+    assert requested_cursors == [0, 10, 10, 10, 10, 10]
+    assert client.is_closed
+    assert db_conn.execute("SELECT count(*) FROM raw.offers;").fetchone()[0] == 0
+    assert db_conn.execute("SELECT count(*) FROM raw.rejected_records;").fetchone()[0] == 0
+    run = db_conn.execute("""
+        SELECT status, stage, pages_fetched, records_accepted, records_rejected,
+               error_type, error_message, finished_at, data_mode
+        FROM raw.ingestion_runs;
+    """).fetchone()
+    assert run is not None
+    assert run[:6] == ("failed", "fetch", None, 0, 0, "HTTPStatusError")
+    assert "503" in run[6]
+    assert run[7] is not None
+    assert run[8] == "live"
 
 
 def test_demo_reads_sample_and_preserves_observation_date(db_conn, sample_offers, monkeypatch):
@@ -69,28 +211,6 @@ def test_live_uses_api_data(db_conn, sample_offers, monkeypatch):
     assert rows[0][0] == offer
     assert before <= rows[0][1] <= after
     assert db_conn.execute("SELECT pages_fetched FROM raw.ingestion_runs;").fetchone()[0] == 2
-
-
-def test_saves_rejected_offer_with_error_and_run_id(db_conn):
-    offer = {"slug": ""}
-    run_id = uuid.uuid4()
-
-    count = loader.load_rejected_offers(db_conn, [(offer, "slug must not be empty.")], run_id)
-
-    row = db_conn.execute(
-        """
-        SELECT payload, error_type, error_message, run_id
-        FROM raw.rejected_records;
-        """
-    ).fetchone()
-
-    assert count == 1
-    assert row == (
-        offer,
-        "validation_error",
-        "slug must not be empty.",
-        run_id,
-    )
 
 
 @pytest.mark.parametrize("mode", ["demo", "live"])
@@ -212,72 +332,3 @@ def test_status_write_failure_preserves_original_error(db_conn, monkeypatch):
 
     with pytest.raises(RuntimeError, match="Original fetch failure"):
         pipeline.run_pipeline(mode="live")
-
-
-def test_same_day_import_keeps_previously_seen_offers(db_conn):
-    first_fetch = datetime(2026, 10, 8, 10, tzinfo=UTC)
-    second_fetch = datetime(2026, 10, 8, 12, tzinfo=UTC)
-    first_offers = [
-        {"slug": "offer-a", "title": "Old title"},
-        {"slug": "offer-b"},
-    ]
-    second_offers = [
-        {"slug": "offer-a", "title": "New title"},
-        {"slug": "offer-c"},
-    ]
-
-    load_raw_offers(
-        db_conn,
-        first_offers,
-        "justjoin.it",
-        uuid.uuid4(),
-        first_fetch,
-        data_mode="live",
-    )
-    load_raw_offers(
-        db_conn,
-        second_offers,
-        "justjoin.it",
-        uuid.uuid4(),
-        second_fetch,
-        data_mode="live",
-    )
-
-    rows = db_conn.execute(
-        """
-        SELECT source_offer_id, payload, fetched_at
-        FROM raw.offers
-        ORDER BY source_offer_id;
-        """
-    ).fetchall()
-
-    assert [row[0] for row in rows] == ["offer-a", "offer-b", "offer-c"]
-    assert rows[0][1]["title"] == "New title"
-    assert rows[0][2] == second_fetch
-    assert rows[1][2] == first_fetch
-
-
-def test_next_day_import_creates_new_observation(db_conn):
-    first_fetch = datetime(2026, 10, 8, 10, tzinfo=UTC)
-    second_fetch = datetime(2026, 10, 9, 10, tzinfo=UTC)
-
-    for fetched_at in (first_fetch, second_fetch):
-        load_raw_offers(
-            db_conn,
-            [{"slug": "offer-a"}],
-            "justjoin.it",
-            uuid.uuid4(),
-            fetched_at,
-            data_mode="live",
-        )
-
-    rows = db_conn.execute(
-        """
-        SELECT fetched_at
-        FROM raw.offers
-        WHERE source_offer_id = 'offer-a'
-        ORDER BY fetched_at;
-        """
-    ).fetchall()
-
-    assert rows == [(first_fetch,), (second_fetch,)]
