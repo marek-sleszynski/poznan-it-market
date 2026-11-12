@@ -1,5 +1,5 @@
 name: 'poznan_it_market'
-version: '0.1.0'
+version: '2.0.0'
 profile: 'poznan_it_market'
 
 model-paths: ["models"]
