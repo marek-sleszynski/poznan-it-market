@@ -71,8 +71,8 @@ class Skill(BaseModel):
 
 
 class RawOffer(BaseModel):
-    slug: str = Field(validation_alias="slug")
-    title: str = Field(validation_alias="title")
+    slug: str
+    title: str
     company_name: str = Field(validation_alias="companyName")
     city: str | None = None
     published_at: AwareDatetime = Field(validation_alias="publishedAt")

@@ -18,6 +18,7 @@ renamed as (
         source,
         source_offer_id,
         fetched_at,
+        (fetched_at AT TIME ZONE 'UTC')::date as date_id,
         run_id,
         data_mode,
         payload->>'title' as title,
