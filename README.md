@@ -78,7 +78,7 @@ make charts
 
 These commands use `DATABASE_URL`.
 GitHub Actions runs the live pipeline daily at **04:00 UTC**.
-Charts are uploaded as `market-charts` after the checks pass and published to the `charts branch`.
+Charts are uploaded as `market-charts` after the checks pass and published to the `charts` branch.
 
 ## Example
 
