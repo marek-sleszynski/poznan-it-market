@@ -40,7 +40,7 @@ Both exclude `legacy_demo` and `unknown`.
 | `fct_offer_skill` | A skill linked to an observation | Table |
 | `offer_salary_history` | An original salary variant for an observation | View |
 
-Offer facts link to company and date dimensions. Skills link to a specific observation.
+Offer facts link to the company dimension. Skills link to a specific observation.
 Company names use `lower(trim(company_name))`; the key is its MD5 hash.
 Skills are trimmed, lowercased and deduplicated.
 
